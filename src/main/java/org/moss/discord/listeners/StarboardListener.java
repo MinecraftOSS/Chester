@@ -53,21 +53,22 @@ public class StarboardListener implements ReactionAddListener {
     }
     
     private void postStarboard(Message message) {
-        Optional<ServerChannel> starboardChannel = message.getServer().get().getChannelById(Constants.CHANNEL_STARBOARD);
+        Optional<TextChannel> starboardChannel = api.getTextChannelById(Constants.CHANNEL_STARBOARD);
         if (!starboardChannel.isPresent()) return; // Starboard is disabled
 
         EmbedBuilder embed = new EmbedBuilder();
 
-        String author = message.getAuthor().getName();
+        String author = message.getAuthor().getDiscriminatedName();
         String channel = message.getServerTextChannel().get().getName();
         String content = message.getContent();
 
-        embed.setTitle(author + " in " + channel);
+        embed.setTitle(author + " in #" + channel);
         embed.setAuthor(message.getAuthor());
         embed.setColor(Color.ORANGE);
         embed.setDescription(content);
+        embed.setFooter(message.getCreationTimestamp().toString());
 
-        starboardChannel.get().asTextChannel().get().sendMessage(embed).join();
+        starboardChannel.get().sendMessage(embed).join();
     }
 
 }
