@@ -70,7 +70,7 @@ public class StarboardListener implements ReactionAddListener {
         embed.setAuthor(message.getAuthor());
         embed.setColor(Color.ORANGE);
         embed.setDescription(content);
-        embed.setFooter(message.getCreationTimestamp().toString());
+        embed.setFooter("Posted at " + message.getCreationTimestamp().toString());
 
         starboardChannel.get().sendMessage(embed).join();
     }
