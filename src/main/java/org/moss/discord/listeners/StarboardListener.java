@@ -1,6 +1,8 @@
 package org.moss.discord.listeners;
 
 import java.awt.Color;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -23,6 +25,7 @@ import org.moss.discord.Constants;
 public class StarboardListener implements ReactionAddListener {
 
     private DiscordApi api;
+    private static Collection<Character> starEmojis = Arrays.asList((char) 0x1F31F, (char) 0x2B50);
 
     // TODO: Store this permanently, obviously this isn't going to work in-memory
     private Set<Long> starredMessages = new HashSet<Long>();
@@ -42,6 +45,7 @@ public class StarboardListener implements ReactionAddListener {
 
         int totalStars = message.getReactions().stream()
             .filter(r -> r.getEmoji().isUnicodeEmoji())
+            .filter(r -> starEmojis.contains(r.getEmoji().asUnicodeEmoji().get().charAt(0)))
             .mapToInt(Reaction::getCount)
             .sum();
         
