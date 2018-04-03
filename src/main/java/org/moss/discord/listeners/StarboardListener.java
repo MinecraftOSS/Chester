@@ -25,7 +25,7 @@ import org.moss.discord.Constants;
 public class StarboardListener implements ReactionAddListener {
 
     private DiscordApi api;
-    private static Collection<Character> starEmojis = Arrays.asList((char) 0x1F31F, (char) 0x2B50);
+    private static Collection<Character> starEmojis = Arrays.asList((char) 0x1F31F, (char) 0x2B50, (char) 0x1F954);
 
     // TODO: Store this permanently, obviously this isn't going to work in-memory
     private Set<Long> starredMessages = new HashSet<Long>();
