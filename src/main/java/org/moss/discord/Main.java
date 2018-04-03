@@ -35,7 +35,7 @@ public class Main {
         // Register commands
         commandHandler.registerCommand(new BStatsCommand());
 
-        api.addReactionAddListener(new StarboardListener());
+        api.addReactionAddListener(new StarboardListener(api));
     }
 
 }
