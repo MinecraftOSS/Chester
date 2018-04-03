@@ -49,7 +49,7 @@ public class BStatsCommand implements CommandExecutor {
                 JsonNode software = bStatsUtil.getSoftwareById(softwareId).join();
                 String softwareName = software.get("name").asText();
                 String softwareUrl = software.get("url").asText();
-                InputStream signatureAsStream = convertSignatureImageToPng(
+                InputStream signatureAsStream = convertSignatureImageToJpeg(
                         "https://bstats.org/signatures/" + softwareUrl + "/" + name + ".svg");
                 int serverCount = bStatsUtil.getLineChartData(id, "servers").join();
                 int playerCount = bStatsUtil.getLineChartData(id, "players").join();
@@ -84,9 +84,10 @@ public class BStatsCommand implements CommandExecutor {
      * @param url The url to the signature image.
      * @return An input stream for the jpeg image.
      */
-    private InputStream convertSignatureImageToPng(String url) {
+    private InputStream convertSignatureImageToJpeg(String url) {
         // Create a JPEG transcoder
         JPEGTranscoder t = new JPEGTranscoder();
+
 
         // Set the transcoding hints.
         t.addTranscodingHint(JPEGTranscoder.KEY_QUALITY, 0.98f);
