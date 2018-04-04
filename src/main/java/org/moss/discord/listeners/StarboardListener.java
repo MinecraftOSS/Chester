@@ -56,14 +56,14 @@ public class StarboardListener implements ReactionAddListener {
         EmbedBuilder embed = new EmbedBuilder();
 
         String author = message.getAuthor().getDiscriminatedName();
-        String channel = message.getServerTextChannel().get().getName();
+        String channel = message.getServerTextChannel().get().getMentionTag();
         String content = message.getContent();
 
-        embed.setTitle(author + " in #" + channel);
+        embed.setTitle(author + " in " + channel);
         embed.setAuthor(message.getAuthor());
-        embed.setColor(Color.ORANGE);
-        embed.setDescription(content);
-        embed.setFooter("Posted at " + message.getCreationTimestamp().toString());
+        embed.setColor(new Color(16763904));
+        embed.setDescription("```markdown\n" + content + "\n```");
+        embed.setTimestamp(message.getCreationTimestamp());
 
         Message starMessage = starboardChannel.get().sendMessage(embed).join();
         storage.set(message.getIdAsString(), starMessage.getIdAsString());
