@@ -65,6 +65,7 @@ public class StarboardListener implements ReactionAddListener {
         embed.setThumbnail("https://cdn.discordapp.com/attachments/397536210236604427/431107224308547604/ecMd5Gecn.png");
         embed.addInlineField("Author", author);
         embed.addInlineField("Channel", channel);
+        embed.setFooter("Posted");
 
         starboardChannel.get().sendMessage(embed).thenAcceptAsync(starMessage -> {
             storage.set(message.getIdAsString(), starMessage.getIdAsString());
