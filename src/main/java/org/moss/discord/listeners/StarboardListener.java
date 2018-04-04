@@ -64,8 +64,13 @@ public class StarboardListener implements ReactionAddListener {
         embed.setDescription("```markdown\n" + content + "\n```");
         embed.setTimestamp(message.getCreationTimestamp());
 
-        Message starMessage = starboardChannel.get().sendMessage(embed).join();
-        storage.set(message.getIdAsString(), starMessage.getIdAsString());
+        starboardChannel.get().sendMessage(embed).thenAcceptAsync(starMessage -> {
+            storage.set(message.getIdAsString(), starMessage.getIdAsString());
+            logger.info("Posted {} to starboard as {}", message.getId(), starMessage.getId());
+        }).exceptionally(t -> {
+            logger.warn("Failed to post to starboard", t);
+            return null;
+        });
     }
 
     private static boolean isStar(Emoji emoji) {
