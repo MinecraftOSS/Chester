@@ -79,6 +79,13 @@
             <version>1.6-1</version>
         </dependency>
 
+        <!-- SnakeYAML to persist data across bot reboots -->
+        <dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+            <version>1.20</version>
+        </dependency>
+
     </dependencies>
 
     <build>
