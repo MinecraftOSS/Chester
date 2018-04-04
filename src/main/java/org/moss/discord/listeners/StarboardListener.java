@@ -3,12 +3,11 @@ package org.moss.discord.listeners;
 import java.awt.Color;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Optional;
-import java.util.Set;
 
 import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.channel.TextChannel;
+import org.javacord.api.entity.emoji.Emoji;
 import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.message.Reaction;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
@@ -16,11 +15,15 @@ import org.javacord.api.event.message.reaction.ReactionAddEvent;
 import org.javacord.api.listener.message.reaction.ReactionAddListener;
 import org.moss.discord.Constants;
 import org.moss.discord.storage.StarboardStorage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class StarboardListener implements ReactionAddListener {
 
     private DiscordApi api;
-    private static Collection<Character> starEmojis = Arrays.asList((char) 0x1F31F, (char) 0x2B50, (char) 0x1F954);
+    private Logger logger = LoggerFactory.getLogger(StarboardListener.class);
+
+    private static Collection<String> starEmojis = Arrays.asList(Constants.EMOJI_STARS_UNICODE);
 
     private StarboardStorage storage = new StarboardStorage();
 
@@ -35,14 +38,12 @@ public class StarboardListener implements ReactionAddListener {
         Optional<Message> mOptional = event.getMessage();
         Message message = mOptional.orElseGet(() -> 
             api.getMessageById(event.getMessageId(), event.getChannel()).join());
-
+        
         int totalStars = message.getReactions().stream()
             .filter(r -> r.getEmoji().isUnicodeEmoji())
-            .filter(r -> starEmojis.contains(r.getEmoji().asUnicodeEmoji().get().charAt(0)))
+            .filter(r -> isStar(r.getEmoji()))
             .mapToInt(Reaction::getCount)
             .sum();
-        
-        System.out.println("Total stars: " + totalStars);
 
         if (totalStars >= Constants.STARS_MINIMUM) {
             postStarboard(message);
@@ -67,6 +68,10 @@ public class StarboardListener implements ReactionAddListener {
 
         Message starMessage = starboardChannel.get().sendMessage(embed).join();
         storage.set(message.getIdAsString(), starMessage.getIdAsString());
+    }
+
+    private static boolean isStar(Emoji emoji) {
+        return starEmojis.contains(emoji.asUnicodeEmoji().orElseGet(() -> emoji.asCustomEmoji().get().getName()));
     }
 
 }

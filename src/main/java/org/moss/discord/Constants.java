@@ -20,6 +20,9 @@ public class Constants {
     public static final String ROLE_PURCHASER_FUUID = "401687069048700928";
     public static final String ROLE_PURCHASER_OD = "401687160559763456";
 
+    // Emojis
+    public static final String[] EMOJI_STARS_UNICODE = {"\u2B50", "\uD83C\uDF1F", "\uD83E\uDD54"};
+
     // Other config
     public static final int STARS_MINIMUM = 3;
 
