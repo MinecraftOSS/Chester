@@ -25,6 +25,7 @@ public class KeyValStorage {
         loadYaml();
     }
 
+    @SuppressWarnings("unchecked")
     protected synchronized void loadYaml() {
         try {
             kvFile.createNewFile();
