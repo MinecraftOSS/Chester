@@ -31,13 +31,11 @@ public class StarboardListener implements ReactionAddListener {
         api = dApi;
     }
 
-	@Override
-	public void onReactionAdd(ReactionAddEvent event) {
+    @Override
+    public void onReactionAdd(ReactionAddEvent event) {
         if (storage.isStarred(event.getMessageId()) || storage.isStarboardMessage(event.getMessageId())) return;
 
-        Optional<Message> mOptional = event.getMessage();
-        Message message = mOptional.orElseGet(() -> 
-            api.getMessageById(event.getMessageId(), event.getChannel()).join());
+        Message message = event.requestMessage().join();
         
         int totalStars = message.getReactions().stream()
             .filter(r -> r.getEmoji().isUnicodeEmoji())
