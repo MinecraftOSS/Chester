@@ -5,6 +5,9 @@ import de.btobastian.sdcf4j.handler.JavacordHandler;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
 import org.moss.discord.commands.BStatsCommand;
+import org.moss.discord.commands.tags.TagCommand;
+import org.moss.discord.commands.tags.TagListCommand;
+import org.moss.discord.commands.tags.TagSetCommand;
 import org.moss.discord.listeners.StarboardListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,6 +37,9 @@ public class Main {
 
         // Register commands
         commandHandler.registerCommand(new BStatsCommand());
+        commandHandler.registerCommand(new TagCommand());
+        commandHandler.registerCommand(new TagListCommand());
+        commandHandler.registerCommand(new TagSetCommand());
 
         api.addReactionAddListener(new StarboardListener(api));
     }
