@@ -9,18 +9,22 @@ import org.javacord.api.event.message.MessageEditEvent;
 import org.javacord.api.event.server.member.ServerMemberBanEvent;
 import org.javacord.api.event.server.member.ServerMemberJoinEvent;
 import org.javacord.api.event.server.member.ServerMemberLeaveEvent;
+import org.javacord.api.event.user.UserChangeNameEvent;
+import org.javacord.api.event.user.UserChangeNicknameEvent;
 import org.javacord.api.listener.message.MessageDeleteListener;
 import org.javacord.api.listener.message.MessageEditListener;
 import org.javacord.api.listener.server.member.ServerMemberBanListener;
 import org.javacord.api.listener.server.member.ServerMemberJoinListener;
 import org.javacord.api.listener.server.member.ServerMemberLeaveListener;
+import org.javacord.api.listener.user.UserChangeNameListener;
+import org.javacord.api.listener.user.UserChangeNicknameListener;
 import org.moss.discord.Constants;
 
 import java.awt.*;
 import java.time.Instant;
 import java.util.Optional;
 
-public class ModLogListeners implements MessageEditListener, MessageDeleteListener, ServerMemberBanListener, ServerMemberJoinListener, ServerMemberLeaveListener {
+public class ModLogListeners implements MessageEditListener, MessageDeleteListener, ServerMemberBanListener, ServerMemberJoinListener, ServerMemberLeaveListener, UserChangeNicknameListener, UserChangeNameListener {
 
     private DiscordApi api;
     private Optional<TextChannel> modChannel;
@@ -38,8 +42,9 @@ public class ModLogListeners implements MessageEditListener, MessageDeleteListen
 
     @Override
     public void onMessageDelete(MessageDeleteEvent ev) {
+        Message message;
         try {
-            Message message = ev.getMessage().orElseGet(null); //TODO
+             message = ev.getMessage().orElseGet(null); //TODO
         } catch (Exception e) {
             return;
         }
@@ -50,7 +55,7 @@ public class ModLogListeners implements MessageEditListener, MessageDeleteListen
         embed.setColor(Color.RED);
         embed.setThumbnail("https://i.imgur.com/bYGnGCp.png");
 
-        embed.addInlineField("Author", ev.getMessage().get().getAuthor().getDiscriminatedName());
+        embed.addInlineField("Author", message.getAuthor().asUser().get().getMentionTag());
         embed.addInlineField("Channel", String.format("<#%s>", ev.getChannel().getId()));
 
         embed.addField("Message", "```"+ev.getMessage().get().getContent()+"```");
@@ -69,7 +74,7 @@ public class ModLogListeners implements MessageEditListener, MessageDeleteListen
         embed.setColor(Color.YELLOW);
         embed.setThumbnail("https://i.imgur.com/bYGnGCp.png");
 
-        embed.addInlineField("Author", ev.getMessage().get().getAuthor().getDiscriminatedName());
+        embed.addInlineField("Author", ev.getMessage().get().getAuthor().asUser().get().getMentionTag());
         embed.addInlineField("Channel", String.format("<#%s>", ev.getChannel().getId()));
 
         embed.addField("Was", "```"+ev.getOldContent().get()+"```");
@@ -117,6 +122,40 @@ public class ModLogListeners implements MessageEditListener, MessageDeleteListen
         embed.setAuthor(ev.getUser());
         embed.setTitle("Left the server");
         embed.setColor(Color.RED);
+
+        modChannel.get().sendMessage(embed);
+    }
+
+    @Override
+    public void onUserChangeName(UserChangeNameEvent ev) {
+        EmbedBuilder embed = new EmbedBuilder();
+
+        embed.setAuthor("NAME CHANGE");
+        embed.setColor(Color.YELLOW);
+        embed.setThumbnail("https://i.imgur.com/bYGnGCp.png");
+
+        embed.addInlineField("Old", ev.getOldName());
+        embed.addInlineField("New", ev.getNewName());
+
+        embed.setFooter("Time");
+        embed.setTimestamp(Instant.now());
+
+        modChannel.get().sendMessage(embed);
+    }
+
+    @Override
+    public void onUserChangeNickname(UserChangeNicknameEvent ev) {
+        EmbedBuilder embed = new EmbedBuilder();
+
+        embed.setAuthor("NICK CHANGE");
+        embed.setColor(Color.YELLOW);
+        embed.setThumbnail("https://i.imgur.com/bYGnGCp.png");
+
+        embed.addInlineField("Old", ev.getOldNickname().get());
+        embed.addInlineField("New", ev.getNewNickname().get());
+
+        embed.setFooter("Time");
+        embed.setTimestamp(Instant.now());
 
         modChannel.get().sendMessage(embed);
     }
