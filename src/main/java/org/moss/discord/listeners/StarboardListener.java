@@ -8,27 +8,21 @@ import java.util.Optional;
 import java.util.Set;
 
 import org.javacord.api.DiscordApi;
-import org.javacord.api.entity.channel.Channel;
-import org.javacord.api.entity.channel.ServerChannel;
 import org.javacord.api.entity.channel.TextChannel;
-import org.javacord.api.entity.emoji.CustomEmoji;
-import org.javacord.api.entity.emoji.Emoji;
-import org.javacord.api.entity.emoji.KnownCustomEmoji;
 import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.message.Reaction;
-import org.javacord.api.entity.message.UncachedMessageUtil;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.event.message.reaction.ReactionAddEvent;
 import org.javacord.api.listener.message.reaction.ReactionAddListener;
 import org.moss.discord.Constants;
+import org.moss.discord.storage.StarboardStorage;
 
 public class StarboardListener implements ReactionAddListener {
 
     private DiscordApi api;
     private static Collection<Character> starEmojis = Arrays.asList((char) 0x1F31F, (char) 0x2B50, (char) 0x1F954);
 
-    // TODO: Store this permanently, obviously this isn't going to work in-memory
-    private Set<Long> starredMessages = new HashSet<Long>();
+    private StarboardStorage storage = new StarboardStorage();
 
     public StarboardListener(DiscordApi dApi) {
         api = dApi;
@@ -36,8 +30,7 @@ public class StarboardListener implements ReactionAddListener {
 
 	@Override
 	public void onReactionAdd(ReactionAddEvent event) {
-        if (starredMessages.contains(event.getMessageId())) return;
-        //System.out.println("reaction add star first");
+        if (storage.isStarred(event.getMessageId()) || storage.isStarboardMessage(event.getMessageId())) return;
 
         Optional<Message> mOptional = event.getMessage();
         Message message = mOptional.orElseGet(() -> 
@@ -72,7 +65,8 @@ public class StarboardListener implements ReactionAddListener {
         embed.setDescription(content);
         embed.setFooter("Posted at " + message.getCreationTimestamp().toString());
 
-        starboardChannel.get().sendMessage(embed).join();
+        Message starMessage = starboardChannel.get().sendMessage(embed).join();
+        storage.set(message.getIdAsString(), starMessage.getIdAsString());
     }
 
 }
