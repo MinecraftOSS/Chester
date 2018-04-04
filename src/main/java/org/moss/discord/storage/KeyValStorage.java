@@ -15,7 +15,7 @@ import org.yaml.snakeyaml.Yaml;
 public class KeyValStorage {
     
     private Yaml yaml = new Yaml();
-    private Logger logger = LoggerFactory.getLogger(KeyValStorage.class);
+    private static final Logger logger = LoggerFactory.getLogger(KeyValStorage.class);
 
     private Map<String, String> kvMap;
     private File kvFile;
