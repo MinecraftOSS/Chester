@@ -58,11 +58,13 @@ public class StarboardListener implements ReactionAddListener {
         String channel = message.getServerTextChannel().get().getMentionTag();
         String content = message.getContent();
 
-        embed.setTitle(author + " in " + channel);
         embed.setAuthor(message.getAuthor());
         embed.setColor(new Color(16763904));
         embed.setDescription("```markdown\n" + content + "\n```");
         embed.setTimestamp(message.getCreationTimestamp());
+        embed.setThumbnail("https://cdn.discordapp.com/attachments/397536210236604427/431107224308547604/ecMd5Gecn.png");
+        embed.addInlineField("Author", author);
+        embed.addInlineField("Channel", channel);
 
         starboardChannel.get().sendMessage(embed).thenAcceptAsync(starMessage -> {
             storage.set(message.getIdAsString(), starMessage.getIdAsString());
