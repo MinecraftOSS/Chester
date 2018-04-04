@@ -125,3 +125,10 @@ fabric.properties
 
 # Editor-based Rest Client
 .idea/httpRequests
+
+# Visual Studio Code
+.vscode/
+
+# Bot data
+starboard.yml
+tags.yml
