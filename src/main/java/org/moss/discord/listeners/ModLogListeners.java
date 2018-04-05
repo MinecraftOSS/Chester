@@ -78,7 +78,7 @@ public class ModLogListeners implements MessageEditListener, MessageDeleteListen
         embed.addInlineField("Channel", String.format("<#%s>", ev.getChannel().getId()));
         embed.addInlineField("Deleted by", deletedBy);
 
-        embed.addField("Message", "```"+ev.getMessage().get().getContent()+"```");
+        embed.addField("Message", "```"+stripGrave(ev.getMessage().get().getContent())+"```");
 
         embed.setFooter("Time");
         embed.setTimestamp(ev.getMessage().get().getCreationTimestamp());
@@ -97,8 +97,8 @@ public class ModLogListeners implements MessageEditListener, MessageDeleteListen
         embed.addInlineField("Author", ev.getMessage().get().getAuthor().asUser().get().getMentionTag());
         embed.addInlineField("Channel", String.format("<#%s>", ev.getChannel().getId()));
 
-        embed.addField("Was", "```"+ev.getOldContent().get()+"```");
-        embed.addField("Now", "```"+ev.getNewContent()+"```");
+        embed.addField("Was", "```diff\n- "+stripGrave(ev.getOldContent().get())+"```");
+        embed.addField("Now", "```diff\n+ "+stripGrave(ev.getNewContent())+"```");
 
         embed.setFooter("Time");
         embed.setTimestamp(ev.getMessage().get().getCreationTimestamp());
@@ -178,5 +178,9 @@ public class ModLogListeners implements MessageEditListener, MessageDeleteListen
         embed.setTimestamp(Instant.now());
 
         modChannel.get().sendMessage(embed);
+    }
+
+    public String stripGrave(String string) {
+        return string.replace("`", "");
     }
 }
