@@ -1,6 +1,9 @@
 package org.moss.discord.listeners;
 
 import org.javacord.api.DiscordApi;
+import org.javacord.api.entity.auditlog.AuditLog;
+import org.javacord.api.entity.auditlog.AuditLogActionType;
+import org.javacord.api.entity.auditlog.AuditLogEntry;
 import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
@@ -23,6 +26,7 @@ import org.moss.discord.Constants;
 import java.awt.*;
 import java.time.Instant;
 import java.util.Optional;
+import java.util.concurrent.Future;
 
 public class ModLogListeners implements MessageEditListener, MessageDeleteListener, ServerMemberBanListener, ServerMemberJoinListener, ServerMemberLeaveListener, UserChangeNicknameListener, UserChangeNameListener {
 
@@ -43,10 +47,25 @@ public class ModLogListeners implements MessageEditListener, MessageDeleteListen
     @Override
     public void onMessageDelete(MessageDeleteEvent ev) {
         Message message;
+        String deletedBy = "Self";
+        AuditLog log;
         try {
-             message = ev.getMessage().orElseGet(null); //TODO
-        } catch (Exception e) {
+            message = ev.getMessage().orElseGet(null);
+        } catch (Exception e) { //Message is not cached
             return;
+        }
+
+        Future<AuditLog> future = ev.getServer().get().getAuditLog(10, AuditLogActionType.MESSAGE_DELETE);
+
+        try {
+            log = future.get();
+            for (AuditLogEntry entry : log.getEntries()) {
+                if (entry.getTarget().get().getId() == ev.getMessage().get().getAuthor().getId()) {
+                    deletedBy = entry.getUser().get().getNicknameMentionTag();
+                    break;
+                }
+            }
+        } catch (Exception e) {
         }
 
         EmbedBuilder embed = new EmbedBuilder();
@@ -57,6 +76,7 @@ public class ModLogListeners implements MessageEditListener, MessageDeleteListen
 
         embed.addInlineField("Author", message.getAuthor().asUser().get().getMentionTag());
         embed.addInlineField("Channel", String.format("<#%s>", ev.getChannel().getId()));
+        embed.addInlineField("Deleted by", deletedBy);
 
         embed.addField("Message", "```"+ev.getMessage().get().getContent()+"```");
 
