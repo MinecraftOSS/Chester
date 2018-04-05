@@ -108,15 +108,33 @@ public class ModLogListeners implements MessageEditListener, MessageDeleteListen
 
     @Override
     public void onServerMemberBan(ServerMemberBanEvent ev) {
+        String bannedBy = "Unknown";
+        String reason = "Because";
+        AuditLog log;
+
+        Future<AuditLog> future = ev.getServer().getAuditLog(10, AuditLogActionType.MEMBER_BAN_ADD);
+
+        try {
+            log = future.get();
+            for (AuditLogEntry entry : log.getEntries()) {
+                if (entry.getTarget().get().getId() == ev.getUser().getId()) {
+                    bannedBy = entry.getUser().get().getNicknameMentionTag();
+                    reason = entry.getReason().get();
+                    break;
+                }
+            }
+        } catch (Exception e) {
+        }
+
         EmbedBuilder embed = new EmbedBuilder();
 
         embed.setAuthor(ev.getUser());
-        embed.setColor(Color.YELLOW);
+        embed.setColor(Color.PINK);
         embed.setThumbnail("https://i.imgur.com/8WJqz7B.png");
 
-        embed.addInlineField("Banned By: ", "Chester"); //TODO
+        embed.addInlineField("Banned By: ", bannedBy);
         embed.addInlineField("ID", ev.getUser().getIdAsString());
-        embed.addField("Reason", "Audit Log");
+        embed.addField("Reason", reason);
 
         embed.setFooter("Banned");
         embed.setTimestamp(Instant.now());
