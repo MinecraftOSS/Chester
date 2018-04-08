@@ -34,12 +34,6 @@ public class ModLogListeners implements MessageEditListener, MessageDeleteListen
     private DiscordApi api;
     private Optional<TextChannel> modChannel;
 
-    /*
-    ++ User Join/Leave
-    ++ User Ban/Kick
-    ++ User Edit/Delete message
-     */
-
     public ModLogListeners(DiscordApi api) {
         modChannel = api.getTextChannelById(Constants.CHANNEL_MODLOG);
         this.api = api;
@@ -67,6 +61,7 @@ public class ModLogListeners implements MessageEditListener, MessageDeleteListen
                 }
             }
         } catch (Exception e) {
+            e.printStackTrace();
         }
 
         EmbedBuilder embed = new EmbedBuilder();
@@ -81,8 +76,8 @@ public class ModLogListeners implements MessageEditListener, MessageDeleteListen
 
         embed.addField("Message", "```"+stripGrave(ev.getMessage().get().getContent())+"```");
 
-        embed.setFooter("Time");
-        embed.setTimestamp(ev.getMessage().get().getCreationTimestamp());
+        embed.setFooter(ev.getMessage().get().getUserAuthor().get().getIdAsString());
+        embed.setTimestamp(Instant.now());
 
         modChannel.get().sendMessage(embed);
     }
@@ -101,8 +96,8 @@ public class ModLogListeners implements MessageEditListener, MessageDeleteListen
         embed.addField("Was", "```diff\n- "+stripGrave(ev.getOldContent().get())+"```");
         embed.addField("Now", "```diff\n+ "+stripGrave(ev.getNewContent())+"```");
 
-        embed.setFooter("Time");
-        embed.setTimestamp(ev.getMessage().get().getCreationTimestamp());
+        embed.setFooter(ev.getMessage().get().getUserAuthor().get().getIdAsString());
+        embed.setTimestamp(Instant.now());
 
         modChannel.get().sendMessage(embed);
     }
@@ -138,7 +133,7 @@ public class ModLogListeners implements MessageEditListener, MessageDeleteListen
         embed.addInlineField("ID", ev.getUser().getIdAsString());
         embed.addField("Reason", reason);
 
-        embed.setFooter("Banned");
+        embed.setFooter(ev.getUser().getIdAsString());
         embed.setTimestamp(Instant.now());
 
         modChannel.get().sendMessage(embed);
@@ -151,6 +146,9 @@ public class ModLogListeners implements MessageEditListener, MessageDeleteListen
         embed.setAuthor(ev.getUser());
         embed.setTitle("Joined the server");
         embed.setColor(Color.GREEN);
+
+        embed.setFooter(ev.getUser().getIdAsString());
+        embed.setTimestamp(Instant.now());
 
         modChannel.get().sendMessage(embed);
     }
@@ -187,13 +185,11 @@ public class ModLogListeners implements MessageEditListener, MessageDeleteListen
             embed.setThumbnail("https://i.imgur.com/6TqbP9o.png");
 
             embed.addInlineField("Kicked By: ", kickedBy);
-            embed.addInlineField("ID", ev.getUser().getIdAsString());
             embed.addField("Reason", kickReason);
-
-            embed.setFooter("Kicked");
-            embed.setTimestamp(Instant.now());
         }
 
+        embed.setFooter(ev.getUser().getIdAsString());
+        embed.setTimestamp(Instant.now());
         modChannel.get().sendMessage(embed);
     }
 
@@ -207,9 +203,8 @@ public class ModLogListeners implements MessageEditListener, MessageDeleteListen
 
         embed.addInlineField("Old", ev.getOldName());
         embed.addInlineField("New", ev.getNewName());
-        embed.addField("ID", ev.getUser().getIdAsString());
 
-        embed.setFooter("Time");
+        embed.setFooter(ev.getUser().getIdAsString());
         embed.setTimestamp(Instant.now());
 
         modChannel.get().sendMessage(embed);
@@ -227,7 +222,7 @@ public class ModLogListeners implements MessageEditListener, MessageDeleteListen
         embed.addInlineField("New", ev.getNewNickname().get());
         embed.addField("ID", ev.getUser().getIdAsString());
 
-        embed.setFooter("Time");
+        embed.setFooter(ev.getUser().getIdAsString());
         embed.setTimestamp(Instant.now());
 
         modChannel.get().sendMessage(embed);
