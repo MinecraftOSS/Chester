@@ -24,6 +24,7 @@ import org.javacord.api.listener.user.UserChangeNicknameListener;
 import org.moss.discord.Constants;
 
 import java.awt.*;
+import java.time.Duration;
 import java.time.Instant;
 import java.util.Optional;
 import java.util.concurrent.Future;
@@ -35,7 +36,7 @@ public class ModLogListeners implements MessageEditListener, MessageDeleteListen
 
     /*
     ++ User Join/Leave
-    +- User Ban/Kick
+    ++ User Ban/Kick
     ++ User Edit/Delete message
      */
 
@@ -60,7 +61,7 @@ public class ModLogListeners implements MessageEditListener, MessageDeleteListen
         try {
             log = future.get();
             for (AuditLogEntry entry : log.getEntries()) {
-                if (entry.getTarget().get().getId() == ev.getMessage().get().getAuthor().getId()) {
+                if (entry.getTarget().get().getId() == ev.getMessage().get().getAuthor().getId() && entry.getCreationTimestamp().isAfter(Instant.now().minus(Duration.ofMinutes(1)))) {
                     deletedBy = entry.getUser().get().getNicknameMentionTag();
                     break;
                 }
@@ -110,13 +111,13 @@ public class ModLogListeners implements MessageEditListener, MessageDeleteListen
     public void onServerMemberBan(ServerMemberBanEvent ev) {
         String bannedBy = "Unknown";
         String reason = "Because";
-        AuditLog log;
+        AuditLog auditLog;
 
         Future<AuditLog> future = ev.getServer().getAuditLog(10, AuditLogActionType.MEMBER_BAN_ADD);
 
         try {
-            log = future.get();
-            for (AuditLogEntry entry : log.getEntries()) {
+            auditLog = future.get();
+            for (AuditLogEntry entry : auditLog.getEntries()) {
                 if (entry.getTarget().get().getId() == ev.getUser().getId()) {
                     bannedBy = entry.getUser().get().getNicknameMentionTag();
                     reason = entry.getReason().get();
@@ -124,6 +125,7 @@ public class ModLogListeners implements MessageEditListener, MessageDeleteListen
                 }
             }
         } catch (Exception e) {
+            e.printStackTrace();
         }
 
         EmbedBuilder embed = new EmbedBuilder();
@@ -155,11 +157,42 @@ public class ModLogListeners implements MessageEditListener, MessageDeleteListen
 
     @Override
     public void onServerMemberLeave(ServerMemberLeaveEvent ev) {
-        EmbedBuilder embed = new EmbedBuilder();
+        String kickedBy = "Unknown";
+        String kickReason = "Because";
+        AuditLog log;
 
+        Future<AuditLog> future = ev.getServer().getAuditLog(10, AuditLogActionType.MEMBER_KICK);
+
+        try {
+            log = future.get();
+            for (AuditLogEntry entry : log.getEntries()) {
+                if (entry.getTarget().get().getId() == ev.getUser().getId()) {
+                    kickedBy = entry.getUser().get().getNicknameMentionTag();
+                    kickReason = entry.getReason().get();
+                    break;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        EmbedBuilder embed = new EmbedBuilder();
         embed.setAuthor(ev.getUser());
-        embed.setTitle("Left the server");
-        embed.setColor(Color.RED);
+
+        if (kickedBy.equalsIgnoreCase("unknown")) {
+            embed.setTitle("Left the server");
+            embed.setColor(Color.RED);
+        } else {
+            embed.setColor(Color.PINK);
+            embed.setThumbnail("https://i.imgur.com/6TqbP9o.png");
+
+            embed.addInlineField("Kicked By: ", kickedBy);
+            embed.addInlineField("ID", ev.getUser().getIdAsString());
+            embed.addField("Reason", kickReason);
+
+            embed.setFooter("Kicked");
+            embed.setTimestamp(Instant.now());
+        }
 
         modChannel.get().sendMessage(embed);
     }
@@ -174,6 +207,7 @@ public class ModLogListeners implements MessageEditListener, MessageDeleteListen
 
         embed.addInlineField("Old", ev.getOldName());
         embed.addInlineField("New", ev.getNewName());
+        embed.addField("ID", ev.getUser().getIdAsString());
 
         embed.setFooter("Time");
         embed.setTimestamp(Instant.now());
@@ -191,6 +225,7 @@ public class ModLogListeners implements MessageEditListener, MessageDeleteListen
 
         embed.addInlineField("Old", ev.getOldNickname().get());
         embed.addInlineField("New", ev.getNewNickname().get());
+        embed.addField("ID", ev.getUser().getIdAsString());
 
         embed.setFooter("Time");
         embed.setTimestamp(Instant.now());
