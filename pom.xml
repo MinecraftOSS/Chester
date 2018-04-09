@@ -16,11 +16,11 @@
     </repositories>
 
     <dependencies>
-        <!-- The Javacord api -->
+        <!-- The Javacord API -->
         <dependency>
             <groupId>de.btobastian.Javacord</groupId>
             <artifactId>javacord-api</artifactId>
-            <version>d6940c5</version>
+            <version>6261002</version>
             <scope>compile</scope>
         </dependency>
 
@@ -28,7 +28,7 @@
         <dependency>
             <groupId>de.btobastian.Javacord</groupId>
             <artifactId>javacord-core</artifactId>
-            <version>d6940c5</version>
+            <version>6261002</version>
             <scope>runtime</scope>
         </dependency>
 
@@ -86,6 +86,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.7.0</version>
                 <configuration>
                     <source>1.8</source>
                     <target>1.8</target>

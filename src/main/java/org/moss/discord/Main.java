@@ -5,6 +5,7 @@ import de.btobastian.sdcf4j.handler.JavacordHandler;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
 import org.moss.discord.commands.BStatsCommand;
+import org.moss.discord.commands.moderation.BanCommand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,6 +34,7 @@ public class Main {
 
         // Register commands
         commandHandler.registerCommand(new BStatsCommand());
+        commandHandler.registerCommand(new BanCommand());
     }
 
 }
