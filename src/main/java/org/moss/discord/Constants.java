@@ -11,7 +11,7 @@ public class Constants {
     public static final String GUILD_MOSS = "390942438061113344";
 
     // Channels
-    public static final String CHANNEL_STARBOARD = ""; // TODO: fill these in once created
+    public static final String CHANNEL_STARBOARD = "431239339796594688";
     public static final String CHANNEL_MODLOG = "430895774075846656";
 
     // Roles
