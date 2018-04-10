@@ -6,7 +6,6 @@ public class StarboardStorage extends KeyValStorage {
         super("./starboard.yml");
     }
 
-    @Override
     public boolean set(String key, String value) {
         boolean replaced = super.set(key, value);
         this.saveYaml();

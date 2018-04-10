@@ -17,7 +17,7 @@ public class KeyValStorage {
     private Yaml yaml = new Yaml();
     private static final Logger logger = LoggerFactory.getLogger(KeyValStorage.class);
 
-    private Map<String, String> kvMap;
+    private Map<String, Object> kvMap;
     private File kvFile;
 
     public KeyValStorage(String path) {
@@ -29,12 +29,12 @@ public class KeyValStorage {
     protected synchronized void loadYaml() {
         try {
             kvFile.createNewFile();
-            kvMap = (Map<String, String>) yaml.load(new FileReader(kvFile));
+            kvMap = (Map<String, Object>) yaml.load(new FileReader(kvFile));
         } catch (IOException e) {
             logger.error("Could not load key-value file!", e);
         }
 
-        if (kvMap == null) kvMap = new HashMap<String, String>();
+        if (kvMap == null) kvMap = new HashMap<String, Object>();
 
         logger.debug("Loaded from {}: {}", kvFile.getPath(), kvMap);
     }
@@ -51,21 +51,21 @@ public class KeyValStorage {
         return kvMap.containsKey(key);
     }
 
-    public boolean existsValue(String value) {
+    public boolean existsValue(Object value) {
         return kvMap.containsValue(value);
     }
 
-    public boolean set(String key, String value) {
+    protected boolean set(String key, Object value) {
         boolean hasKey = exists(key);
         kvMap.put(key, value);
         return hasKey;
     }
 
-    public String get(String key) {
+    public Object get(String key) {
         return kvMap.get(key);
     }
 
-    public Map<String, String> getMap() {
+    public Map<String, Object> getMap() {
         return Collections.unmodifiableMap(kvMap);
     }
 
