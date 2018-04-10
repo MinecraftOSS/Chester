@@ -58,7 +58,7 @@ public class StarboardListener implements ReactionAddListener {
         String content = message.getContent();
 
         embed.setAuthor(message.getAuthor());
-        embed.setColor(new Color(16763904));
+        embed.setColor(Constants.COLOR_STARBOARD);
         embed.setDescription("```markdown\n" + content + "\n```");
         embed.setTimestamp(message.getCreationTimestamp());
         embed.setThumbnail("https://cdn.discordapp.com/attachments/397536210236604427/431107224308547604/ecMd5Gecn.png");

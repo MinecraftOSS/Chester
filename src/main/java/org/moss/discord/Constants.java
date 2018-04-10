@@ -1,5 +1,7 @@
 package org.moss.discord;
 
+import java.awt.Color;
+
 /*
  * Holds IDs for the guild, channels and roles.
  */
@@ -22,6 +24,9 @@ public class Constants {
 
     // Emojis
     public static final String[] EMOJI_STARS_UNICODE = {"\u2B50", "\uD83C\uDF1F", "\uD83E\uDD54"};
+
+    // Colo(u)rs
+    public static final Color COLOR_STARBOARD = new Color(16763904);
 
     // Other config
     public static final int STARS_MINIMUM = 3;
