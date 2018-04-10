@@ -93,8 +93,8 @@ public class ModLogListeners implements MessageEditListener, MessageDeleteListen
         embed.addInlineField("Author", ev.getMessage().get().getAuthor().asUser().get().getMentionTag());
         embed.addInlineField("Channel", String.format("<#%s>", ev.getChannel().getId()));
 
-        embed.addField("Was", "```diff\n- "+stripGrave(ev.getOldContent().get())+"```");
-        embed.addField("Now", "```diff\n+ "+stripGrave(ev.getNewContent())+"```");
+        embed.addField("Was", "```"+stripGrave(ev.getOldContent().get())+"```");
+        embed.addField("Now", "```"+stripGrave(ev.getNewContent())+"```");
 
         embed.setFooter(ev.getMessage().get().getUserAuthor().get().getIdAsString());
         embed.setTimestamp(Instant.now());
