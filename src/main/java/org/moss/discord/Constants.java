@@ -12,6 +12,7 @@ public class Constants {
 
     public static final String CHANNEL_STARBOARD = ""; // TODO: fill these in once created
     public static final String CHANNEL_MODLOG = "430895774075846656";
+    public static final String CHANNEL_NONSENSE = "";
 
     // Roles
 
