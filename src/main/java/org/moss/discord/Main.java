@@ -14,9 +14,7 @@ import org.slf4j.LoggerFactory;
 
 public class Main {
 
-    /**
-     * The logger for this class.
-     */
+    // The logger for this class.
     private static final Logger logger = LoggerFactory.getLogger(Main.class);
 
     public static void main(String[] args) {
@@ -25,7 +23,6 @@ public class Main {
             logger.error("Invalid amount of arguments provided!");
             return;
         }
-
 
         // Logging in (args[0])
         DiscordApi api = new DiscordApiBuilder().setToken(args[0]).login().join();

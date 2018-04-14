@@ -20,7 +20,7 @@
         <dependency>
             <groupId>de.btobastian.Javacord</groupId>
             <artifactId>javacord-api</artifactId>
-            <version>6261002</version>
+            <version>f306ace</version>
             <scope>compile</scope>
         </dependency>
 
@@ -28,7 +28,7 @@
         <dependency>
             <groupId>de.btobastian.Javacord</groupId>
             <artifactId>javacord-core</artifactId>
-            <version>6261002</version>
+            <version>f306ace</version>
             <scope>runtime</scope>
         </dependency>
 
@@ -96,7 +96,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
-                <version>2.4.1</version>
+                <version>3.1.0</version>
                 <configuration>
                     <descriptorRefs>
                         <descriptorRef>jar-with-dependencies</descriptorRef>
