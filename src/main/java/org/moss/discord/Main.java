@@ -8,6 +8,7 @@ import org.moss.discord.commands.BStatsCommand;
 import org.moss.discord.commands.moderation.BanCommand;
 import org.moss.discord.commands.moderation.KickCommand;
 import org.moss.discord.commands.moderation.PruneCommand;
+import org.moss.discord.listeners.ModLogListeners;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,6 +42,9 @@ public class Main {
         commandHandler.registerCommand(new BanCommand());
         commandHandler.registerCommand(new KickCommand());
         commandHandler.registerCommand(new PruneCommand());
+
+        // Register listeners
+        api.addListener(new ModLogListeners(api));
     }
 
 }
