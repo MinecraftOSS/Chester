@@ -12,6 +12,9 @@ import org.moss.discord.listeners.ModLogListeners;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.moss.discord.Constants.GUILD_MOSS;
+import static org.moss.discord.Constants.ROLE_MODERATOR;
+
 public class Main {
 
     // The logger for this class.
@@ -31,7 +34,7 @@ public class Main {
         // Create command handler
         CommandHandler commandHandler = new JavacordHandler(api);
 
-        // Give the bot owner all permissions
+        // Give bot owner all permissions.
         commandHandler.addPermission(String.valueOf(api.getOwnerId()), "*");
 
         // Register commands
