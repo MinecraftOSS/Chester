@@ -127,7 +127,7 @@ public class BStatsUtil {
      * @return A json node.
      * @throws IOException If something went wrong.
      */
-    private JsonNode makeRequest(String url) throws IOException {
+    public JsonNode makeRequest(String url) throws IOException {
         Request request = new Request.Builder()
                 .url(url)
                 .build();
