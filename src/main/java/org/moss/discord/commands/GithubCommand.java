@@ -91,7 +91,7 @@ public class GithubCommand implements CommandExecutor {
             JsonNode issues = bStatsUtil.makeRequest(String.format(issuerepos, repository));
 
             embed.setTitle(repo.get("name").asText());
-            embed.setUrl(repo.get("url").asText());
+            embed.setUrl(repo.get("html_url").asText());
             embed.setColor(Color.YELLOW);
             embed.setDescription(repo.get("description").asText());
             embed.setThumbnail(repo.get("owner").get("avatar_url").asText());
