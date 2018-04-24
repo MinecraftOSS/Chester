@@ -8,15 +8,21 @@ import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.permission.Role;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
+import org.javacord.api.event.message.MessageCreateEvent;
+import org.javacord.api.listener.message.MessageCreateListener;
 import org.moss.discord.Constants;
 import org.moss.discord.storage.FactoidStorage;
 
 import java.awt.*;
 import java.util.List;
 
-public class TagCommand implements CommandExecutor {
+public class TagCommand implements CommandExecutor, MessageCreateListener {
 
     private FactoidStorage storage = new FactoidStorage();
+
+    public TagCommand(DiscordApi api) {
+        api.addListener(this);
+    }
 
     @Command(aliases = {"!tag", "?tag", "?"}, usage = "!tag <name>", description = "Send the tag message to the channel.")
     public void onTag(DiscordApi api, TextChannel channel, String[] args) {
@@ -44,7 +50,6 @@ public class TagCommand implements CommandExecutor {
             storage.set(args[0].toLowerCase(), sb.toString());
             channel.sendMessage(new EmbedBuilder().setTitle("Tag set!").setColor(Color.GREEN));
         }
-
     }
 
     public Boolean hasPermission(List<Role> roles) {
@@ -57,4 +62,14 @@ public class TagCommand implements CommandExecutor {
         return false;
     }
 
+    @Override
+    public void onMessageCreate(MessageCreateEvent ev) {
+        String message = ev.getMessage().getContent();
+        if (message.startsWith("?") && message.length() >= 2) {
+            String tag = message.split(" ")[0].substring(1).toLowerCase();
+            if (storage.isFactoid(tag)) {
+                ev.getChannel().sendMessage(storage.getTag(tag));
+            }
+        }
+    }
 }

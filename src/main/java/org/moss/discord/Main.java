@@ -37,7 +37,7 @@ public class Main {
 
         // Register commands
         commandHandler.registerCommand(new BStatsCommand());
-        commandHandler.registerCommand(new TagCommand());
+        commandHandler.registerCommand(new TagCommand(api));
         commandHandler.registerCommand(new BanCommand());
         commandHandler.registerCommand(new KickCommand());
         commandHandler.registerCommand(new PruneCommand());
