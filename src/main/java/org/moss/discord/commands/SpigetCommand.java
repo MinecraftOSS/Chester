@@ -3,6 +3,8 @@ package org.moss.discord.commands;
 import com.fasterxml.jackson.databind.JsonNode;
 import de.btobastian.sdcf4j.Command;
 import de.btobastian.sdcf4j.CommandExecutor;
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
@@ -14,15 +16,22 @@ import java.util.Iterator;
 
 public class SpigetCommand implements CommandExecutor {
 
-    String queryurl = "https://api.spiget.org/v2/search/resources/{0}?size=5&page={1}&fields=id%2Cname%2Ctag%2Crating";
+    String queryurl = "https://api.spiget.org/v2/search/resources/{0}?field=name&size=5&page={1}&fields=id,name,tag,rating";
 
     @Command(aliases = {"!spiget", "!plsearch"}, usage = "!spiget <Query>", description = "Search spigots resources")
     public void onCommand(DiscordApi api, TextChannel channel, String[] args) {
+        String query = String.join(" ", args);
+        String lastIndex = query.substring(query.lastIndexOf(" ")+1);
+        int page = 1;
+        if (StringUtils.isNumeric(lastIndex) && !lastIndex.equals("1")) {
+            page = Integer.valueOf(lastIndex);
+            query = String.join(" ", (String[]) ArrayUtils.remove(args, args.length-1));
+        }
         BStatsUtil bStatsUtil = new BStatsUtil(api);
         EmbedBuilder embed = new EmbedBuilder();
         if (args.length >= 1) {
             try {
-                JsonNode search = bStatsUtil.makeRequest(MessageFormat.format(queryurl, args[0], args.length == 1 ? 1 : args[1]));
+                JsonNode search = bStatsUtil.makeRequest(MessageFormat.format(queryurl, query, page));
                 StringBuilder result = new StringBuilder();
                 for (Iterator<JsonNode> i = search.elements(); i.hasNext();) {
                     JsonNode resource = i.next();
