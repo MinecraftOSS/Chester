@@ -11,6 +11,7 @@ public class Constants {
     // Channels
     public static final String CHANNEL_STARBOARD = ""; // TODO: fill these in once created
     public static final String CHANNEL_MODLOG = "430895774075846656";
+    public static final String CHANNEL_PRIVATE = "439928433959501825";
 
     // Roles
     public static final String ROLE_MODERATOR = "390944427071242240";
