@@ -14,6 +14,7 @@ public class Constants {
 
     // Roles
     public static final String ROLE_MODERATOR = "390944427071242240";
+    public static final String ROLE_ADMIN = "390970629261623296";
 
     public static final String ROLE_PURCHASER = "401686955336663041";
     public static final String ROLE_PURCHASER_PVX = "401687126242230274";
