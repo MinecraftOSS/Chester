@@ -28,7 +28,7 @@
         <dependency>
             <groupId>de.btobastian.Javacord</groupId>
             <artifactId>javacord-core</artifactId>
-            <version>f306ace</version>
+            <version>a0c8f86</version>
             <scope>runtime</scope>
         </dependency>
 

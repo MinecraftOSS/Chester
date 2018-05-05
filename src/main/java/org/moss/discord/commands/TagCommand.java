@@ -40,7 +40,7 @@ public class TagCommand implements CommandExecutor, MessageCreateListener {
         channel.sendMessage(new EmbedBuilder().addField("Active Tags", s).setColor(Color.GREEN));
     }
 
-    @Command(aliases = {"!tagset", "?tagset"}, usage = "!tagset <name> [message]", description = "Set a new tag for this channel.")
+    @Command(aliases = {"!tagset", "?tagset"}, usage = "!tagset <name> [message]", description = "Set a new tag")
     public void onSet(DiscordApi api, TextChannel channel, String[] args, User user, Server server) {
         if (args.length >= 2 && hasPermission(user.getRoles(server))) {
             StringBuilder sb = new StringBuilder();
@@ -52,10 +52,18 @@ public class TagCommand implements CommandExecutor, MessageCreateListener {
         }
     }
 
+    @Command(aliases = {"!tagunset", "?tagunset"}, usage = "!tagunset <name> [message]", description = "Unset a tag")
+    public void onUnSet(DiscordApi api, TextChannel channel, String[] args, User user, Server server) {
+        if (args.length >= 2 && hasPermission(user.getRoles(server))) {
+            storage.unSet(args[0].toLowerCase());
+            channel.sendMessage(new EmbedBuilder().setTitle("Tag removed!").setColor(Color.GREEN));
+        }
+    }
+
     public Boolean hasPermission(List<Role> roles) {
         for (Role role : roles) {
             String roleId = role.getIdAsString();
-            if ((roleId.equals(Constants.ROLE_MODERATOR) || roleId.equals(Constants.ROLE_ADMIN))) {
+            if ((roleId.equals(Constants.ROLE_MODERATOR) || roleId.equals(Constants.ROLE_ADMIN) || roleId.equals(Constants.ROLE_PROJECT_LEAD))) {
                 return true;
             }
         }

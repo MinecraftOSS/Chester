@@ -12,6 +12,11 @@ public class FactoidStorage extends KeyValStorage {
         return replaced;
     }
 
+    public void unSet(String key) {
+        super.unSet(key);
+        this.saveYaml();
+    }
+
     public boolean isFactoid(String args) {
         return exists(args);
     }
