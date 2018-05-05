@@ -13,9 +13,9 @@ public class Constants {
     public static final String CHANNEL_MODLOG = "430895774075846656";
 
     // Messages
-    public static final String ESSX_ROLE_MSG = ""; // fill with cool message IDs when it's created
-    public static final String PVX_ROLE_MSG = "";
-    public static final String FUUID_ROLE_MSG = "";
+    public static final String ESSX_ROLE_MSG = "1"; // fill with cool message IDs when it's created
+    public static final String PVX_ROLE_MSG = "2";
+    public static final String FUUID_ROLE_MSG = "3";
 
     // Roles
     public static final String ROLE_MODERATOR = "390944427071242240";
