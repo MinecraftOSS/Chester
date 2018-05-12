@@ -6,6 +6,7 @@ import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
 import org.moss.discord.commands.BStatsCommand;
 import org.moss.discord.listeners.StarboardListener;
+import org.moss.discord.listeners.ModLogListeners;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,6 +37,7 @@ public class Main {
         commandHandler.registerCommand(new BStatsCommand());
 
         api.addReactionAddListener(new StarboardListener(api));
+        api.addListener(new ModLogListeners(api));
     }
 
 }
