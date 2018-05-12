@@ -3,6 +3,7 @@ package org.moss.discord.listeners;
 import java.awt.Color;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 import org.javacord.api.DiscordApi;
@@ -36,15 +37,19 @@ public class StarboardListener implements ReactionAddListener {
 
         Message message = event.requestMessage().join();
         
-        int totalStars = message.getReactions().stream()
-            .filter(r -> r.getEmoji().isUnicodeEmoji())
-            .filter(r -> isStar(r.getEmoji()))
-            .mapToInt(Reaction::getCount)
-            .sum();
+        long totalStars = countStars(message.getReactions());
 
         if (totalStars >= Constants.STARS_MINIMUM) {
             postStarboard(message);
         }
+    }
+
+    private long countStars(List<Reaction> reactions) {
+        return reactions.stream()
+            .filter(r -> isStar(r.getEmoji()))
+            .map(Reaction::getUsers)
+            .distinct()
+            .count();
     }
     
     private void postStarboard(Message message) {
