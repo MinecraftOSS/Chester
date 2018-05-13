@@ -13,6 +13,7 @@ import org.javacord.api.entity.user.User;
 import org.moss.discord.Constants;
 
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 public class PresenceCommand implements CommandExecutor {
@@ -21,9 +22,16 @@ public class PresenceCommand implements CommandExecutor {
     public void onCommand(DiscordApi api, String[] args, TextChannel channel, User user, Server server) {
         if (hasPermission(user.getRoles(server)) && args.length >= 2) {
             String type = args[0].toUpperCase();
-            String status = String.join(" ", (String[]) ArrayUtils.remove(args, 0));
+            String url = args[args.length-1];
+            LinkedList<String> status = new LinkedList(Arrays.asList(args));
+            status.removeFirst();
             try {
-                api.updateActivity(String.join(" ", status), ActivityType.valueOf(type));
+                if (type.equalsIgnoreCase("streaming")) {
+                    status.removeLast();
+                    api.updateActivity(String.join(" ", status), url);
+                } else {
+                    api.updateActivity(String.join(" ", status), ActivityType.valueOf(type));
+                }
             } catch (Exception e) {
                 channel.sendMessage("Invalid activity use: " + Arrays.toString(ActivityType.values()));
             }
