@@ -86,6 +86,13 @@
             <version>1.20</version>
         </dependency>
 
+        <!-- Apache commons -->
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <version>2.6</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 
     <build>

@@ -1,5 +1,7 @@
 package org.moss.discord;
 
+import java.awt.Color;
+
 /*
  * Holds IDs for the guild, channels and roles.
  */
@@ -9,7 +11,7 @@ public class Constants {
     public static final String GUILD_MOSS = "390942438061113344";
 
     // Channels
-    public static final String CHANNEL_STARBOARD = ""; // TODO: fill these in once created
+    public static final String CHANNEL_STARBOARD = "431239339796594688";
     public static final String CHANNEL_MODLOG = "430895774075846656";
 
     // Roles
@@ -24,6 +26,9 @@ public class Constants {
 
     // Emojis
     public static final String[] EMOJI_STARS_UNICODE = {"\u2B50", "\uD83C\uDF1F", "\uD83E\uDD54"};
+
+    // Colo(u)rs
+    public static final Color COLOR_STARBOARD = new Color(16763904);
 
     // Other config
     public static final int STARS_MINIMUM = 3;

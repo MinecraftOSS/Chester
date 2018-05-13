@@ -24,6 +24,7 @@ import org.javacord.api.listener.user.UserChangeNicknameListener;
 import org.moss.discord.Constants;
 
 import java.awt.*;
+import java.util.Date;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Optional;
@@ -146,6 +147,8 @@ public class ModLogListeners implements MessageEditListener, MessageDeleteListen
         embed.setAuthor(ev.getUser());
         embed.setTitle("Joined the server");
         embed.setColor(Color.GREEN);
+
+        embed.addField("Created", Date.from(ev.getUser().getCreationTimestamp()).toString());
 
         embed.setFooter(ev.getUser().getIdAsString());
         embed.setTimestamp(Instant.now());
