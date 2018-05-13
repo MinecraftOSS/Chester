@@ -16,11 +16,11 @@
     </repositories>
 
     <dependencies>
-        <!-- The Javacord api -->
+        <!-- The Javacord API -->
         <dependency>
             <groupId>de.btobastian.Javacord</groupId>
             <artifactId>javacord-api</artifactId>
-            <version>d6940c5</version>
+            <version>f306ace</version>
             <scope>compile</scope>
         </dependency>
 
@@ -28,7 +28,7 @@
         <dependency>
             <groupId>de.btobastian.Javacord</groupId>
             <artifactId>javacord-core</artifactId>
-            <version>d6940c5</version>
+            <version>f306ace</version>
             <scope>runtime</scope>
         </dependency>
 
@@ -79,11 +79,20 @@
             <version>1.6-1</version>
         </dependency>
 
+
         <!-- SnakeYAML to persist data across bot reboots -->
         <dependency>
             <groupId>org.yaml</groupId>
             <artifactId>snakeyaml</artifactId>
             <version>1.20</version>
+
+        <!-- Apache commons -->
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <version>2.6</version>
+            <scope>compile</scope>
+
         </dependency>
 
     </dependencies>
@@ -93,6 +102,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.7.0</version>
                 <configuration>
                     <source>1.8</source>
                     <target>1.8</target>
@@ -102,7 +112,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
-                <version>2.4.1</version>
+                <version>3.1.0</version>
                 <configuration>
                     <descriptorRefs>
                         <descriptorRef>jar-with-dependencies</descriptorRef>
