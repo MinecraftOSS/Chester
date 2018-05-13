@@ -7,6 +7,7 @@ import org.javacord.api.DiscordApiBuilder;
 import org.moss.discord.commands.BStatsCommand;
 import org.moss.discord.commands.GithubCommand;
 import org.moss.discord.commands.MojangCommand;
+import org.moss.discord.commands.RoleCheckCommand;
 import org.moss.discord.commands.moderation.BanCommand;
 import org.moss.discord.commands.moderation.KickCommand;
 import org.moss.discord.commands.moderation.PruneCommand;
@@ -43,6 +44,7 @@ public class Main {
         commandHandler.registerCommand(new KickCommand());
         commandHandler.registerCommand(new PruneCommand());
         commandHandler.registerCommand(new MojangCommand());
+        commandHandler.registerCommand(new RoleCheckCommand());
 
         // Register listeners
         api.addListener(new ModLogListeners(api));
