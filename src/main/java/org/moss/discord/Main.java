@@ -5,6 +5,7 @@ import de.btobastian.sdcf4j.handler.JavacordHandler;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
 import org.moss.discord.commands.BStatsCommand;
+import org.moss.discord.commands.RoleCommand;
 import org.moss.discord.listeners.StarboardListener;
 import org.moss.discord.commands.GithubCommand;
 import org.moss.discord.commands.MojangCommand;
@@ -47,7 +48,8 @@ public class Main {
         commandHandler.registerCommand(new PruneCommand());
         commandHandler.registerCommand(new MojangCommand());
         commandHandler.registerCommand(new SpigetCommand());
-
+        commandHandler.registerCommand(new RoleCommand());
+        
         // Register listeners
         api.addListener(new ModLogListeners(api));
         api.addReactionAddListener(new StarboardListener(api));
