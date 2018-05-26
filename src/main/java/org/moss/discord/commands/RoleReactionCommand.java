@@ -24,13 +24,13 @@ import java.util.Map;
 public class RoleReactionCommand implements CommandExecutor, ReactionAddListener, ReactionRemoveListener {
 
     RolePollStorage storage = new RolePollStorage();
-    Map<String, String> messageMap = new HashMap<>();
+    Map<String, String> roleMap = new HashMap<>();
 
     public RoleReactionCommand(DiscordApi api) {
         api.addListener(this);
-        messageMap.put("Click the pineapple to subscribe to EssentialsX", Constants.ROLE_ESSX_UPDATES+":\uD83C\uDF4D");
-        messageMap.put("Click the cookie to subscribe to FactionsUUID", Constants.ROLE_FUUID_UPDATES+":\uD83C\uDF6A");
-        messageMap.put("Click the burger to subscribe to PlayerVaults", Constants.ROLE_PVX_UPDATES+":\uD83C\uDF54");
+        roleMap.put("\uD83C\uDF4D", Constants.ROLE_ESSX_UPDATES);
+        roleMap.put("\uD83C\uDF6A", Constants.ROLE_FUUID_UPDATES);
+        roleMap.put("\uD83C\uDF54", Constants.ROLE_PVX_UPDATES);
     }
 
     @Command(aliases = {"!rolepoll", ".rolepoll"}, usage = "!rolepoll", description = "Polls users for update roles")
@@ -38,11 +38,16 @@ public class RoleReactionCommand implements CommandExecutor, ReactionAddListener
         if (hasPermission(user.getRoles(server))) {
             cmd.delete();
             try {
-                for (String message : messageMap.keySet()) {
-                    Message msg = channel.sendMessage(new EmbedBuilder().setTitle(message).setColor(Color.GREEN)).get();
-                    msg.addReaction(messageMap.get(message).split(":")[1]);
-                    storage.set(msg.getIdAsString(), messageMap.get(message).split(":")[0]);
-                }
+                EmbedBuilder embed = new EmbedBuilder();
+
+                embed.setColor(Color.GREEN);
+                embed.addField("Subscribe to plugin updates", "```Click the \uD83C\uDF4D to subscribe to EssentialsX updates\nClick the \uD83C\uDF6A to subscribe to FactionsUUID updates\nClick the \uD83C\uDF54 to subscribe to PlayerVaults updates```");
+
+                Message msg = channel.sendMessage(embed).get();
+
+                roleMap.keySet().forEach(msg::addReaction);
+                storage.set(msg.getIdAsString(), "");
+
             } catch (Exception e) {}
         }
     }
@@ -53,10 +58,11 @@ public class RoleReactionCommand implements CommandExecutor, ReactionAddListener
         }
         if (!event.getReaction().isPresent()) {
             event.removeReaction();
+            return;
         }
         if (storage.ispoll(event.getMessageId())) {
             if (event.getReaction().get().containsYou()) {
-                updateRole(event.getUser(), storage.getRole(event.getMessageId()), event.getServer().get(), "add");
+                updateRole(event.getUser(), event.getReaction().get().getEmoji().asUnicodeEmoji().get(), event.getServer().get(), "add");
             } else {
                 event.removeReaction();
             }
@@ -68,7 +74,7 @@ public class RoleReactionCommand implements CommandExecutor, ReactionAddListener
             return;
         }
         if (storage.ispoll(event.getMessageId()) && event.getReaction().isPresent() && event.getReaction().get().containsYou()) {
-            updateRole(event.getUser(), storage.getRole(event.getMessageId()), event.getServer().get(), "remove");
+            updateRole(event.getUser(), roleMap.get(event.getReaction().get().getEmoji().asUnicodeEmoji().get()), event.getServer().get(), "remove");
         }
     }
 
