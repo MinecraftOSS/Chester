@@ -62,7 +62,7 @@ public class RoleReactionCommand implements CommandExecutor, ReactionAddListener
         }
         if (storage.ispoll(event.getMessageId())) {
             if (event.getReaction().get().containsYou()) {
-                updateRole(event.getUser(), event.getReaction().get().getEmoji().asUnicodeEmoji().get(), event.getServer().get(), "add");
+                updateRole(event.getUser(), roleMap.get(event.getReaction().get().getEmoji().asUnicodeEmoji().get()), event.getServer().get(), "add");
             } else {
                 event.removeReaction();
             }
