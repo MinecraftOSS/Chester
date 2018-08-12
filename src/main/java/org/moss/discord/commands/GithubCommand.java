@@ -109,7 +109,7 @@ public class GithubCommand implements CommandExecutor {
 
             embed.addField("Current issues", issuenames.toString().isEmpty() ? "None!" : issuenames.toString());
 
-            embed.setTimestamp();
+            embed.setTimestampToNow();
 
             return embed;
         } catch (Exception e) {
@@ -139,7 +139,7 @@ public class GithubCommand implements CommandExecutor {
 
             embed.addField("Issue", issue.get("body").asText().substring(0, maxLength) + " ...");
 
-            embed.setTimestamp();
+            embed.setTimestampToNow();
 
             return embed;
         } catch (Exception e) {

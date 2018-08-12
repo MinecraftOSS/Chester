@@ -15,6 +15,7 @@ import org.moss.discord.storage.FactoidStorage;
 
 import java.awt.*;
 import java.util.List;
+import java.util.StringJoiner;
 
 public class TagCommand implements CommandExecutor, MessageCreateListener {
 
@@ -27,7 +28,7 @@ public class TagCommand implements CommandExecutor, MessageCreateListener {
     @Command(aliases = {"!tag", "?tag", "?"}, usage = "!tag <name>", description = "Send the tag message to the channel.")
     public void onTag(DiscordApi api, TextChannel channel, String[] args) {
         if (args.length >= 1  && storage.isFactoid(args[0].toLowerCase())) {
-            channel.sendMessage(storage.getTag(args[0].toLowerCase()));
+            channel.sendMessage(getFactoid(args[0]));
         }
     }
 
@@ -43,9 +44,9 @@ public class TagCommand implements CommandExecutor, MessageCreateListener {
     @Command(aliases = {"!tagset", "?tagset"}, usage = "!tagset <name> [message]", description = "Set a new tag")
     public void onSet(DiscordApi api, TextChannel channel, String[] args, User user, Server server) {
         if (args.length >= 2 && hasPermission(user.getRoles(server))) {
-            StringBuilder sb = new StringBuilder();
+            StringJoiner sb = new StringJoiner(" ");
             for(int i = 1; i < args.length; i++) {
-                sb.append(' ').append(args[i]);
+                sb.add(args[i]);
             }
             storage.set(args[0].toLowerCase(), sb.toString());
             channel.sendMessage(new EmbedBuilder().setTitle("Tag set!").setColor(Color.GREEN));
@@ -76,8 +77,14 @@ public class TagCommand implements CommandExecutor, MessageCreateListener {
         if (message.startsWith("?") && message.length() >= 2) {
             String tag = message.split(" ")[0].substring(1).toLowerCase();
             if (storage.isFactoid(tag)) {
-                ev.getChannel().sendMessage(storage.getTag(tag));
+                ev.getChannel().sendMessage(getFactoid(tag));
             }
         }
     }
+
+    public String getFactoid(String tag) {
+        String taag = storage.getTag(tag.toLowerCase());
+        return taag.startsWith("?") ? storage.getTag(taag.split(" ")[0].substring(1).toLowerCase()) : taag;
+    }
+
 }
