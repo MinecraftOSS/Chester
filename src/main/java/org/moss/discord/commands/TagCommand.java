@@ -32,6 +32,13 @@ public class TagCommand implements CommandExecutor, MessageCreateListener {
         }
     }
 
+    @Command(aliases = {"!tagraw", "?tagraw"}, usage = "!tagraw <name>", description = "Send the raw tag message to the channel.")
+    public void onTagRaw(DiscordApi api, TextChannel channel, String[] args, User user, Server server) {
+        if (args.length >= 1  && storage.isFactoid(args[0].toLowerCase()) && hasPermission(user.getRoles(server))) {
+            channel.sendMessage("```"+getFactoid(args[0])+"```");
+        }
+    }
+
     @Command(aliases = {"!tags", "?tags"}, usage = "!tags [filter]", description = "List all currently enabled tags.")
     public void onList(DiscordApi api, TextChannel channel, String[] args) {
         String s = "";
@@ -54,9 +61,9 @@ public class TagCommand implements CommandExecutor, MessageCreateListener {
     }
 
     @Command(aliases = {"!tagunset", "?tagunset"}, usage = "!tagunset <name> [message]", description = "Unset a tag")
-    public void onUnSet(DiscordApi api, TextChannel channel, String[] args, User user, Server server) {
+    public void onUnset(DiscordApi api, TextChannel channel, String[] args, User user, Server server) {
         if (args.length >= 1 && hasPermission(user.getRoles(server))) {
-            storage.unSet(args[0].toLowerCase());
+            storage.unset(args[0].toLowerCase());
             channel.sendMessage(new EmbedBuilder().setTitle("Tag removed!").setColor(Color.GREEN));
         }
     }

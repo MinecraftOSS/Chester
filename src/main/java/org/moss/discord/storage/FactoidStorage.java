@@ -12,8 +12,8 @@ public class FactoidStorage extends KeyValStorage {
         return replaced;
     }
 
-    public void unSet(String key) {
-        super.unSet(key);
+    public void unset(String key) {
+        super.unset(key);
         this.saveYaml();
     }
 
