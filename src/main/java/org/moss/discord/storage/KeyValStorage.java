@@ -61,7 +61,7 @@ public class KeyValStorage {
         return hasKey;
     }
 
-    protected void unSet(String key) {
+    protected void unset(String key) {
         kvMap.remove(key);
     }
 
