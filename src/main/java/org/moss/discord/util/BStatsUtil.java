@@ -128,6 +128,7 @@ public class BStatsUtil {
      * @throws IOException If something went wrong.
      */
     public JsonNode makeRequest(String url) throws IOException {
+        System.out.println("Request: " + url);
         Request request = new Request.Builder()
                 .url(url)
                 .build();

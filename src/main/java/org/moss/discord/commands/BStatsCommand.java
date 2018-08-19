@@ -61,7 +61,7 @@ public class BStatsCommand implements CommandExecutor {
                 embed.addInlineField("\uD83D\uDC76 Players", "```\n" + String.valueOf(playerCount) + "\n```");
                 embed.addInlineField("⚙ Software", "```\n" + softwareName + "\n```");
                 embed.setImage(signatureAsStream, "jpg");
-                embed.setTimestamp();
+                embed.setTimestampToNow();
 
                 // Send the embed
                 channel.sendMessage(embed).join();
