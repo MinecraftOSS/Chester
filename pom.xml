@@ -18,32 +18,24 @@
     <dependencies>
         <!-- The Javacord API -->
         <dependency>
-            <groupId>de.btobastian.Javacord</groupId>
-            <artifactId>javacord-api</artifactId>
-            <version>f306ace</version>
-            <scope>compile</scope>
-        </dependency>
-
-        <!-- The Javacord core module, required to run the bot -->
-        <dependency>
-            <groupId>de.btobastian.Javacord</groupId>
-            <artifactId>javacord-core</artifactId>
-            <version>f306ace</version>
-            <scope>runtime</scope>
+            <groupId>org.javacord</groupId>
+            <artifactId>javacord</artifactId>
+            <version>3.0.0</version>
+            <type>pom</type>
         </dependency>
 
         <!-- The sdcf4j core module -->
         <dependency>
             <groupId>de.btobastian.sdcf4j</groupId>
             <artifactId>sdcf4j-core</artifactId>
-            <version>c967c87</version>
+            <version>v1.0.10</version>
         </dependency>
 
         <!-- The sdcf4j module for Javacord -->
         <dependency>
             <groupId>de.btobastian.sdcf4j</groupId>
             <artifactId>sdcf4j-javacord</artifactId>
-            <version>c967c87</version>
+            <version>v1.0.10</version>
         </dependency>
 
         <!-- Logback classic as out logging framework -->

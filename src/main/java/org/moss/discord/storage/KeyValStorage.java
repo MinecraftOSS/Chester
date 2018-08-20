@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
 
 public class KeyValStorage {
-    
+
     private Yaml yaml = new Yaml();
     private static final Logger logger = LoggerFactory.getLogger(KeyValStorage.class);
 
@@ -60,6 +60,11 @@ public class KeyValStorage {
         kvMap.put(key, value);
         return hasKey;
     }
+
+    protected void unset(String key) {
+        kvMap.remove(key);
+    }
+
 
     public Object get(String key) {
         return kvMap.get(key);
