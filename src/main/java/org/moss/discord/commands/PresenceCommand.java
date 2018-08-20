@@ -30,7 +30,7 @@ public class PresenceCommand implements CommandExecutor {
                     status.removeLast();
                     api.updateActivity(String.join(" ", status), url);
                 } else {
-                    api.updateActivity(String.join(" ", status), ActivityType.valueOf(type));
+                    api.updateActivity(ActivityType.valueOf(type), String.join(" ", status));
                 }
             } catch (Exception e) {
                 channel.sendMessage("Invalid activity use: " + Arrays.toString(ActivityType.values()));

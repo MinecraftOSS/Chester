@@ -55,7 +55,6 @@ public class Main {
         commandHandler.registerCommand(new AvatarCommand());
         commandHandler.registerCommand(new SpigetCommand());
 
-
         // Register listeners
         api.addListener(new ModLogListeners(api));
         api.addReactionAddListener(new StarboardListener(api));
