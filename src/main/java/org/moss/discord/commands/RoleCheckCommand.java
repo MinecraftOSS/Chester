@@ -4,6 +4,7 @@ import de.btobastian.sdcf4j.Command;
 import de.btobastian.sdcf4j.CommandExecutor;
 import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.entity.message.Message;
+import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.permission.Role;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
@@ -14,6 +15,11 @@ public class RoleCheckCommand implements CommandExecutor {
     public void onCommand(TextChannel channel, String[] args, Message message, Server server) {
         if (args.length >= 1) {
             String string = "User Roles```";
+            if (message.getMentionedUsers().size() >= 1) {
+                for (Role role : message.getMentionedUsers().get(0).getRoles(server)) {
+                    string += role.getIdAsString() + " " + role.getName() + "\n";
+                }
+            }
             for (User user : server.getMembers()) {
                 if (user.getName().equalsIgnoreCase(args[0])) {
                     for (Role role : user.getRoles(server)) {

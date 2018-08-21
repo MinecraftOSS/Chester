@@ -32,7 +32,7 @@ public class MojangCommand implements CommandExecutor {
             embed.addInlineField("Mojang | API", parseStatus(status.get(5).get("api.mojang.com").asText()));
             embed.addInlineField("Mojang | Website", parseStatus(status.get(7).get("mojang.com").asText()));
 
-            embed.setTimestamp();
+            embed.setTimestampToNow();
 
         } catch (Exception e) {
             embed.addField("Error", "```"+e.toString() + " @ " +e.getStackTrace()[0]+"```");
