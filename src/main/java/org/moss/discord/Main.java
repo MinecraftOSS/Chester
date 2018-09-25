@@ -4,15 +4,8 @@ import de.btobastian.sdcf4j.CommandHandler;
 import de.btobastian.sdcf4j.handler.JavacordHandler;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
-import org.moss.discord.commands.AvatarCommand;
-import org.moss.discord.commands.BStatsCommand;
+import org.moss.discord.commands.*;
 import org.moss.discord.listeners.StarboardListener;
-import org.moss.discord.commands.GithubCommand;
-import org.moss.discord.commands.MojangCommand;
-import org.moss.discord.commands.NicknameCommand;
-import org.moss.discord.commands.PresenceCommand;
-import org.moss.discord.commands.TagCommand;
-import org.moss.discord.commands.SpigetCommand;
 import org.moss.discord.commands.moderation.BanCommand;
 import org.moss.discord.commands.moderation.KickCommand;
 import org.moss.discord.commands.moderation.PruneCommand;
@@ -55,6 +48,7 @@ public class Main {
         commandHandler.registerCommand(new NicknameCommand());
         commandHandler.registerCommand(new AvatarCommand());
         commandHandler.registerCommand(new SpigetCommand());
+        commandHandler.registerCommand(new BlacklistCommand());
 
         // Register listeners
         api.addListener(new ModLogListeners(api));
