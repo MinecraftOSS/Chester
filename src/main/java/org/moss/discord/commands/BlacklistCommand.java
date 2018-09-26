@@ -35,7 +35,7 @@ public class BlacklistCommand implements CommandExecutor {
                 String emoji;
                 String check = String.valueOf(array.getJSONObject(i).getBoolean("blocked"));
                 if (check.equalsIgnoreCase("false")) {
-                    emoji = "✅";
+                    emoji = "\u2705";
                 } else {
                     emoji = "\uD83D\uDEAB";
                 }
