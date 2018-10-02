@@ -14,6 +14,8 @@ import org.moss.discord.Constants;
 import org.moss.discord.storage.FactoidStorage;
 
 import java.awt.*;
+import java.util.Arrays;
+import java.util.IllegalFormatException;
 import java.util.List;
 import java.util.StringJoiner;
 
@@ -28,6 +30,16 @@ public class TagCommand implements CommandExecutor, MessageCreateListener {
     @Command(aliases = {"!tag", "?tag", "?"}, usage = "!tag <name>", description = "Send the tag message to the channel.")
     public void onTag(DiscordApi api, TextChannel channel, String[] args) {
         if (args.length >= 1  && storage.isFactoid(args[0].toLowerCase())) {
+            if (args.length > 1) {
+                String[] tagArgs = Arrays.copyOfRange(args, 1, args.length);
+                try {
+                    channel.sendMessage(String.format(getFactoid(args[0]), (Object[]) tagArgs));
+                } catch (IllegalFormatException e) {
+                    // Some Joker -_- passed in some weird arguments
+                    return;
+                }
+                return;
+            }
             channel.sendMessage(getFactoid(args[0]));
         }
     }
