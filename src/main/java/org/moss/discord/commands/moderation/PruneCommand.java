@@ -18,7 +18,7 @@ public class PruneCommand implements CommandExecutor {
 
             channel.getMessages(amount).thenCompose(MessageSet::deleteAll).exceptionally(ExceptionLogger.get());
             channel.sendMessage("Deleted " + amount + " messages.");
-        } else message.addReaction("👎");
+        } else message.addReaction("\uD83D\uDC4E");
     }
 
 }
