@@ -16,7 +16,7 @@ import org.moss.discord.commands.SpigetCommand;
 import org.moss.discord.commands.moderation.BanCommand;
 import org.moss.discord.commands.moderation.KickCommand;
 import org.moss.discord.commands.moderation.PruneCommand;
-
+import org.moss.discord.listeners.AutoModListeners;
 import org.moss.discord.listeners.ModLogListeners;
 import org.moss.discord.listeners.PrivateListener;
 import org.slf4j.Logger;
@@ -58,9 +58,10 @@ public class Main {
 
         // Register listeners
         api.addListener(new ModLogListeners(api));
+        api.addListener(new AutoModListeners(api));
         api.addListener(new PrivateListener(api));
-
         api.addReactionAddListener(new StarboardListener(api));
+
     }
 
 }
