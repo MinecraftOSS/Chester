@@ -98,6 +98,7 @@ public class GithubCommand implements CommandExecutor {
 
             embed.addInlineField("\uD83C\uDF1F Stars", String.format("```%s```", repo.get("stargazers_count").asText()));
             embed.addInlineField("\u203C Issues", String.format("```%s```", repo.get("open_issues_count").asText()));
+            embed.addField("\uD83C\uDF74 Forks", String.format("```%s```", repo.get("forks").asText()));
 
             StringBuilder issuenames = new StringBuilder();
             for (int i = 0; i < 3; i++) {
