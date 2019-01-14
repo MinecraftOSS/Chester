@@ -9,6 +9,8 @@ import org.javacord.api.entity.permission.Role;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
 
+import java.util.stream.Collectors;
+
 public class RoleCheckCommand implements CommandExecutor {
 
     @Command(aliases = {"!rolecheck", ".rolecheck"}, usage = "!rolecheck <User>", description = "Checks users' role")
@@ -16,20 +18,17 @@ public class RoleCheckCommand implements CommandExecutor {
         if (args.length >= 1) {
             String string = "User Roles```";
             if (message.getMentionedUsers().size() >= 1) {
-                for (Role role : message.getMentionedUsers().get(0).getRoles(server)) {
-                    string += role.getIdAsString() + " " + role.getName() + "\n";
+                for (User user : message.getMentionedUsers()) {
+                    channel.sendMessage("User Roles for " + user.getName() + String.format("```%s```", user.getRoles(server).stream().map(Role::getName).collect(Collectors.joining(", "))));
                 }
+                return;
             }
             for (User user : server.getMembers()) {
                 if (user.getName().equalsIgnoreCase(args[0])) {
-                    for (Role role : user.getRoles(server)) {
-                        string += role.getIdAsString() + " " + role.getName() + "\n";
-                    }
+                    channel.sendMessage("User Roles for " + user.getName() + String.format("```%s```", user.getRoles(server).stream().map(Role::getName).collect(Collectors.joining(", "))));
                     break;
                 }
             }
-            string += "```";
-            channel.sendMessage(string);
         }
     }
 }
