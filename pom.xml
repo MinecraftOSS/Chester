@@ -24,6 +24,12 @@
             <type>pom</type>
         </dependency>
 
+        <dependency>
+            <groupId>org.javacord</groupId>
+            <artifactId>javacord-core</artifactId>
+            <version>3.0.1</version>
+        </dependency>
+
         <!-- The sdcf4j core module -->
         <dependency>
             <groupId>de.btobastian.sdcf4j</groupId>

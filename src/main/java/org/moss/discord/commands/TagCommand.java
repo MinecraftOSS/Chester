@@ -4,6 +4,7 @@ import de.btobastian.sdcf4j.Command;
 import de.btobastian.sdcf4j.CommandExecutor;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.channel.TextChannel;
+import org.javacord.api.entity.message.embed.Embed;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.permission.Role;
 import org.javacord.api.entity.server.Server;
@@ -12,6 +13,7 @@ import org.javacord.api.event.message.MessageCreateEvent;
 import org.javacord.api.listener.message.MessageCreateListener;
 import org.moss.discord.Constants;
 import org.moss.discord.storage.FactoidStorage;
+import org.moss.discord.util.EmbedUtil;
 
 import java.awt.*;
 import java.util.Arrays;
@@ -96,7 +98,13 @@ public class TagCommand implements CommandExecutor, MessageCreateListener {
         if (message.startsWith("?") && message.length() >= 2) {
             String tag = message.split(" ")[0].substring(1).toLowerCase();
             if (storage.isFactoid(tag)) {
-                ev.getChannel().sendMessage(getFactoid(tag));
+                String factoid = getFactoid(tag);
+                if (getFactoid(tag).startsWith("<embed>")) {
+                    EmbedUtil util = new EmbedUtil();
+                    ev.getChannel().sendMessage(util.fromJson(factoid.substring(7)));
+                } else {
+                    ev.getChannel().sendMessage(factoid);
+                }
             }
         }
     }
