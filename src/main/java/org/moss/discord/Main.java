@@ -9,6 +9,7 @@ import org.moss.discord.commands.BStatsCommand;
 import org.moss.discord.listeners.StarboardListener;
 import org.moss.discord.commands.GithubCommand;
 import org.moss.discord.commands.MojangCommand;
+import org.moss.discord.commands.RoleCheckCommand;
 import org.moss.discord.commands.NicknameCommand;
 import org.moss.discord.commands.PresenceCommand;
 import org.moss.discord.commands.TagCommand;
@@ -51,6 +52,7 @@ public class Main {
         commandHandler.registerCommand(new KickCommand());
         commandHandler.registerCommand(new PruneCommand());
         commandHandler.registerCommand(new MojangCommand());
+        commandHandler.registerCommand(new RoleCheckCommand());
         commandHandler.registerCommand(new PresenceCommand());
         commandHandler.registerCommand(new NicknameCommand());
         commandHandler.registerCommand(new AvatarCommand());
