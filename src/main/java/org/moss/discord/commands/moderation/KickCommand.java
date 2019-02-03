@@ -15,11 +15,11 @@ public class KickCommand implements CommandExecutor {
         if (author.canKickUsersFromServer()) {
             if (args.length == 2) {
                 User user = message.getMentionedUsers().get(0);
-                String reason = args[1];
+                String reason = String.join(" ", args).substring(args[0].length());
 
                 message.getServer().ifPresent(server -> server.kickUser(user, reason));
 
-                channel.sendMessage("Kicked " + user.getMentionTag() + " successfully!");
+                channel.sendMessage("Succesfully kicked " + user.getMentionTag() + " for " + reason);
             } else if (args.length == 1) {
                 channel.sendMessage("You need to specify a reason to kick this user!");
             } else if (args.length == 0) {
