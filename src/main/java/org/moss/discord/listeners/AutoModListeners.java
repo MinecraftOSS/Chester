@@ -2,6 +2,7 @@ package org.moss.discord.listeners;
 
 import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.channel.TextChannel;
+import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.message.MessageAttachment;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.user.User;
@@ -10,11 +11,15 @@ import org.javacord.api.listener.message.MessageCreateListener;
 import org.moss.discord.Constants;
 
 import java.awt.*;
+import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -24,23 +29,37 @@ public class AutoModListeners implements MessageCreateListener {
     List<String> blacklistedFiles;
     List<String> censoredWords;
     private Optional<TextChannel> modChannel;
-
-    /*
-    TODO: Add role bypass
-     */
+    private Map<Long, Instant> active = new HashMap<>();
+    String[] donts = {
+            "Do not",
+            "Don't",
+            "Stop",
+            "Huge Mistake",
+            "Bad Idea",
+            "No no no",
+            "apologize",
+            "Say sorry",
+            "You will now be terminated",
+            "Prepare for your termination",
+            "We're coming for you",
+            "You've been added to the naughty list"
+    };
 
     public AutoModListeners(DiscordApi api) {
         this.api = api;
         modChannel = api.getTextChannelById(Constants.CHANNEL_MODLOG);
         blacklistedFiles = new ArrayList<>(Arrays.asList(".jar", ".exe", ".zip")); //TODO configurable
-        censoredWords = new ArrayList<>(Arrays.asList("discord.gg", "discordapp.com/invite", "blackspigot"));
+        censoredWords = new ArrayList<>(Arrays.asList("discord.gg", "discordapp.com/invite", "blackspigot", "amazingsexdating.com", "whatsappx.com", "bestoffersx.com", "kidsearncash.com"));
     }
 
     @Override
     public void onMessageCreate(MessageCreateEvent ev) {
         if (ev.getMessage().getAuthor().isYourself() || ev.getMessage().getAuthor().canKickUsersFromServer()) {
+            active.put(ev.getMessage().getAuthor().getId(), Instant.now());
             return;
         }
+
+        parsePings(ev.getMessage());
 
         for (MessageAttachment messageAttachment : ev.getMessage().getAttachments()) {
             String fileName = messageAttachment.getFileName();
@@ -60,6 +79,29 @@ public class AutoModListeners implements MessageCreateListener {
                 return;
             }
         }
+    }
+
+    public void parsePings(Message message) {
+        if (message.getMentionedUsers().size() >= 1) {
+            for (User user : message.getMentionedUsers()) {
+                if (message.getServer().get().canKickUsers(user) && !userIsActive(user.getId())) {
+                    EmbedBuilder embed = new EmbedBuilder();
+                    embed.setColor(Color.RED);
+                    embed.setImage("https://i.imgur.com/z8UBrh5.png");
+                    embed.setDescription("It looks like you're trying to randomly ping a staff");
+                    embed.setFooter(donts[ThreadLocalRandom.current().nextInt(donts.length-1)]);
+                    message.getChannel().sendMessage(message.getUserAuthor().get().getMentionTag(),embed);
+                    break;
+                }
+            }
+        }
+    }
+
+    private boolean userIsActive(long userId) {
+        if (!active.keySet().contains(userId)) {
+            return false;
+        }
+        return (Duration.between(active.get(userId), Instant.now()).toMinutes() <= 15);
     }
 
     public void logCensorMessage(Optional<User> user, String pattern, String chanId) {
