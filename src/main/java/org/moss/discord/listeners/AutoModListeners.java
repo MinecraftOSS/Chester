@@ -19,7 +19,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -44,6 +47,8 @@ public class AutoModListeners implements MessageCreateListener {
             "We're coming for you",
             "You've been added to the naughty list"
     };
+
+    List<String> nodonts = new ArrayList<>(Arrays.asList("430125651559710720", "430125667062120449"));
 
     public AutoModListeners(DiscordApi api) {
         this.api = api;
@@ -82,7 +87,7 @@ public class AutoModListeners implements MessageCreateListener {
     }
 
     public void parsePings(Message message) {
-        if (message.getMentionedUsers().size() >= 1) {
+        if (message.getMentionedUsers().size() >= 1 && !nodonts.contains(message.getChannel().getIdAsString())) {
             for (User user : message.getMentionedUsers()) {
                 if (message.getServer().get().canKickUsers(user) && !userIsActive(user.getId())) {
                     EmbedBuilder embed = new EmbedBuilder();
@@ -90,7 +95,8 @@ public class AutoModListeners implements MessageCreateListener {
                     embed.setImage("https://i.imgur.com/z8UBrh5.png");
                     embed.setDescription("It looks like you're trying to randomly ping a staff");
                     embed.setFooter(donts[ThreadLocalRandom.current().nextInt(donts.length-1)]);
-                    message.getChannel().sendMessage(message.getUserAuthor().get().getMentionTag(),embed);
+                    message.getChannel().sendMessage(message.getUserAuthor().get().getMentionTag(),embed).thenAcceptAsync(msg -> api.getThreadPool().getScheduler().schedule((Callable<CompletableFuture<Void>>) msg::delete, 30, TimeUnit.MINUTES));
+                    message.getUserAuthor().get().sendMessage(embed);
                     break;
                 }
             }
