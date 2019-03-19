@@ -48,7 +48,7 @@ public class AutoModListeners implements MessageCreateListener {
             "You've been added to the naughty list"
     };
 
-    List<String> nodonts = new ArrayList<>(Arrays.asList("430125651559710720", "430125667062120449", "442304736587415574"));
+    List<String> nodonts = new ArrayList<>(Arrays.asList("430125651559710720", "430125667062120449", "442304736587415574", "479919848177139713", "479919881702342676"));
 
     public AutoModListeners(DiscordApi api) {
         this.api = api;
