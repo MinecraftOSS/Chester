@@ -6,6 +6,7 @@ import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
 import org.moss.discord.commands.AvatarCommand;
 import org.moss.discord.commands.BStatsCommand;
+import org.moss.discord.commands.EssentialsXCommand;
 import org.moss.discord.listeners.StarboardListener;
 import org.moss.discord.commands.GithubCommand;
 import org.moss.discord.commands.MojangCommand;
@@ -57,6 +58,7 @@ public class Main {
         commandHandler.registerCommand(new NicknameCommand());
         commandHandler.registerCommand(new AvatarCommand());
         commandHandler.registerCommand(new SpigetCommand());
+        commandHandler.registerCommand(new EssentialsXCommand());
 
         // Register listeners
         api.addListener(new ModLogListeners(api));

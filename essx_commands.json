@@ -1,0 +1,1054 @@
+[
+  {
+    "data": [
+      {
+        "id": "1",
+        "Module": "Essentials",
+        "Command": "repair",
+        "Aliases": "fix, efix, erepair",
+        "Description": "Repairs the durability of one or all items.",
+        "Syntax": "/<command> [hand|all]"
+      },
+      {
+        "id": "2",
+        "Module": "Essentials",
+        "Command": "msgtoggle",
+        "Aliases": "emsgtoggle",
+        "Description": "Blocks receiving all private messages.",
+        "Syntax": "/<command> [player] [on|off]"
+      },
+      {
+        "id": "3",
+        "Module": "Essentials",
+        "Command": "setjail",
+        "Aliases": "esetjail, createjail, ecreatejail",
+        "Description": "Creates a jail where you specified named [jailname].",
+        "Syntax": "/<command> <jailname>"
+      },
+      {
+        "id": "4",
+        "Module": "Essentials",
+        "Command": "help",
+        "Aliases": "ehelp",
+        "Description": "Views a list of available commands.",
+        "Syntax": "/<command> [search term] [page]"
+      },
+      {
+        "id": "5",
+        "Module": "Essentials",
+        "Command": "clearinventoryconfirmtoggle",
+        "Aliases": "eclearinventoryconfirmtoggle, clearinventoryconfirmoff, eclearinventoryconfirmoff, clearconfirmoff, eclearconfirmoff, clearconfirmon, eclearconfirmon, clearconfirm, eclearconfirm",
+        "Description": "Toggles whether you are prompted to confirm inventory clears.",
+        "Syntax": "/<command>"
+      },
+      {
+        "id": "6",
+        "Module": "Essentials",
+        "Command": "mute",
+        "Aliases": "emute, silence, esilence",
+        "Description": "Mutes or unmutes a player.",
+        "Syntax": "/<command> <player> [datediff]"
+      },
+      {
+        "id": "7",
+        "Module": "Essentials",
+        "Command": "spawner",
+        "Aliases": "changems, echangems, espawner, mobspawner, emobspawner",
+        "Description": "Change the mob type of a spawner.",
+        "Syntax": "/<command> <mob> [delay]"
+      },
+      {
+        "id": "8",
+        "Module": "Essentials",
+        "Command": "deljail",
+        "Aliases": "edeljail, remjail, eremjail, rmjail, ermjail",
+        "Description": "Removes a jail.",
+        "Syntax": "/<command> <jailname>"
+      },
+      {
+        "id": "9",
+        "Module": "Essentials",
+        "Command": "powertool",
+        "Aliases": "epowertool, pt, ept",
+        "Description": "Assigns a command to the item in hand.",
+        "Syntax": "/<command> [l:|a:|r:|c:|d:][command] [arguments]\n({player} can be replaced by name of a clicked player.)"
+      },
+      {
+        "id": "10",
+        "Module": "Essentials",
+        "Command": "weather",
+        "Aliases": "rain, erain, sky, esky, storm, estorm, sun, esun, eweather",
+        "Description": "Sets the weather.",
+        "Syntax": "/<command> <storm/sun> [duration]"
+      },
+      {
+        "id": "11",
+        "Module": "Essentials",
+        "Command": "gc",
+        "Aliases": "lag, elag, egc, mem, emem, memory, ememory, uptime, euptime, tps, etps, entities, eentities",
+        "Description": "Reports memory, uptime and tick info.",
+        "Syntax": "/<command> [all]"
+      },
+      {
+        "id": "12",
+        "Module": "Essentials",
+        "Command": "delhome",
+        "Aliases": "edelhome, remhome, eremhome, rmhome, ermhome",
+        "Description": "Removes a home.",
+        "Syntax": "/<command> [player:]<name>"
+      },
+      {
+        "id": "13",
+        "Module": "Essentials",
+        "Command": "enderchest",
+        "Aliases": "echest, eechest, eenderchest, endersee, eendersee, ec, eec",
+        "Description": "Lets you see inside an enderchest.",
+        "Syntax": "/<command> [player]"
+      },
+      {
+        "id": "14",
+        "Module": "Essentials",
+        "Command": "powertooltoggle",
+        "Aliases": "epowertooltoggle, ptt, eptt, pttoggle, epttoggle",
+        "Description": "Enables or disables all current powertools.",
+        "Syntax": "/<command>"
+      },
+      {
+        "id": "15",
+        "Module": "Essentials",
+        "Command": "kickall",
+        "Aliases": "ekickall",
+        "Description": "Kicks all players off the server except the issuer.",
+        "Syntax": "/<command> [reason]"
+      },
+      {
+        "id": "16",
+        "Module": "Essentials",
+        "Command": "speed",
+        "Aliases": "flyspeed, eflyspeed, fspeed, efspeed, espeed, walkspeed, ewalkspeed, wspeed, ewspeed",
+        "Description": "Change your speed limits.",
+        "Syntax": "/<command> [type] <speed> [player]"
+      },
+      {
+        "id": "17",
+        "Module": "Essentials",
+        "Command": "tpall",
+        "Aliases": "etpall",
+        "Description": "Teleport all online players to another player.",
+        "Syntax": "/<command> <player>"
+      },
+      {
+        "id": "18",
+        "Module": "Essentials",
+        "Command": "suicide",
+        "Aliases": "esuicide",
+        "Description": "Causes you to perish.",
+        "Syntax": "/<command>"
+      },
+      {
+        "id": "19",
+        "Module": "Essentials",
+        "Command": "essentials",
+        "Aliases": "eessentials, ess, eess, essversion",
+        "Description": "Reloads essentials.",
+        "Syntax": "/<command>"
+      },
+      {
+        "id": "20",
+        "Module": "Essentials",
+        "Command": "tptoggle",
+        "Aliases": "etptoggle",
+        "Description": "Blocks all forms of teleportation.",
+        "Syntax": "/<command> [player] [on|off]"
+      },
+      {
+        "id": "21",
+        "Module": "Essentials",
+        "Command": "disposal",
+        "Aliases": "edisposal, trash, etrash",
+        "Description": "Opens a portable disposal menu.",
+        "Syntax": "/<command>"
+      },
+      {
+        "id": "22",
+        "Module": "Essentials",
+        "Command": "top",
+        "Aliases": "etop",
+        "Description": "Teleport to the highest block at your current position.",
+        "Syntax": "/<command>"
+      },
+      {
+        "id": "23",
+        "Module": "Essentials",
+        "Command": "gamemode",
+        "Aliases": "adventure, eadventure, adventuremode, eadventuremode, creative, eecreative, creativemode, ecreativemode, egamemode, gm, egm, gma, egma, gmc, egmc, gms, egms, gmt, egmt, survival, esurvival, survivalmode, esurvivalmode, gmsp, sp, egmsp, spec, spectator",
+        "Description": "Change player gamemode.",
+        "Syntax": "/<command>\n<survival|creative|adventure|spectator>\n[player]"
+      },
+      {
+        "id": "24",
+        "Module": "Essentials",
+        "Command": "condense",
+        "Aliases": "econdense, compact, ecompact, blocks, eblocks, toblocks, etoblocks",
+        "Description": "Condenses items into a more compact blocks.",
+        "Syntax": "/<command> [<itemname>|<id>|hand|inventory]"
+      },
+      {
+        "id": "25",
+        "Module": "Essentials",
+        "Command": "tp",
+        "Aliases": "tele, etele, teleport, eteleport, etp, tp2p, etp2p",
+        "Description": "Teleport to a player.",
+        "Syntax": "/<command> <player> [otherplayer]"
+      },
+      {
+        "id": "26",
+        "Module": "Essentials",
+        "Command": "setworth",
+        "Aliases": "esetworth",
+        "Description": "Set the sell value of an item.",
+        "Syntax": "/<command> [itemname|id] <price>"
+      },
+      {
+        "id": "27",
+        "Module": "Essentials",
+        "Command": "spawnmob",
+        "Aliases": "mob, emob, spawnentity, espawnentity, espawnmob",
+        "Description": "Spawns a mob.",
+        "Syntax": "/<command> <mob>[:data][,<mount>[:data]] [amount] [player]"
+      },
+      {
+        "id": "28",
+        "Module": "Essentials",
+        "Command": "book",
+        "Aliases": "ebook",
+        "Description": "Allows reopening and editing of sealed books.",
+        "Syntax": "/<command> [title|author [name]]"
+      },
+      {
+        "id": "29",
+        "Module": "Essentials",
+        "Command": "time",
+        "Aliases": "day, eday, night, enight, etime",
+        "Description": "Display/Change the world time. Defaults to current world.",
+        "Syntax": "/<command> [day|night|dawn|17:30|4pm|4000ticks] [worldname|all]"
+      },
+      {
+        "id": "30",
+        "Module": "Essentials",
+        "Command": "tpaall",
+        "Aliases": "etpaall",
+        "Description": "Requests all players online to teleport to you.",
+        "Syntax": "/<command> <player>"
+      },
+      {
+        "id": "31",
+        "Module": "Essentials",
+        "Command": "mail",
+        "Aliases": "email, eemail, memo, ememo",
+        "Description": "Manages inter-player, intra-server mail.",
+        "Syntax": "/<command> [read|clear|send [to] [message]|sendall [message]]"
+      },
+      {
+        "id": "32",
+        "Module": "Essentials",
+        "Command": "hat",
+        "Aliases": "ehat, head, ehead",
+        "Description": "Get some cool new headgear.",
+        "Syntax": "/<command> [remove]"
+      },
+      {
+        "id": "33",
+        "Module": "Essentials",
+        "Command": "worth",
+        "Aliases": "eprice, price, eworth",
+        "Description": "Calculates the worth of items in hand or as specified.",
+        "Syntax": "/<command> <<itemname>|<id>|hand|inventory|blocks> [-][amount]"
+      },
+      {
+        "id": "34",
+        "Module": "Essentials",
+        "Command": "kick",
+        "Aliases": "ekick",
+        "Description": "Kicks a specified player with a reason.",
+        "Syntax": "/<command> <player> [reason]"
+      },
+      {
+        "id": "35",
+        "Module": "Essentials",
+        "Command": "more",
+        "Aliases": "emore",
+        "Description": "Fills the item stack in hand to maximum size.",
+        "Syntax": "/<command>"
+      },
+      {
+        "id": "36",
+        "Module": "Essentials",
+        "Command": "info",
+        "Aliases": "about, eabout, ifo, eifo, einfo, inform, einform, news, enews",
+        "Description": "Shows information set by the server owner.",
+        "Syntax": "/<command> [chapter] [page]"
+      },
+      {
+        "id": "37",
+        "Module": "Essentials",
+        "Command": "tpahere",
+        "Aliases": "etpahere",
+        "Description": "Request that the specified player teleport to you.",
+        "Syntax": "/<command> <player>"
+      },
+      {
+        "id": "38",
+        "Module": "Essentials",
+        "Command": "realname",
+        "Aliases": "erealname",
+        "Description": "Displays the username of a user based on nick.",
+        "Syntax": "/<command> <nickname>"
+      },
+      {
+        "id": "39",
+        "Module": "Essentials",
+        "Command": "bigtree",
+        "Aliases": "ebigtree, largetree, elargetree",
+        "Description": "Spawn a big tree where you are looking.",
+        "Syntax": "/<command> <tree|redwood|jungle>"
+      },
+      {
+        "id": "40",
+        "Module": "Essentials",
+        "Command": "rules",
+        "Aliases": "erules",
+        "Description": "Views the server rules.",
+        "Syntax": "/<command> [chapter] [page]"
+      },
+      {
+        "id": "41",
+        "Module": "Essentials",
+        "Command": "recipe",
+        "Aliases": "formula, eformula, method, emethod, erecipe, recipes, erecipes",
+        "Description": "Displays how to craft items.",
+        "Syntax": "/<command> <item> [number]"
+      },
+      {
+        "id": "42",
+        "Module": "Essentials",
+        "Command": "sethome",
+        "Aliases": "esethome, createhome, ecreatehome",
+        "Description": "Set your home to your current location.",
+        "Syntax": "/<command> [[player:]name]"
+      },
+      {
+        "id": "43",
+        "Module": "Essentials",
+        "Command": "pweather",
+        "Aliases": "playerweather, eplayerweather, epweather",
+        "Description": "Adjust a player's weather",
+        "Syntax": "/<command> [list|reset|storm|sun|clear] [player|*]"
+      },
+      {
+        "id": "44",
+        "Module": "Essentials",
+        "Command": "setwarp",
+        "Aliases": "createwarp, ecreatewarp, esetwarp",
+        "Description": "Creates a new warp.",
+        "Syntax": "/<command> <warp>"
+      },
+      {
+        "id": "45",
+        "Module": "Essentials",
+        "Command": "warp",
+        "Aliases": "ewarp, warps, ewarps",
+        "Description": "List all warps or warp to the specified location.",
+        "Syntax": "/<command> <pagenumber|warp> [player]"
+      },
+      {
+        "id": "46",
+        "Module": "Essentials",
+        "Command": "break",
+        "Aliases": "ebreak",
+        "Description": "Breaks the block you are looking at.",
+        "Syntax": "/<command>"
+      },
+      {
+        "id": "47",
+        "Module": "Essentials",
+        "Command": "msg",
+        "Aliases": "w, m, t, pm, emsg, epm, tell, etell, whisper, ewhisper",
+        "Description": "Sends a private message to the specified player.",
+        "Syntax": "/<command> <to> <message>"
+      },
+      {
+        "id": "48",
+        "Module": "Essentials",
+        "Command": "delwarp",
+        "Aliases": "edelwarp, remwarp, eremwarp, rmwarp, ermwarp",
+        "Description": "Deletes the specified warp.",
+        "Syntax": "/<command> <warp>"
+      },
+      {
+        "id": "49",
+        "Module": "Essentials",
+        "Command": "compass",
+        "Aliases": "ecompass, direction, edirection",
+        "Description": "Describes your current bearing.",
+        "Syntax": "/<command>"
+      },
+      {
+        "id": "50",
+        "Module": "Essentials",
+        "Command": "world",
+        "Aliases": "eworld",
+        "Description": "Switch between worlds.",
+        "Syntax": "/<command> [world]"
+      },
+      {
+        "id": "51",
+        "Module": "Essentials",
+        "Command": "me",
+        "Aliases": "action, eaction, describe, edescribe, eme",
+        "Description": "Describes an action in the context of the player.",
+        "Syntax": "/<command> <description>"
+      },
+      {
+        "id": "52",
+        "Module": "Essentials",
+        "Command": "payconfirmtoggle",
+        "Aliases": "epayconfirmtoggle, payconfirmoff, epayconfirmoff, payconfirmon, epayconfirmon, payconfirm, epayconfirm",
+        "Description": "Toggles whether you are prompted to confirm payments.",
+        "Syntax": "/<command>"
+      },
+      {
+        "id": "53",
+        "Module": "Essentials",
+        "Command": "ext",
+        "Aliases": "eext, extinguish, eextinguish",
+        "Description": "Extinguish players.",
+        "Syntax": "/<command> [player]"
+      },
+      {
+        "id": "54",
+        "Module": "Essentials",
+        "Command": "broadcastworld",
+        "Aliases": "bcw, ebcw, bcastw, ebcastw, ebroadcastworld, shoutworld, eshoutworld",
+        "Description": "Broadcasts a message to a world.",
+        "Syntax": "/<command> <world> <msg>"
+      },
+      {
+        "id": "55",
+        "Module": "Essentials",
+        "Command": "togglejail",
+        "Aliases": "jail, ejail, tjail, etjail, etogglejail, unjail, eunjail",
+        "Description": "Jails/Unjails a player, TPs them to the jail specified.",
+        "Syntax": "/<command> <player> <jailname> [datediff]"
+      },
+      {
+        "id": "56",
+        "Module": "Essentials",
+        "Command": "list",
+        "Aliases": "elist, online, eonline, playerlist, eplayerlist, plist, eplist, who, ewho",
+        "Description": "List all online players.",
+        "Syntax": "/<command> [group]"
+      },
+      {
+        "id": "57",
+        "Module": "Essentials",
+        "Command": "remove",
+        "Aliases": "eremove, butcher, ebutcher, killall, ekillall, mobkill, emobkill",
+        "Description": "Removes entities in your world.",
+        "Syntax": "/<command> <all|tamed|named|drops|arrows|boats|\nminecarts|xp|paintings|itemframes|endercrystals|\nmonsters|animals|ambient|mobs|[mobType]> [radius|world]"
+      },
+      {
+        "id": "58",
+        "Module": "Essentials",
+        "Command": "lightning",
+        "Aliases": "elightning, shock, eshock, smite, esmite, strike, estrike, thor, ethor",
+        "Description": "The power of Thor. Strike at cursor or player.",
+        "Syntax": "/<command> [player] [power]"
+      },
+      {
+        "id": "59",
+        "Module": "Essentials",
+        "Command": "ignore",
+        "Aliases": "eignore, unignore, eunignore, delignore, edelignore, remignore, eremignore, rmignore, ermignore",
+        "Description": "Ignore or unignore other players.",
+        "Syntax": "/<command> <player>"
+      },
+      {
+        "id": "60",
+        "Module": "Essentials",
+        "Command": "item",
+        "Aliases": "i, eitem, ei",
+        "Description": "Spawn an item.",
+        "Syntax": "/<command> <item|numeric> [amount [itemmeta...]]"
+      },
+      {
+        "id": "61",
+        "Module": "Essentials",
+        "Command": "near",
+        "Aliases": "enear, nearby, enearby",
+        "Description": "Lists the players near by or around a player.",
+        "Syntax": "/<command> [playername] [radius]"
+      },
+      {
+        "id": "62",
+        "Module": "Essentials",
+        "Command": "firework",
+        "Aliases": "efirework",
+        "Description": "Allows you to modify a stack of fireworks.",
+        "Syntax": "/<command> <<meta param>|power [amount]|clear|fire [amount]>"
+      },
+      {
+        "id": "63",
+        "Module": "Essentials",
+        "Command": "invsee",
+        "Aliases": "einvsee",
+        "Description": "See the inventory of other players.",
+        "Syntax": "/<command> <player>"
+      },
+      {
+        "id": "64",
+        "Module": "Essentials",
+        "Command": "balancetop",
+        "Aliases": "ebalancetop, baltop, ebaltop",
+        "Description": "Gets the top balance values.",
+        "Syntax": "/<command> <page>"
+      },
+      {
+        "id": "65",
+        "Module": "Essentials",
+        "Command": "ban",
+        "Aliases": "eban",
+        "Description": "Bans a player.",
+        "Syntax": "/<command> <player> [reason]"
+      },
+      {
+        "id": "66",
+        "Module": "Essentials",
+        "Command": "kill",
+        "Aliases": "ekill",
+        "Description": "Kills specified player.",
+        "Syntax": "/<command> <player>"
+      },
+      {
+        "id": "67",
+        "Module": "Essentials",
+        "Command": "balance",
+        "Aliases": "bal, ebal, ebalance, money, emoney",
+        "Description": "States the current balance of a player.",
+        "Syntax": "/<command> [player]"
+      },
+      {
+        "id": "68",
+        "Module": "Essentials",
+        "Command": "enchant",
+        "Aliases": "eenchant, enchantment, eenchantment",
+        "Description": "Enchants the item the user is holding.",
+        "Syntax": "/<command> <enchantmentname> [level]"
+      },
+      {
+        "id": "69",
+        "Module": "Essentials",
+        "Command": "banip",
+        "Aliases": "ebanip",
+        "Description": "Bans an IP address.",
+        "Syntax": "/<command> <address>"
+      },
+      {
+        "id": "70",
+        "Module": "Essentials",
+        "Command": "socialspy",
+        "Aliases": "esocialspy",
+        "Description": "Toggles if you can see msg/mail commands in chat.",
+        "Syntax": "/<command> [player] [on|off]"
+      },
+      {
+        "id": "71",
+        "Module": "Essentials",
+        "Command": "workbench",
+        "Aliases": "craft, ecraft, wb, ewb, wbench, ewbench, eworkbench",
+        "Description": "Opens up a workbench.",
+        "Syntax": "/<command>"
+      },
+      {
+        "id": "72",
+        "Module": "Essentials",
+        "Command": "motd",
+        "Aliases": "emotd",
+        "Description": "Views the Message Of The Day.",
+        "Syntax": "/<command> [chapter] [page]"
+      },
+      {
+        "id": "73",
+        "Module": "Essentials",
+        "Command": "ptime",
+        "Aliases": "playertime, eplayertime, eptime",
+        "Description": "Adjust player's client time. Add @ prefix to fix.",
+        "Syntax": "/<command> [list|reset|day|night|dawn|17:30|4pm|4000ticks] [player|*]"
+      },
+      {
+        "id": "74",
+        "Module": "Essentials",
+        "Command": "give",
+        "Aliases": "egive",
+        "Description": "Give a player an item.",
+        "Syntax": "/<command> <player> <item|numeric> [amount [itemmeta...]]"
+      },
+      {
+        "id": "75",
+        "Module": "Essentials",
+        "Command": "tree",
+        "Aliases": "etree",
+        "Description": "Spawn a tree where you are looking.",
+        "Syntax": "/<command> <tree|birch|redwood|redmushroom|\nbrownmushroom|jungle|junglebush|swamp>"
+      },
+      {
+        "id": "76",
+        "Module": "Essentials",
+        "Command": "tpacancel",
+        "Aliases": "etpacancel",
+        "Description": "Cancel all outstanding teleport requests. Specify [player] to cancel requests with them.",
+        "Syntax": "/<command> [player]"
+      },
+      {
+        "id": "77",
+        "Module": "Essentials",
+        "Command": "sudo",
+        "Aliases": "esudo",
+        "Description": "Make another user perform a command.",
+        "Syntax": "/<command> <player> <command [args]>"
+      },
+      {
+        "id": "78",
+        "Module": "Essentials",
+        "Command": "back",
+        "Aliases": "eback, return, ereturn",
+        "Description": "Teleports you to your location prior to tp/spawn/warp.",
+        "Syntax": "/<command>"
+      },
+      {
+        "id": "79",
+        "Module": "Essentials",
+        "Command": "jump",
+        "Aliases": "j, ej, ejump, jumpto, ejumpto",
+        "Description": "Jumps to the nearest block in the line of sight.",
+        "Syntax": "/<command>"
+      },
+      {
+        "id": "80",
+        "Module": "Essentials",
+        "Command": "fly",
+        "Aliases": "efly",
+        "Description": "Take off, and soar!",
+        "Syntax": "/<command> [player] [on|off]"
+      },
+      {
+        "id": "81",
+        "Module": "Essentials",
+        "Command": "potion",
+        "Aliases": "epotion, elixer, eelixer",
+        "Description": "Adds custom potion effects to a potion.",
+        "Syntax": "/<command> <clear|apply|effect:<effect> power:<power> duration:<duration>>"
+      },
+      {
+        "id": "82",
+        "Module": "Essentials",
+        "Command": "seen",
+        "Aliases": "eseen",
+        "Description": "Shows the last logout time of a player.",
+        "Syntax": "/<command> <playername>"
+      },
+      {
+        "id": "83",
+        "Module": "Essentials",
+        "Command": "home",
+        "Aliases": "ehome, homes, ehomes",
+        "Description": "Teleport to your home.",
+        "Syntax": "/<command> [player:][name]"
+      },
+      {
+        "id": "84",
+        "Module": "Essentials",
+        "Command": "vanish",
+        "Aliases": "v, ev, evanish",
+        "Description": "Hide yourself from other players.",
+        "Syntax": "/<command> [player] [on|off]"
+      },
+      {
+        "id": "85",
+        "Module": "Essentials",
+        "Command": "tpdeny",
+        "Aliases": "etpdeny, tpno, etpno",
+        "Description": "Reject a teleport request.",
+        "Syntax": "/<command>"
+      },
+      {
+        "id": "86",
+        "Module": "Essentials",
+        "Command": "tpohere",
+        "Aliases": "etpohere",
+        "Description": "Teleport here override for tptoggle.",
+        "Syntax": "/<command> <player>"
+      },
+      {
+        "id": "87",
+        "Module": "Essentials",
+        "Command": "getpos",
+        "Aliases": "eposition",
+        "Description": "Get your current coordinates or those of a player.",
+        "Syntax": "/<command> [player]"
+      },
+      {
+        "id": "88",
+        "Module": "Essentials",
+        "Command": "god",
+        "Aliases": "tgm",
+        "Description": "Enables your godly powers.",
+        "Syntax": "/<command> [player] [on|off]"
+      },
+      {
+        "id": "89",
+        "Module": "Essentials",
+        "Command": "ping",
+        "Aliases": "pong",
+        "Description": "Pong!",
+        "Syntax": "/<command>"
+      },
+      {
+        "id": "90",
+        "Module": "Essentials",
+        "Command": "helpop",
+        "Aliases": "eamsg",
+        "Description": "Message online admins.",
+        "Syntax": "/<command> <message>"
+      },
+      {
+        "id": "91",
+        "Module": "Essentials",
+        "Command": "skull",
+        "Aliases": "head",
+        "Description": "Set the owner of a player skull",
+        "Syntax": "/<command> [owner]"
+      },
+      {
+        "id": "92",
+        "Module": "Essentials",
+        "Command": "broadcast",
+        "Aliases": "ebcast",
+        "Description": "Broadcasts a message to the entire server.",
+        "Syntax": "/<command> <msg>"
+      },
+      {
+        "id": "93",
+        "Module": "Essentials",
+        "Command": "clearinventory",
+        "Aliases": "eclean",
+        "Description": "Clear all items in your inventory.",
+        "Syntax": "/<command> [player|*] [item[:<data>]|*|**] [amount]"
+      },
+      {
+        "id": "94",
+        "Module": "Essentials",
+        "Command": "unlimited",
+        "Aliases": "eul",
+        "Description": "Allows the unlimited placing of items.",
+        "Syntax": "/<command> <list|item|clear> [player]"
+      },
+      {
+        "id": "95",
+        "Module": "Essentials",
+        "Command": "antioch",
+        "Aliases": "tnt",
+        "Description": "A little surprise for operators.",
+        "Syntax": "/<command> [message]"
+      },
+      {
+        "id": "96",
+        "Module": "Essentials",
+        "Command": "fireball",
+        "Aliases": "fireskull",
+        "Description": "Throw a fireball.",
+        "Syntax": "/<command> [small|skull]"
+      },
+      {
+        "id": "97",
+        "Module": "Essentials",
+        "Command": "tpa",
+        "Aliases": "tpask",
+        "Description": "Request to teleport to the specified player.",
+        "Syntax": "/<command> <player>"
+      },
+      {
+        "id": "98",
+        "Module": "Essentials",
+        "Command": "createkit",
+        "Aliases": "ck",
+        "Description": "Create a kit in game!",
+        "Syntax": "/<command> <kitname> <delay>"
+      },
+      {
+        "id": "99",
+        "Module": "Essentials",
+        "Command": "depth",
+        "Aliases": "eheight",
+        "Description": "States current depth",
+        "Syntax": "/depth"
+      },
+      {
+        "id": "100",
+        "Module": "Essentials",
+        "Command": "paytoggle",
+        "Aliases": "payon",
+        "Description": "Toggles whether you are accepting payments.",
+        "Syntax": "/<command>"
+      },
+      {
+        "id": "101",
+        "Module": "Essentials",
+        "Command": "itemdb",
+        "Aliases": "edurability",
+        "Description": "Searches for an item.",
+        "Syntax": "/<command> <item>"
+      },
+      {
+        "id": "102",
+        "Module": "Essentials",
+        "Command": "afk",
+        "Aliases": "eafk, away, eaway",
+        "Description": "Marks you as away-from-keyboard.",
+        "Syntax": "/<command> [player/message...]"
+      },
+      {
+        "id": "103",
+        "Module": "Essentials",
+        "Command": "backup",
+        "Aliases": "ebackup",
+        "Description": "Runs the backup if configured.",
+        "Syntax": "/<command>"
+      },
+      {
+        "id": "104",
+        "Module": "Essentials",
+        "Command": "burn",
+        "Aliases": "eburn",
+        "Description": "Set a player on fire.",
+        "Syntax": "/<command> <player> <seconds>"
+      },
+      {
+        "id": "105",
+        "Module": "Essentials",
+        "Command": "customtext",
+        "Aliases": "",
+        "Description": "Allows you to create custom text commands.",
+        "Syntax": "/<alias> - Define in bukkit.yml"
+      },
+      {
+        "id": "106",
+        "Module": "Essentials",
+        "Command": "eco",
+        "Aliases": "eeco,economy,eeconomy",
+        "Description": "Manages the server economy.",
+        "Syntax": "/<command> <give|take|set|reset> <player> <amount>"
+      },
+      {
+        "id": "107",
+        "Module": "Essentials",
+        "Command": "exp",
+        "Aliases": "eexp, xp",
+        "Description": "Give, set or look at a players exp.",
+        "Syntax": "/<command> [show|set|give] [playername [amount]]"
+      },
+      {
+        "id": "108",
+        "Module": "Essentials",
+        "Command": "feed",
+        "Aliases": "eat,eeat,efeed",
+        "Description": "Satisfy the hunger.",
+        "Syntax": "/<command> [player]"
+      },
+      {
+        "id": "109",
+        "Module": "Essentials",
+        "Command": "heal",
+        "Aliases": "eheal",
+        "Description": "Heals you or the given player.",
+        "Syntax": "/<command> [player]"
+      },
+      {
+        "id": "110",
+        "Module": "Essentials",
+        "Command": "kit",
+        "Aliases": "ekit,kits,ekits",
+        "Description": "Obtains the specified kit or views all available kits.",
+        "Syntax": "/<command> [kit] [player]"
+      },
+      {
+        "id": "111",
+        "Module": "Essentials",
+        "Command": "kittycannon",
+        "Aliases": "ekittycannon",
+        "Description": "Throw an exploding kitten at your opponent.",
+        "Syntax": "/<command>"
+      },
+      {
+        "id": "112",
+        "Module": "Essentials",
+        "Command": "nick",
+        "Aliases": "enick,nickname,enickname",
+        "Description": "Change your nickname or that of another player.",
+        "Syntax": "/<command> [player] <nickname|off>"
+      },
+      {
+        "id": "113",
+        "Module": "Essentials",
+        "Command": "nuke",
+        "Aliases": "enuke",
+        "Description": "May death rain upon them.",
+        "Syntax": "/<command> [player]"
+      },
+      {
+        "id": "114",
+        "Module": "Essentials",
+        "Command": "pay",
+        "Aliases": "epay",
+        "Description": "Pays another player from your balance.",
+        "Syntax": "/<command> <player> <amount>"
+      },
+      {
+        "id": "115",
+        "Module": "Essentials",
+        "Command": "r",
+        "Aliases": "er,reply,ereply",
+        "Description": "Quickly reply to the last player to message you.",
+        "Syntax": "/<command> <message>"
+      },
+      {
+        "id": "116",
+        "Module": "Essentials",
+        "Command": "sell",
+        "Aliases": "esell",
+        "Description": "Sells the item currently in your hand.",
+        "Syntax": "/<command> <<itemname>|<id>|hand|inventory|blocks> [-][amount]"
+      },
+      {
+        "id": "117",
+        "Module": "Essentials",
+        "Command": "showkit",
+        "Aliases": "kitpreview,preview,kitshow",
+        "Description": "Show contents of a kit.",
+        "Syntax": "<command> <kitname>"
+      },
+      {
+        "id": "118",
+        "Module": "Essentials",
+        "Command": "tempban",
+        "Aliases": "etempban",
+        "Description": "Temporary ban a user.",
+        "Syntax": "/<command> <playername> <datediff> <reason>"
+      },
+      {
+        "id": "119",
+        "Module": "Essentials",
+        "Command": "thunder",
+        "Aliases": "ethunder",
+        "Description": "Enable/disable thunder.",
+        "Syntax": "/<command> <true/false> [duration]"
+      },
+      {
+        "id": "120",
+        "Module": "Essentials",
+        "Command": "tpaccept",
+        "Aliases": "etpaccept,tpyes,etpyes",
+        "Description": "Accepts a teleport request.",
+        "Syntax": "/<command> [otherplayer]"
+      },
+      {
+        "id": "121",
+        "Module": "Essentials",
+        "Command": "tphere",
+        "Aliases": "s,etphere",
+        "Description": "Teleport a player to you.",
+        "Syntax": "/<command> <player>"
+      },
+      {
+        "id": "122",
+        "Module": "Essentials",
+        "Command": "tpohere",
+        "Aliases": "etpohere",
+        "Description": "Teleport here override for tptoggle.",
+        "Syntax": "/<command> <player>"
+      },
+      {
+        "id": "123",
+        "Module": "Essentials",
+        "Command": "tppos",
+        "Aliases": "etppos",
+        "Description": "Teleport to coordinates.",
+        "Syntax": "/<command> <x> <y> <z> [yaw] [pitch] [world]"
+      },
+      {
+        "id": "124",
+        "Module": "Essentials",
+        "Command": "unban",
+        "Aliases": "pardon,eunban,epardon",
+        "Description": "Unbans the specified player.",
+        "Syntax": "/<command> <player>"
+      },
+      {
+        "id": "125",
+        "Module": "Essentials",
+        "Command": "unbanip",
+        "Aliases": "eunbanip,pardonip,epardonip",
+        "Description": "Unbans the specified IP address.",
+        "Syntax": "/<command> <address>"
+      },
+      {
+        "id": "126",
+        "Module": "EssentialsSpawn",
+        "Command": "setspawn",
+        "Aliases": "esetspawn",
+        "Description": "Set the spawnpoint to your current position.",
+        "Syntax": "/<command> <group>"
+      },
+      {
+        "id": "127",
+        "Module": "EssentialsSpawn",
+        "Command": "spawn",
+        "Aliases": "espawn",
+        "Description": "Teleport to the spawnpoint.",
+        "Syntax": "/<command> [player]"
+      },
+      {
+        "id": "128",
+        "Module": "EssentialsXMPP",
+        "Command": "setxmpp",
+        "Aliases": "",
+        "Description": "Set your xmpp address.",
+        "Syntax": "/<command> <address>"
+      },
+      {
+        "id": "129",
+        "Module": "EssentialsXMPP",
+        "Command": "xmpp",
+        "Aliases": "",
+        "Description": "Send a message to a player.",
+        "Syntax": "/<command> <player> <message>"
+      },
+      {
+        "id": "130",
+        "Module": "EssentialsXMPP",
+        "Command": "xmppspy",
+        "Aliases": "",
+        "Description": "Toggle xmpp spy for all messages.",
+        "Syntax": "/<command> <player>"
+      },
+      {
+        "id": "131",
+        "Module": "Essentials",
+        "Command": "tpauto",
+        "Aliases": "etpauto",
+        "Description": "Automatically accept teleportation requests.",
+        "Syntax": "/<command> <player>"
+      }
+    ]
+  }
+]
