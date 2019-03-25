@@ -116,9 +116,9 @@ public class EssentialsXCommand implements CommandExecutor {
     }
 
     private JsonNode searchCommands(String param) {
-        for (int i = 0; i <= essxCommands.size(); i++) {
+        for (int i = 0; i <= essxCommands.size() -1; i++) {
             JsonNode command = essxCommands.get(i);
-            if (param.equalsIgnoreCase(command.get("Command").asText()) ) {
+            if (param.equalsIgnoreCase(command.get("Command").asText())) {
                 return command;
             }
         }
@@ -133,7 +133,7 @@ public class EssentialsXCommand implements CommandExecutor {
 
     private List<JsonNode> searchPermissions(String param) {
         java.util.List<JsonNode> nodes = new ArrayList<>();
-        for (int i = 0; i <= essxPermissions.size(); i++) {
+        for (int i = 0; i <= essxPermissions.size() -1; i++) {
             JsonNode permNode = essxPermissions.get(i);
             if (permNode.get("Command").asText().contains(param) || permNode.get("Permission").asText().contains(param)) {
                 nodes.add(permNode);
