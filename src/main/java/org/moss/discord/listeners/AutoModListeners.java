@@ -4,6 +4,7 @@ import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.message.MessageAttachment;
+import org.javacord.api.entity.message.embed.Embed;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.user.User;
 import org.javacord.api.event.message.MessageCreateEvent;
@@ -54,7 +55,7 @@ public class AutoModListeners implements MessageCreateListener {
         this.api = api;
         modChannel = api.getTextChannelById(Constants.CHANNEL_MODLOG);
         blacklistedFiles = new ArrayList<>(Arrays.asList(".jar", ".exe", ".zip")); //TODO configurable
-        censoredWords = new ArrayList<>(Arrays.asList("discord.gg", "discordapp.com/invite", "blackspigot", "amazingsexdating.com", "whatsappx.com", "bestoffersx.com", "kidsearncash.com"));
+        censoredWords = new ArrayList<>(Arrays.asList("discord.gg", "discordapp.com/invite", "blackspigot", "amazingsexdating.com", "whatsappx.com", "bestoffersx.com", "kidsearncash.com", "l10n\\_2\\.x"));
     }
 
     @Override
@@ -65,6 +66,20 @@ public class AutoModListeners implements MessageCreateListener {
         }
 
         parsePings(ev.getMessage());
+
+        if (!ev.getMessage().getEmbeds().isEmpty()) {
+            for (Embed embed : ev.getMessage().getEmbeds()) {
+                String title = embed.getTitle().orElse("");
+                System.out.println(title);
+                for (String pattern : censoredWords) {
+                    if (title.toLowerCase().contains(pattern)) {
+                        ev.getMessage().delete("Pattern trigger: " + pattern);
+                        logCensorMessage(ev.getMessage().getUserAuthor(), pattern, ev.getChannel().getIdAsString());
+                        return;
+                    }
+                }
+            }
+        }
 
         for (MessageAttachment messageAttachment : ev.getMessage().getAttachments()) {
             String fileName = messageAttachment.getFileName();
