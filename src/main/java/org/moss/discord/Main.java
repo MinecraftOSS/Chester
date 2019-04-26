@@ -9,6 +9,10 @@ import org.moss.discord.commands.BStatsCommand;
 import org.moss.discord.commands.EmbedCommand;
 
 import org.moss.discord.commands.SayCommand;
+import org.moss.discord.listeners.AutoModListeners;
+import org.moss.discord.listeners.ModLogListeners;
+import org.moss.discord.listeners.MrParser;
+import org.moss.discord.listeners.PrivateListener;
 import org.moss.discord.listeners.StarboardListener;
 import org.moss.discord.commands.GithubCommand;
 import org.moss.discord.commands.MojangCommand;
@@ -20,9 +24,6 @@ import org.moss.discord.commands.SpigetCommand;
 import org.moss.discord.commands.moderation.BanCommand;
 import org.moss.discord.commands.moderation.KickCommand;
 import org.moss.discord.commands.moderation.PruneCommand;
-import org.moss.discord.listeners.AutoModListeners;
-import org.moss.discord.listeners.ModLogListeners;
-import org.moss.discord.listeners.PrivateListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,6 +68,7 @@ public class Main {
         api.addListener(new ModLogListeners(api));
         api.addListener(new AutoModListeners(api));
         api.addListener(new PrivateListener(api));
+        api.addListener(new MrParser(api));
         api.addReactionAddListener(new StarboardListener(api));
 
     }
