@@ -49,6 +49,12 @@ public class AutoModListeners implements MessageCreateListener {
             "You've been added to the naughty list"
     };
 
+    String[] nopes = {
+            "https://i.imgur.com/z8UBrh5.png",
+            "https://i.imgur.com/J015ZK5.png",
+            "https://i.imgur.com/RJAtyAg.png"
+    };
+
     List<String> nodonts = new ArrayList<>(Arrays.asList("430125651559710720", "430125667062120449", "442304736587415574"));
 
     public AutoModListeners(DiscordApi api) {
@@ -107,7 +113,7 @@ public class AutoModListeners implements MessageCreateListener {
                 if (message.getServer().get().canKickUsers(user) && !userIsActive(user.getId())) {
                     EmbedBuilder embed = new EmbedBuilder();
                     embed.setColor(Color.RED);
-                    embed.setImage("https://i.imgur.com/z8UBrh5.png");
+                    embed.setImage(nopes[ThreadLocalRandom.current().nextInt(nopes.length-1)]);
                     embed.setDescription("It looks like you're trying to randomly ping a staff");
                     embed.setFooter(donts[ThreadLocalRandom.current().nextInt(donts.length-1)]);
                     message.getChannel().sendMessage(message.getUserAuthor().get().getMentionTag(),embed).thenAcceptAsync(msg -> api.getThreadPool().getScheduler().schedule((Callable<CompletableFuture<Void>>) msg::delete, 30, TimeUnit.MINUTES));
