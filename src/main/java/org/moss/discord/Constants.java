@@ -13,12 +13,15 @@ public class Constants {
     // Channels
     public static final String CHANNEL_STARBOARD = "431239339796594688";
     public static final String CHANNEL_MODLOG = "430895774075846656";
+    public static final String CHANNEL_PRIVATE = "439928433959501825";
+    public static final String CHANNEL_RANDOM = "391079761285480449";
 
     // Roles
     public static final String ROLE_MODERATOR = "390944427071242240";
     public static final String ROLE_ADMIN = "390970629261623296";
     public static final String ROLE_PROJECT_LEAD = " 390943316335788034";
     public static final String ROLE_CONTRIBUTOR = "395277849877151767";
+    public static final String ROLE_SUPPORTER = "391029845225766912";
 
     public static final String ROLE_PURCHASER = "401686955336663041";
     public static final String ROLE_PURCHASER_PVX = "401687126242230274";
