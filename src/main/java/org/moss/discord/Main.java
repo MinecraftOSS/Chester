@@ -9,6 +9,7 @@ import org.moss.discord.commands.BStatsCommand;
 import org.moss.discord.commands.EmbedCommand;
 
 import org.moss.discord.commands.SayCommand;
+import org.moss.discord.commands.UserTagCommand;
 import org.moss.discord.listeners.StarboardListener;
 import org.moss.discord.commands.GithubCommand;
 import org.moss.discord.commands.MojangCommand;
@@ -62,6 +63,7 @@ public class Main {
         commandHandler.registerCommand(new SpigetCommand());
         commandHandler.registerCommand(new EmbedCommand());
         commandHandler.registerCommand(new SayCommand());
+        commandHandler.registerCommand(new UserTagCommand(api));
 
         // Register listeners
         api.addListener(new ModLogListeners(api));
