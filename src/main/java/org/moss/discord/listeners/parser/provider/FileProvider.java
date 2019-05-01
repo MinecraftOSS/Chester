@@ -7,10 +7,10 @@ import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.message.MessageAttachment;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 
-import java.awt.*;
+import java.awt.Color;
 import java.io.IOException;
 import java.util.Objects;
-import java.util.concurrent.ExecutionException;
+import java.util.concurrent.CompletableFuture;
 
 public class FileProvider implements LogProvider {
 
@@ -18,13 +18,15 @@ public class FileProvider implements LogProvider {
     private static final OkHttpClient client = new OkHttpClient.Builder().build();
 
     @Override
-    public String provide(Message message) {
+    public CompletableFuture<String> provide(Message message) {
+        CompletableFuture<String> log = new CompletableFuture<>();
         for (MessageAttachment attachment : message.getAttachments()) {
             if (attachment.getFileName().contains("log")) {
-                try {
-                    String log = new String(attachment.downloadAsByteArray().get());
-                    RequestBody body = RequestBody.create(MediaType.parse("text/plain"), log);
+                attachment.downloadAsByteArray().thenAcceptAsync(bytes -> {
+                    String logString = new String(bytes);
+                    log.complete(logString);
 
+                    RequestBody body = RequestBody.create(MediaType.parse("text/plain"), logString);
                     Request request = new Request.Builder()
                             .url("https://hasteb.in/documents")
                             .post(body)
@@ -43,14 +45,10 @@ public class FileProvider implements LogProvider {
                             message.getChannel().sendMessage(embed);
                         }
                     });
-
-                    return log;
-                } catch (InterruptedException | ExecutionException e) {
-                    e.printStackTrace();
-                }
+                });
             }
         }
-        return null;
+        return log;
     }
 
 }

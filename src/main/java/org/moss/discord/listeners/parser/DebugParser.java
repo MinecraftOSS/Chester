@@ -20,7 +20,7 @@ public class DebugParser implements LogParser {
             String line = log.nextLine();
             if (line.contains("This server is running")) {
                 embed.addInlineField("Minecraft", "`" + line.substring(line.indexOf("MC:") + 3, line.indexOf(")")) + "`" );
-                embed.addInlineField("Server Software", "`" + line.substring(line.indexOf("git-"), line.indexOf("(") - 2) + "`");
+                embed.addInlineField("Server Software", "`" + line.substring(line.indexOf("git-"), line.indexOf("(") - 1) + "`");
             }
 
             for (String plugin : mossPlugins) {

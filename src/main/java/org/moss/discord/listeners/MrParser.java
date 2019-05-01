@@ -15,16 +15,19 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.concurrent.CompletableFuture;
+import java.util.function.Consumer;
 
 public class MrParser implements MessageCreateListener {
 
     private static final Logger logger = LoggerFactory.getLogger(MrParser.class);
     private DiscordApi api;
 
-    /* Providers and Parsers */
+    /* Providers */
     private PasteProvider hastebin = new PasteProvider();
     private FileProvider file = new FileProvider();
 
+    /* Parsers */
     private DebugParser debug = new DebugParser();
     private TruAntiLagParser truAntiLag = new TruAntiLagParser();
 
@@ -43,19 +46,13 @@ public class MrParser implements MessageCreateListener {
 
     @Override
     public void onMessageCreate(MessageCreateEvent messageCreateEvent) {
-        String log = null;
         for (LogProvider provider : providers) {
-            log = provider.provide(messageCreateEvent.getMessage());
-            if (log != null) {
-                break;
-            }
-        }
-        if (log == null) {
-            return;
-        }
-
-        for (LogParser parser : parsers) {
-            parser.evaluate(messageCreateEvent.getMessage(), new Scanner(log));
+            CompletableFuture<String> futureLog = provider.provide(messageCreateEvent.getMessage());
+            futureLog.thenAcceptAsync(log -> {
+                for (LogParser parser : parsers) {
+                    parser.evaluate(messageCreateEvent.getMessage(), new Scanner(log));
+                }
+            });
         }
     }
 }
