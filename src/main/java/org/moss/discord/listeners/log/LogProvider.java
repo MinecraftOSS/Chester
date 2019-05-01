@@ -1,4 +1,4 @@
-package org.moss.discord.listeners.parser.provider;
+package org.moss.discord.listeners.log;
 
 import org.javacord.api.entity.message.Message;
 

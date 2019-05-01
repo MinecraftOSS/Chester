@@ -3,12 +3,12 @@ package org.moss.discord.listeners;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.javacord.api.listener.message.MessageCreateListener;
-import org.moss.discord.listeners.parser.DebugParser;
-import org.moss.discord.listeners.parser.TruAntiLagParser;
-import org.moss.discord.listeners.parser.provider.FileProvider;
-import org.moss.discord.listeners.parser.provider.PasteProvider;
-import org.moss.discord.listeners.parser.LogParser;
-import org.moss.discord.listeners.parser.provider.LogProvider;
+import org.moss.discord.listeners.log.parsers.DebugParser;
+import org.moss.discord.listeners.log.parsers.TruAntiLagParser;
+import org.moss.discord.listeners.log.providers.FileProvider;
+import org.moss.discord.listeners.log.providers.PasteProvider;
+import org.moss.discord.listeners.log.LogParser;
+import org.moss.discord.listeners.log.LogProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.Consumer;
 
 public class MrParser implements MessageCreateListener {
 

@@ -1,7 +1,8 @@
-package org.moss.discord.listeners.parser;
+package org.moss.discord.listeners.log.parsers;
 
 import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
+import org.moss.discord.listeners.log.LogParser;
 
 import java.awt.*;
 import java.util.Scanner;

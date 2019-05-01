@@ -1,4 +1,4 @@
-package org.moss.discord.listeners.parser.provider;
+package org.moss.discord.listeners.log.providers;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -6,6 +6,7 @@ import okhttp3.*;
 import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.message.MessageAttachment;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
+import org.moss.discord.listeners.log.LogProvider;
 
 import java.awt.Color;
 import java.io.IOException;
@@ -31,6 +32,7 @@ public class FileProvider implements LogProvider {
                             .url("https://hasteb.in/documents")
                             .post(body)
                             .build();
+
                     client.newCall(request).enqueue(new Callback() {
                         @Override
                         public void onFailure(Call call, IOException e) {}

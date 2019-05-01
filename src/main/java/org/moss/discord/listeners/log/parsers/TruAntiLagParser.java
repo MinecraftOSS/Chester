@@ -1,4 +1,4 @@
-package org.moss.discord.listeners.parser;
+package org.moss.discord.listeners.log.parsers;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -6,6 +6,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
+import org.moss.discord.listeners.log.LogParser;
 
 import java.awt.*;
 import java.io.IOException;

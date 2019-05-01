@@ -1,7 +1,8 @@
-package org.moss.discord.listeners.parser.provider;
+package org.moss.discord.listeners.log.providers;
 
 import okhttp3.*;
 import org.javacord.api.entity.message.Message;
+import org.moss.discord.listeners.log.LogProvider;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
