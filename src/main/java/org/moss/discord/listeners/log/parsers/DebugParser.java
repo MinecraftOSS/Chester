@@ -27,7 +27,7 @@ public class DebugParser implements LogParser {
 
             if (line.contains("Loading ")) {
                 for (String plugin : mossPlugins) {
-                    if (line.contains(plugin)) {
+                    if (line.contains("Loading " + plugin)) {
                         log.addPlugin(new LogData.Plugin(plugin, line.substring(line.lastIndexOf(" "))));
                     }
                 }
