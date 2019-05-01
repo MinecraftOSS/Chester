@@ -6,6 +6,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
+import org.moss.discord.listeners.log.LogData;
 import org.moss.discord.listeners.log.LogParser;
 
 import java.awt.*;
@@ -35,27 +36,28 @@ public class TruAntiLagParser implements LogParser {
     }
 
     @Override
-    public void evaluate(Message message, Scanner log) {
-        boolean populated = false;
-
+    public void evaluate(LogData log) {
+        boolean found = false;
         EmbedBuilder embed = new EmbedBuilder();
         embed.setTitle("**TruAntiLag xPerience Alert!**");
         embed.setColor(Color.RED);
 
-        while (log.hasNextLine()) {
-            String line = log.nextLine();
+        Scanner scanner = log.getLog();
+        while (scanner.hasNextLine()) {
+            String line = scanner.nextLine();
             Iterator<Map.Entry<String, JsonNode>> iterator = laggers.fields();
+
             while (iterator.hasNext()) {
                 Map.Entry<String, JsonNode> lagger = iterator.next();
                 if (line.contains(lagger.getKey())) {
-                    populated = true;
+                    found = true;
                     embed.addField(lagger.getKey(), lagger.getValue().get("description").asText());
                 }
             }
         }
 
-        if (populated) {
-            message.getChannel().sendMessage(embed);
+        if (found) {
+            log.getMessage().getChannel().sendMessage(embed);
         }
     }
 

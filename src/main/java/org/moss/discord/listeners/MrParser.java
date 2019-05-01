@@ -3,6 +3,7 @@ package org.moss.discord.listeners;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.javacord.api.listener.message.MessageCreateListener;
+import org.moss.discord.listeners.log.LogData;
 import org.moss.discord.listeners.log.parsers.DebugParser;
 import org.moss.discord.listeners.log.parsers.TruAntiLagParser;
 import org.moss.discord.listeners.log.providers.FileProvider;
@@ -48,8 +49,9 @@ public class MrParser implements MessageCreateListener {
         for (LogProvider provider : providers) {
             CompletableFuture<String> futureLog = provider.provide(messageCreateEvent.getMessage());
             futureLog.thenAcceptAsync(log -> {
+                LogData logData = new LogData(log, messageCreateEvent.getMessage());
                 for (LogParser parser : parsers) {
-                    parser.evaluate(messageCreateEvent.getMessage(), new Scanner(log));
+                    parser.evaluate(logData);
                 }
             });
         }
