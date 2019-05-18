@@ -1,58 +1,70 @@
 package org.moss.discord.commands;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import de.btobastian.sdcf4j.Command;
 import de.btobastian.sdcf4j.CommandExecutor;
 import org.apache.commons.lang.ArrayUtils;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.channel.TextChannel;
-import org.javacord.api.entity.message.embed.Embed;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
-import org.javacord.api.entity.permission.Role;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.javacord.api.listener.message.MessageCreateListener;
-import org.moss.discord.Constants;
 import org.moss.discord.storage.FactoidStorage;
 import org.moss.discord.util.EmbedUtil;
 import org.moss.discord.util.KeywordsUtil;
 
 import java.awt.*;
-import java.util.Arrays;
-import java.util.IllegalFormatException;
-import java.util.List;
+import java.io.File;
+import java.io.IOException;
+import java.sql.Date;
+import java.time.Instant;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.StringJoiner;
 
 public class TagCommand implements CommandExecutor, MessageCreateListener {
 
-    private FactoidStorage storage = new FactoidStorage();
+    private Map<String, Factoid> tagMap = new HashMap<>();
     EmbedUtil util = new EmbedUtil();
+    private ObjectMapper mapper = new ObjectMapper();
 
     public TagCommand(DiscordApi api) {
         api.addListener(this);
+        try {
+            JsonNode jsonTags = mapper.readTree(new File("./factoids.json")).get("tags");
+            for (int i = 0; i < jsonTags.size(); i++) {
+                Factoid userTag = mapper.readValue(jsonTags.get(i).toString(), Factoid.class);
+                tagMap.put(userTag.name, userTag);
+            }
+        } catch (Exception e) {
+            /*
+            Import factoids to the new storage format.
+             */
+            FactoidStorage storage = new FactoidStorage();
+            for (String s : storage.getMap().keySet()) {
+                Factoid newTag = new Factoid().setName(s).setContent(storage.getTag(s));
+                tagMap.put(s, newTag);
+            }
+            saveTags();
+            e.printStackTrace();
+        }
     }
-
-//    @Command(aliases = {"!tag", "?tag", "?"}, usage = "!tag <name>", description = "Send the tag message to the channel.")
-//    public void onTag(DiscordApi api, TextChannel channel, String[] args) {
-//        if (args.length >= 1  && storage.isFactoid(args[0].toLowerCase())) {
-//            if (args.length > 1) {
-//                String[] tagArgs = Arrays.copyOfRange(args, 1, args.length);
-//                try {
-//                    channel.sendMessage(String.format(getFactoid(args[0]), (Object[]) tagArgs));
-//                } catch (IllegalFormatException e) {
-//                    // Some Joker -_- passed in some weird arguments
-//                    return;
-//                }
-//                return;
-//            }
-//            channel.sendMessage(getFactoid(args[0]));
-//        }
-//    }
 
     @Command(aliases = {"!tagraw", "?tagraw"}, usage = "!tagraw <name>", description = "Send the raw tag message to the channel.")
     public void onTagRaw(DiscordApi api, TextChannel channel, String[] args, User user, Server server) {
-        if (args.length >= 1  && storage.isFactoid(args[0].toLowerCase()) && server.canKickUsers(user)) {
-            channel.sendMessage("```"+getFactoid(args[0])+"```");
+        if (args.length >= 1 && tagMap.containsKey(args[0].toLowerCase()) && server.canKickUsers(user)) {
+            Factoid userTag = tagMap.get(args[0].toLowerCase());
+            channel.sendMessage(user.getMentionTag(), new EmbedBuilder().setTitle(args[0] + " info").addInlineField("Created by", String.format("<@%s>", userTag.owner)).addInlineField("Modified on", Date.from(Instant.parse(userTag.modified)).toString()).addField("Content",String.format("```%s```", userTag.content)));
+        }
+    }
+
+    @Command(aliases = {"!tagfile", "?tagfile"}, usage = "!tagfile", description = "Gets the tag file")
+    public void onTagFile(TextChannel channel, User user, Server server) {
+        if (server.canBanUsers(user)) {
+            channel.sendMessage(new File("./factoids.json"));
         }
     }
 
@@ -60,7 +72,7 @@ public class TagCommand implements CommandExecutor, MessageCreateListener {
     public void onList(DiscordApi api, TextChannel channel, Server server, User user) {
         if (!server.canKickUsers(user)) return;
         String s = "";
-        for (String key : storage.getMap().keySet()) {
+        for (String key : tagMap.keySet()) {
             s += String.format("`%s` ", key);
         }
         channel.sendMessage(new EmbedBuilder().addField("Active Tags", s).setColor(Color.GREEN));
@@ -69,11 +81,14 @@ public class TagCommand implements CommandExecutor, MessageCreateListener {
     @Command(aliases = {"!tagset", "?tagset"}, usage = "!tagset <name> [message]", description = "Set a new tag")
     public void onSet(DiscordApi api, TextChannel channel, String[] args, User user, Server server) {
         if (args.length >= 2 && server.canKickUsers(user)) {
+            String key = args[0].toLowerCase();
             StringJoiner sb = new StringJoiner(" ");
             for(int i = 1; i < args.length; i++) {
                 sb.add(args[i]);
             }
-            storage.set(args[0].toLowerCase(), sb.toString());
+            Factoid newTag = new Factoid().setName(key).setContent(sb.toString()).setOwner(user.getIdAsString());
+            tagMap.put(key, newTag);
+            saveTags();
             channel.sendMessage(new EmbedBuilder().setTitle("Tag set!").setColor(Color.GREEN));
         }
     }
@@ -81,7 +96,8 @@ public class TagCommand implements CommandExecutor, MessageCreateListener {
     @Command(aliases = {"!tagunset", "?tagunset"}, usage = "!tagunset <name> [message]", description = "Unset a tag")
     public void onUnset(DiscordApi api, TextChannel channel, String[] args, User user, Server server) {
         if (args.length >= 1 && server.canKickUsers(user)) {
-            storage.unset(args[0].toLowerCase());
+            tagMap.remove(args[0].toLowerCase());
+            saveTags();
             channel.sendMessage(new EmbedBuilder().setTitle("Tag removed!").setColor(Color.GREEN));
         }
     }
@@ -93,7 +109,7 @@ public class TagCommand implements CommandExecutor, MessageCreateListener {
             String[] args = message.split(" ");
             String tag = args[0].substring(1).toLowerCase();
             args = (String[]) ArrayUtils.remove(args, 0);
-            if (storage.isFactoid(tag)) {
+            if (tagMap.containsKey(tag)) {
                 String factoid = getFactoid(tag);
                 if (factoid.startsWith("<staff>")) {
                     factoid = factoid.substring(7);
@@ -113,8 +129,45 @@ public class TagCommand implements CommandExecutor, MessageCreateListener {
     }
 
     public String getFactoid(String tag) {
-        String taag = storage.getTag(tag.toLowerCase());
-        return taag.startsWith("?") ? storage.getTag(taag.split(" ")[0].substring(1).toLowerCase()) : taag;
+        String taag = tagMap.get(tag.toLowerCase()).content;
+        return taag.startsWith("?") ? tagMap.get(taag.split(" ")[0].substring(1).toLowerCase()).content : taag;
+    }
+
+    public void saveTags() {
+        try {
+            mapper.writerWithDefaultPrettyPrinter().withRootName("tags").writeValue(new File("./factoids.json"), tagMap.values());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    static class Factoid {
+        public String name;
+        public String content;
+        public String owner;
+        public String modified;
+
+        public Factoid setName(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public Factoid setOwner(String owner) {
+            this.owner = owner;
+            return this;
+        }
+
+        public Factoid setContent(String content) {
+            this.content = content;
+            return this;
+        }
+
+        Factoid() {
+            this.owner = "Chester";
+            this.name = "";
+            this.content = "";
+            this.modified = Instant.now().toString();
+        }
     }
 
 }

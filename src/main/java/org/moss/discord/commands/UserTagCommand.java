@@ -51,7 +51,7 @@ public class UserTagCommand implements CommandExecutor, MessageCreateListener {
         for (String key : tagMap.keySet()) {
             s += String.format("`%s` ", key);
         }
-        channel.sendMessage(new EmbedBuilder().addField("Active Tags", s).setColor(Color.GREEN));
+        channel.sendMessage(new EmbedBuilder().addField("Active User Tags", s).setColor(Color.GREEN));
     }
 
     @Command(aliases = {"!utagset"}, usage = "!utagset <name> [message]", description = "Set a user tag")
@@ -74,7 +74,7 @@ public class UserTagCommand implements CommandExecutor, MessageCreateListener {
             UserTag newTag = new UserTag().setName(key).setContent(sb.toString()).setOwner(user.getIdAsString());
             tagMap.put(key, newTag);
             saveTags();
-            channel.sendMessage(new EmbedBuilder().setTitle("Tag set!").setColor(Color.GREEN));
+            channel.sendMessage(new EmbedBuilder().setTitle("User Tag set!").setColor(Color.GREEN));
         }
     }
 

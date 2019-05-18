@@ -24,6 +24,7 @@ public class KeywordsUtil {
                 .replace("{USER}", user.getDisplayName(server))
                 .replace("{USER_TAG}", user.getMentionTag())
                 .replace("{TIMESTAMP_NOW}", Instant.now().toString())
-                .replace("{ARGS}", String.join(" ", args));
+                .replace("{ARGS}", String.join(" ", args))
+                .replace("{USER_COUNT}", String.valueOf(server.getMemberCount()));
     }
 }
