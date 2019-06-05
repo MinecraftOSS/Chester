@@ -1,8 +1,13 @@
 {
-  "tags" : [ {
-    "name" : "laxwashere",
-    "content" : "I ❤ LaxWasHere",
-    "owner" : "171458204167831552",
-    "modified" : "2019-04-26T05:22:29.955Z"
-  } ]
+  "data" : {
+    "tagMap" : {
+      "laxwashere" : {
+        "name" : "laxwashere",
+        "content" : "I ❤ LaxWasHere",
+        "owner" : "171458204167831552",
+        "modified" : "2019-04-26T05:22:29.955Z"
+      }
+    },
+    "whitelist" : [ "171458204167831552" ]
+  }
 }

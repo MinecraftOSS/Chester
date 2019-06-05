@@ -7,6 +7,8 @@ import de.btobastian.sdcf4j.CommandExecutor;
 import org.apache.commons.lang.ArrayUtils;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.channel.TextChannel;
+import org.javacord.api.entity.message.Message;
+import org.javacord.api.entity.message.MessageAuthor;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
@@ -23,22 +25,21 @@ import java.sql.Date;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.StringJoiner;
+import java.util.TreeSet;
 
 public class UserTagCommand implements CommandExecutor, MessageCreateListener {
 
-    private Map<String, UserTag> tagMap = new HashMap<>();
+    private UserTagData data = new UserTagData();
     private EmbedUtil embedUtil = new EmbedUtil();
     private ObjectMapper mapper = new ObjectMapper();
 
     public UserTagCommand(DiscordApi api) {
         api.addListener(this);
         try {
-            JsonNode jsonTags = mapper.readTree(new File("./user_tags.json")).get("tags");
-            for (int i = 0; i < jsonTags.size(); i++) {
-                UserTag userTag = mapper.readValue(jsonTags.get(i).toString(), UserTag.class);
-                tagMap.put(userTag.name, userTag);
-            }
+            JsonNode jsonTags = mapper.readTree(new File("./user_tags.json")).get("data");
+            data = mapper.readValue(jsonTags.toString(), UserTagData.class);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -48,11 +49,12 @@ public class UserTagCommand implements CommandExecutor, MessageCreateListener {
     public void onList(DiscordApi api, TextChannel channel, Server server, User user) {
         if (!server.canKickUsers(user)) return;
         String s = "";
-        for (String key : tagMap.keySet()) {
+        for (String key : data.tagMap.keySet()) {
             s += String.format("`%s` ", key);
         }
-        channel.sendMessage(new EmbedBuilder().addField("Active User Tags", s).setColor(Color.GREEN));
+        channel.sendMessage(new EmbedBuilder().addField("Active User Tags", s).setColor(Color.GREEN).setFooter(String.format("%d users whitelisted", data.whitelist.size())));
     }
+
 
     @Command(aliases = {"!utagset"}, usage = "!utagset <name> [message]", description = "Set a user tag")
     public void onSet(DiscordApi api, TextChannel channel, String[] args, User user, Server server) {
@@ -60,8 +62,8 @@ public class UserTagCommand implements CommandExecutor, MessageCreateListener {
         if (!channel.getIdAsString().equals(Constants.CHANNEL_RANDOM) && !server.canKickUsers(user)) {
             return;
         }
-        if (args.length >= 2 && tagMap.containsKey(key)) {
-            if (!user.getIdAsString().equals(tagMap.get(key).owner)) {
+        if (args.length >= 2 && data.tagMap.containsKey(key)) {
+            if (!user.getIdAsString().equals(data.tagMap.get(key).owner)) {
                 channel.sendMessage(new EmbedBuilder().setTitle("Tag already exist").setColor(Color.RED));
                 return;
             }
@@ -72,7 +74,7 @@ public class UserTagCommand implements CommandExecutor, MessageCreateListener {
                 sb.add(args[i]);
             }
             UserTag newTag = new UserTag().setName(key).setContent(sb.toString()).setOwner(user.getIdAsString());
-            tagMap.put(key, newTag);
+            data.tagMap.put(key, newTag);
             saveTags();
             channel.sendMessage(new EmbedBuilder().setTitle("User Tag set!").setColor(Color.GREEN));
         }
@@ -80,9 +82,9 @@ public class UserTagCommand implements CommandExecutor, MessageCreateListener {
 
     @Command(aliases = {"!utagunset", "!tagrelease"}, usage = "!utagunset <name> [message]", description = "Unset a user tag")
     public void onUnset(DiscordApi api, TextChannel channel, String[] args, User user, Server server) {
-        if (args.length >= 1 && tagMap.containsKey(args[0].toLowerCase())) {
-            if (tagMap.get(args[0].toLowerCase()).owner.equals(user.getIdAsString()) || server.canKickUsers(user)) {
-                tagMap.remove(args[0].toLowerCase());
+        if (args.length >= 1 && data.tagMap.containsKey(args[0].toLowerCase())) {
+            if (data.tagMap.get(args[0].toLowerCase()).owner.equals(user.getIdAsString()) || server.canKickUsers(user)) {
+                data.tagMap.remove(args[0].toLowerCase());
                 saveTags();
                 channel.sendMessage(new EmbedBuilder().setTitle("Tag released!").setColor(Color.GREEN));
             } else {
@@ -96,15 +98,32 @@ public class UserTagCommand implements CommandExecutor, MessageCreateListener {
         if (!channel.getIdAsString().equals(Constants.CHANNEL_RANDOM) && !server.canKickUsers(user)) {
             return;
         }
-        if (args.length >= 1 && tagMap.containsKey(args[0].toLowerCase())) {
-            UserTag userTag = tagMap.get(args[0].toLowerCase());
+        if (args.length >= 1 && data.tagMap.containsKey(args[0].toLowerCase())) {
+            UserTag userTag = data.tagMap.get(args[0].toLowerCase());
             channel.sendMessage(user.getMentionTag(), new EmbedBuilder().setTitle(args[0] + " info").addInlineField("Created by", String.format("<@%s>", userTag.owner)).addInlineField("Modified on", Date.from(Instant.parse(userTag.modified)).toString()).addField("Content",String.format("```%s```", userTag.content)));
+        }
+    }
+
+    @Command(aliases = {"!utw"}, usage = "!utw", description = "Adds user to user tag whitelist.")
+    public void onadd(DiscordApi api, TextChannel channel, Server server, MessageAuthor author, Message message) {
+        if (author.canKickUsersFromServer() && message.getMentionedUsers().size() >= 1) {
+            for (User target : message.getMentionedUsers()) {
+                String id = target.getIdAsString();
+                if (data.whitelist.contains(id)) {
+                    data.whitelist.remove(id);
+                } else {
+                    data.whitelist.add(id);
+                }
+            }
+            saveTags();
+            channel.sendMessage(new EmbedBuilder().setColor(Color.GREEN).setTitle("User(s) added/removed"));
         }
     }
 
     public void saveTags() {
         try {
-            mapper.writerWithDefaultPrettyPrinter().withRootName("tags").writeValue(new File("./user_tags.json"), tagMap.values());
+            mapper.writerWithDefaultPrettyPrinter().withRootName("data").writeValue(new File("./user_tags.json"), data);
+            //mapper.writerWithDefaultPrettyPrinter().withRootName("whitelist").writeValue(new File("./user_tags.json"), whitelist);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -117,8 +136,8 @@ public class UserTagCommand implements CommandExecutor, MessageCreateListener {
             String[] args = message.split(" ");
             String tag = args[0].substring(2).toLowerCase();
             args = (String[]) ArrayUtils.remove(args, 0);
-            if (tagMap.containsKey(tag)) {
-                String factoid = tagMap.get(tag).content;
+            if (data.tagMap.containsKey(tag)) {
+                String factoid = data.tagMap.get(tag).content;
                 if (factoid.startsWith("<del>")) {
                     ev.getMessage().delete();
                     factoid = factoid.substring(5);
@@ -130,6 +149,11 @@ public class UserTagCommand implements CommandExecutor, MessageCreateListener {
                 }
             }
         }
+    }
+
+    static class UserTagData {
+        public Map<String, UserTag> tagMap = new HashMap<>();
+        public Set<String> whitelist = new TreeSet();
     }
 
     static class UserTag {
