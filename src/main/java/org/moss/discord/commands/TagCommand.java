@@ -21,8 +21,11 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.Date;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.StringJoiner;
 
 public class TagCommand implements CommandExecutor, MessageCreateListener {
@@ -72,7 +75,10 @@ public class TagCommand implements CommandExecutor, MessageCreateListener {
     public void onList(DiscordApi api, TextChannel channel, Server server, User user) {
         if (!server.canKickUsers(user)) return;
         String s = "";
-        for (String key : tagMap.keySet()) {
+        Set<String> tags = tagMap.keySet();
+        ArrayList<String> tagsList = new ArrayList<>(tags);
+        Collections.sort(tagsList);
+        for (String key : tagsList) {
             s += String.format("`%s` ", key);
         }
         channel.sendMessage(new EmbedBuilder().addField("Active Tags", s).setColor(Color.GREEN));
