@@ -25,7 +25,7 @@ public class BanCommand implements CommandExecutor {
             } else if (args.length == 0) {
                 channel.sendMessage("You need to mention a user and specify a reason to ban!");
             }
-        }
+        } else message.addReaction("\uD83D\uDC4E");
     }
 
 }

@@ -44,7 +44,7 @@ public class SpigetCommand implements CommandExecutor {
                 embed.setColor(Color.GREEN);
                 embed.addField("Results", result.toString());
 
-                embed.setTimestamp();
+                embed.setTimestampToNow();
 
             } catch (Exception e) {
                 e.printStackTrace();

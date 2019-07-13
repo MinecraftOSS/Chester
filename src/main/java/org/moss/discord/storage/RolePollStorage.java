@@ -16,7 +16,7 @@ public class RolePollStorage extends KeyValStorage {
         return exists(Long.toString(messageId));
     }
 
-    public String getRole(long messageId) {
-        return get(Long.toString(messageId)).toString();
+    public String getChannel(String messageId) {
+        return get(messageId).toString();
     }
 }
