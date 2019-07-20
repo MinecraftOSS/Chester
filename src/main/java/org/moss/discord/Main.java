@@ -9,6 +9,7 @@ import org.moss.discord.commands.BStatsCommand;
 import org.moss.discord.commands.EmbedCommand;
 
 import org.moss.discord.commands.SayCommand;
+import org.moss.discord.commands.SpaceXCommand;
 import org.moss.discord.commands.UserTagCommand;
 import org.moss.discord.listeners.StarboardListener;
 import org.moss.discord.commands.GithubCommand;
@@ -64,6 +65,7 @@ public class Main {
         commandHandler.registerCommand(new EmbedCommand());
         commandHandler.registerCommand(new SayCommand());
         commandHandler.registerCommand(new UserTagCommand(api));
+        commandHandler.registerCommand(new SpaceXCommand());
 
         // Register listeners
         api.addListener(new ModLogListeners(api));
