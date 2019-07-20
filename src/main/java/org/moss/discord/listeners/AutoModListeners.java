@@ -46,22 +46,29 @@ public class AutoModListeners implements MessageCreateListener {
             "You will now be terminated",
             "Prepare for your termination",
             "We're coming for you",
-            "You've been added to the naughty list"
+            "You've been added to the naughty list",
+            "EXTERMINATE!",
+            "The ban-hammer awaits you"
     };
 
     String[] nopes = {
             "https://i.imgur.com/z8UBrh5.png",
             "https://i.imgur.com/J015ZK5.png",
-            "https://i.imgur.com/RJAtyAg.png"
+            "https://i.imgur.com/RJAtyAg.png",
+            "https://i.imgur.com/aPVrnKl.gif",
+            "https://media0.giphy.com/media/rFvtiIevmj0zu/giphy.gif",
+            "https://i.imgur.com/dTMWtkp.png",
+            "https://i.imgur.com/KbsSxlR.gif",
+            "https://i.imgur.com/8r5mriG.jpg"
     };
 
-    List<String> nodonts = new ArrayList<>(Arrays.asList("430125651559710720", "430125667062120449", "442304736587415574"));
+    List<String> nodonts = new ArrayList<>(Arrays.asList("430125651559710720", "430125667062120449", "442304736587415574", "479919881702342676", "479919848177139713"));
 
     public AutoModListeners(DiscordApi api) {
         this.api = api;
         modChannel = api.getTextChannelById(Constants.CHANNEL_MODLOG);
         blacklistedFiles = new ArrayList<>(Arrays.asList(".jar", ".exe", ".zip")); //TODO configurable
-        censoredWords = new ArrayList<>(Arrays.asList("discord.gg", "discordapp.com/invite", "blackspigot", "amazingsexdating.com", "whatsappx.com", "bestoffersx.com", "kidsearncash.com", "l10n\\_2\\.x"));
+        censoredWords = new ArrayList<>(Arrays.asList("discord.gg", "discordapp.com/invite", "blackspigot", "amazingsexdating.com", "whatsappx.com", "bestoffersx.com", "kidsearncash.com", "l10n\\_2\\.x", "38875", "getbukkit"));
     }
 
     @Override
@@ -113,9 +120,9 @@ public class AutoModListeners implements MessageCreateListener {
                 if (message.getServer().get().canKickUsers(user) && !userIsActive(user.getId())) {
                     EmbedBuilder embed = new EmbedBuilder();
                     embed.setColor(Color.RED);
-                    embed.setImage(nopes[ThreadLocalRandom.current().nextInt(nopes.length-1)]);
+                    embed.setImage(nopes[ThreadLocalRandom.current().nextInt(nopes.length)]);
                     embed.setDescription("It looks like you're trying to randomly ping a staff");
-                    embed.setFooter(donts[ThreadLocalRandom.current().nextInt(donts.length-1)]);
+                    embed.setFooter(donts[ThreadLocalRandom.current().nextInt(donts.length)]);
                     message.getChannel().sendMessage(message.getUserAuthor().get().getMentionTag(),embed).thenAcceptAsync(msg -> api.getThreadPool().getScheduler().schedule((Callable<CompletableFuture<Void>>) msg::delete, 30, TimeUnit.MINUTES));
                     message.getUserAuthor().get().sendMessage(embed);
                     break;
