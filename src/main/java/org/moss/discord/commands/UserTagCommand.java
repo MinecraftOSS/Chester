@@ -23,6 +23,8 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.Date;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -49,7 +51,9 @@ public class UserTagCommand implements CommandExecutor, MessageCreateListener {
     public void onList(DiscordApi api, TextChannel channel, Server server, User user) {
         if (!server.canKickUsers(user)) return;
         String s = "";
-        for (String key : data.tagMap.keySet()) {
+        ArrayList<String> tagsList = new ArrayList<>(data.tagMap.keySet());
+        Collections.sort(tagsList);
+        for (String key : tagsList) {
             s += String.format("`%s` ", key);
         }
         channel.sendMessage(new EmbedBuilder().addField("Active User Tags", s).setColor(Color.GREEN).setFooter(String.format("%d users whitelisted", data.whitelist.size())));
@@ -60,6 +64,10 @@ public class UserTagCommand implements CommandExecutor, MessageCreateListener {
     public void onSet(DiscordApi api, TextChannel channel, String[] args, User user, Server server) {
         String key = args[0].toLowerCase();
         if (!channel.getIdAsString().equals(Constants.CHANNEL_RANDOM) && !server.canKickUsers(user)) {
+            return;
+        }
+        if (key.contains("\\n")) {
+            channel.sendMessage("Please do not be a DoNotSpamPls, pls");
             return;
         }
         if (args.length >= 2 && data.tagMap.containsKey(key)) {
