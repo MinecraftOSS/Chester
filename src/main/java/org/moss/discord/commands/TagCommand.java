@@ -12,7 +12,6 @@ import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.javacord.api.listener.message.MessageCreateListener;
-import org.moss.discord.storage.FactoidStorage;
 import org.moss.discord.util.EmbedUtil;
 import org.moss.discord.util.KeywordsUtil;
 
@@ -21,6 +20,8 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.Date;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.StringJoiner;
@@ -40,15 +41,6 @@ public class TagCommand implements CommandExecutor, MessageCreateListener {
                 tagMap.put(userTag.name, userTag);
             }
         } catch (Exception e) {
-            /*
-            Import factoids to the new storage format.
-             */
-            FactoidStorage storage = new FactoidStorage();
-            for (String s : storage.getMap().keySet()) {
-                Factoid newTag = new Factoid().setName(s).setContent(storage.getTag(s));
-                tagMap.put(s, newTag);
-            }
-            saveTags();
             e.printStackTrace();
         }
     }
@@ -72,7 +64,9 @@ public class TagCommand implements CommandExecutor, MessageCreateListener {
     public void onList(DiscordApi api, TextChannel channel, Server server, User user) {
         if (!server.canKickUsers(user)) return;
         String s = "";
-        for (String key : tagMap.keySet()) {
+        ArrayList<String> tagsList = new ArrayList<>(tagMap.keySet());
+        Collections.sort(tagsList);
+        for (String key : tagsList) {
             s += String.format("`%s` ", key);
         }
         channel.sendMessage(new EmbedBuilder().addField("Active Tags", s).setColor(Color.GREEN));
@@ -82,6 +76,10 @@ public class TagCommand implements CommandExecutor, MessageCreateListener {
     public void onSet(DiscordApi api, TextChannel channel, String[] args, User user, Server server) {
         if (args.length >= 2 && server.canKickUsers(user)) {
             String key = args[0].toLowerCase();
+            if (key.contains("\\n")) {
+                channel.sendMessage("Please do not be a DoNotSpamPls, pls");
+                return;
+            }
             StringJoiner sb = new StringJoiner(" ");
             for(int i = 1; i < args.length; i++) {
                 sb.add(args[i]);
