@@ -1,5 +1,6 @@
 package org.moss.discord.commands.moderation;
 
+import org.apache.commons.lang.StringUtils;
 import org.javacord.api.entity.channel.TextChannel;
 
 import de.btobastian.sdcf4j.Command;
@@ -13,8 +14,8 @@ public class PruneCommand implements CommandExecutor {
 
     @Command(aliases = {"!prune"}, usage = "!prune <amount>", description = "Prunes a certain amount of messages (between 2 and 100)")
     public void onCommand(TextChannel channel, String[] args, MessageAuthor author, Message message) {
-        if (author.canDeleteMessage()) {
-            int amount = Integer.parseInt(args[0]);
+        if (author.canKickUsersFromServer() && StringUtils.isNumeric(args[0])) {
+            int amount = Integer.parseInt(args[0])+1;
 
             channel.getMessages(amount).thenCompose(MessageSet::deleteAll).exceptionally(ExceptionLogger.get());
             channel.sendMessage("Deleted " + amount + " messages.");
