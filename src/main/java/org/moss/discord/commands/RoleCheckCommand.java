@@ -9,14 +9,14 @@ import org.javacord.api.entity.permission.Role;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
 
+import java.awt.*;
 import java.util.stream.Collectors;
 
 public class RoleCheckCommand implements CommandExecutor {
 
     @Command(aliases = {"!rolecheck", ".rolecheck"}, usage = "!rolecheck <User>", description = "Checks users' role")
-    public void onCommand(TextChannel channel, String[] args, Message message, Server server) {
+    public void onCheck(TextChannel channel, String[] args, Message message, Server server) {
         if (args.length >= 1) {
-            String string = "User Roles```";
             if (message.getMentionedUsers().size() >= 1) {
                 for (User user : message.getMentionedUsers()) {
                     channel.sendMessage("User Roles for " + user.getName() + String.format("```%s```", user.getRoles(server).stream().map(Role::getName).collect(Collectors.joining(", "))));
@@ -31,4 +31,13 @@ public class RoleCheckCommand implements CommandExecutor {
             }
         }
     }
+
+    @Command(aliases = {"!rolelist"}, usage = "Role List", description = "Role List")
+    public void onList(TextChannel channel, User user, Server server) {
+        if (server.canBanUsers(user)) {
+            String roles = server.getRoles().stream().map(role -> role.getName() + " = " + role.getId()).collect(Collectors.joining("\n"));
+            channel.sendMessage(new EmbedBuilder().setTitle("Roles").setColor(Color.GREEN).addField("Name | ID", roles));
+        }
+    }
+
 }
