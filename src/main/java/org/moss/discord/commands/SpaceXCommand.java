@@ -39,7 +39,9 @@ public class SpaceXCommand implements CommandExecutor {
                     linkText += (String.format("[%s](%s)", WordUtils.capitalize(s.replace("_", " ")), node.get("links").get(s).asText()))+"\n";
                 }
             }
-            builder.addField("Links", linkText);
+            if (!linkText.equalsIgnoreCase("")) {
+                builder.addField("Links", linkText);
+            }
             channel.sendMessage(user.getMentionTag(), builder);
         } catch (Exception e) {
             e.printStackTrace();
