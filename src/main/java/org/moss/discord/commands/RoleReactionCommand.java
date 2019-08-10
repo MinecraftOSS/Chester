@@ -82,7 +82,7 @@ public class RoleReactionCommand implements CommandExecutor, ReactionAddListener
                     case "493936113837408256": //guilds
                         broadcast(String.join(" ", args), channel, server.getRoleById(Constants.ROLE_GUILD_UPDATES).get());
                         break;
-                    case "479919913067216897": //MLWC
+                    case "479919913067216897": //LWCX
                         broadcast(String.join(" ", args), channel, server.getRoleById(Constants.ROLE_MLWC_UPDATES).get());
                         break;
                     case "430125681645453325": //NVTFR
@@ -120,7 +120,7 @@ public class RoleReactionCommand implements CommandExecutor, ReactionAddListener
                 "`Click the \uD83C\uDF4D to subscribe to EssentialsX`" +
                         "\n`Click the \uD83C\uDF6A to subscribe to FactionsUUID`" +
                         "\n`Click the \uD83C\uDF54 to subscribe to PlayerVaults`" +
-                        "\n`Click the \ud83C\uDF2F to subscribe to Modern LWC`" +
+                        "\n`Click the \ud83C\uDF2F to subscribe to LWC Extended`" +
                         "\n`Click the \uD83D\uDC8E to subscribe to Guilds`" +
                         "\n`Click the \uD83C\uDF7A to subscribe to NuVotifier`");
         return embed;
