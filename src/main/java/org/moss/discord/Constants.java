@@ -14,6 +14,7 @@ public class Constants {
     public static final String CHANNEL_STARBOARD = "431239339796594688";
     public static final String CHANNEL_MODLOG = "430895774075846656";
     public static final String CHANNEL_PRIVATE = "439928433959501825";
+    public static final String CHANNEL_RANDOM = "391079761285480449";
 
     // Roles
     public static final String ROLE_MODERATOR = "390944427071242240";

@@ -4,39 +4,52 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.btobastian.sdcf4j.Command;
 import de.btobastian.sdcf4j.CommandExecutor;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
 import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.user.User;
 
 import java.awt.*;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class EssentialsXCommand implements CommandExecutor {
 
     private static JsonNode essxCommands;
     private static JsonNode essxPermissions;
     private static Map<String, List<String>> itemDb = new HashMap<>();
+    private ObjectMapper mapper = new ObjectMapper();
 
     public EssentialsXCommand() {
-        ObjectMapper mapper = new ObjectMapper();
         try {
             essxCommands = mapper.readTree(new File("./essx_commands.json")).get(0).get("data");
-            essxPermissions = mapper.readTree(new File("./essx_perms.json")).get(0).get("data");
+            essxPermissions = mapper.readTree(new File("./essx_perms.json"));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        try {
             JsonNode essxItemDB = mapper.readTree(new File("./essx_items.json"));
 
-            for (Iterator<String> it = essxItemDB.fieldNames(); it.hasNext();) {
-                String s = it.next();
-                if (itemDb.get(essxItemDB.get(s).asText()) == null) {
-                    itemDb.put(s, new ArrayList<>());
-                } else {
-                    itemDb.get(essxItemDB.get(s).asText()).add(s);
-                }
+            Request request = new Request.Builder().url("https://raw.githubusercontent.com/EssentialsX/Essentials/2.x/Essentials/src/items.json").build();
+            JsonNode essxItemDB2 =  mapper.readTree(Objects.requireNonNull(new OkHttpClient.Builder().build().newCall(request).execute().body()).string().replace("#version: ${full.version}", ""));
+
+            if (essxItemDB2.size() > essxItemDB.size()) {
+                System.out.println("Updating Essentials ItemDB.");
+                updateItemDB(essxItemDB2);
+            } else {
+                parseItemDB(essxItemDB);
             }
+        } catch (FileNotFoundException e) {
+            System.out.println("Acquiring Essentials ItemDB");
+            updateItemDB(null);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -133,8 +146,8 @@ public class EssentialsXCommand implements CommandExecutor {
 
     private List<JsonNode> searchPermissions(String param) {
         java.util.List<JsonNode> nodes = new ArrayList<>();
-        for (int i = 0; i <= essxPermissions.size() -1; i++) {
-            JsonNode permNode = essxPermissions.get(i);
+        for (Iterator<String> it = essxPermissions.fieldNames(); it.hasNext();) {
+            JsonNode permNode = essxPermissions.get(it.next());
             if (permNode.get("Command").asText().contains(param) || permNode.get("Permission").asText().contains(param)) {
                 nodes.add(permNode);
             }
@@ -150,5 +163,30 @@ public class EssentialsXCommand implements CommandExecutor {
             }
         }
         return result;
+    }
+
+    private void updateItemDB(JsonNode database) {
+        try {
+            JsonNode essxItemDB2;
+            if (database == null) {
+                Request request = new Request.Builder().url("https://raw.githubusercontent.com/EssentialsX/Essentials/2.x/Essentials/src/items.json").build();
+                essxItemDB2 =  mapper.readTree(Objects.requireNonNull(new OkHttpClient.Builder().build().newCall(request).execute().body()).string().replace("#version: ${full.version}", ""));
+            } else {
+                essxItemDB2 = database;
+            }
+            mapper.writerWithDefaultPrettyPrinter().writeValue(new File("./essx_items.json"), essxItemDB2);
+            parseItemDB(essxItemDB2);
+        } catch (Exception ignored) {}
+    }
+
+    private void parseItemDB(JsonNode essxItemDB) {
+        for (Iterator<String> it = essxItemDB.fieldNames(); it.hasNext();) {
+            String s = it.next();
+            if (itemDb.get(essxItemDB.get(s).asText()) == null) {
+                itemDb.put(s, new ArrayList<>());
+            } else {
+                itemDb.get(essxItemDB.get(s).asText()).add(s);
+            }
+        }
     }
 }
