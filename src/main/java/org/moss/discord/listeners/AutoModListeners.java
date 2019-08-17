@@ -48,7 +48,8 @@ public class AutoModListeners implements MessageCreateListener {
             "We're coming for you",
             "You've been added to the naughty list",
             "EXTERMINATE!",
-            "The ban-hammer awaits you"
+            "The ban-hammer awaits you",
+            "Hell will now be unleashed"
     };
 
     String[] nopes = {
@@ -59,7 +60,11 @@ public class AutoModListeners implements MessageCreateListener {
             "https://media0.giphy.com/media/rFvtiIevmj0zu/giphy.gif",
             "https://i.imgur.com/dTMWtkp.png",
             "https://i.imgur.com/KbsSxlR.gif",
-            "https://i.imgur.com/8r5mriG.jpg"
+            "https://i.imgur.com/8r5mriG.jpg",
+            "https://i.imgur.com/ced9xSC.gif",
+            "https://i.imgur.com/HFRKIpb.gif",
+            "https://i.imgur.com/ebngidh.gif",
+            "https://i.imgur.com/7h0YLxS.gif"
     };
 
     List<String> nodonts = new ArrayList<>(Arrays.asList("430125651559710720", "430125667062120449", "442304736587415574", "479919881702342676", "479919848177139713"));
