@@ -6,6 +6,12 @@ import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
 import org.moss.discord.commands.AvatarCommand;
 import org.moss.discord.commands.BStatsCommand;
+import org.moss.discord.commands.EssentialsXCommand;
+import org.moss.discord.commands.RoleReactionCommand;
+import org.moss.discord.commands.EmbedCommand;
+import org.moss.discord.commands.SayCommand;
+import org.moss.discord.commands.UserTagCommand;
+import org.moss.discord.commands.XkcdCommand;
 import org.moss.discord.listeners.StarboardListener;
 import org.moss.discord.commands.GithubCommand;
 import org.moss.discord.commands.MojangCommand;
@@ -57,6 +63,12 @@ public class Main {
         commandHandler.registerCommand(new NicknameCommand());
         commandHandler.registerCommand(new AvatarCommand());
         commandHandler.registerCommand(new SpigetCommand());
+        commandHandler.registerCommand(new EssentialsXCommand());
+        commandHandler.registerCommand(new RoleReactionCommand(api));
+        commandHandler.registerCommand(new EmbedCommand());
+        commandHandler.registerCommand(new SayCommand());
+        commandHandler.registerCommand(new UserTagCommand(api));
+        commandHandler.registerCommand(new XkcdCommand());
 
         // Register listeners
         api.addListener(new ModLogListeners(api));
