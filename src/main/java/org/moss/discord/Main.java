@@ -6,6 +6,7 @@ import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
 import org.moss.discord.commands.AvatarCommand;
 import org.moss.discord.commands.BStatsCommand;
+import org.moss.discord.commands.CommandsCommand;
 import org.moss.discord.commands.EssentialsXCommand;
 import org.moss.discord.commands.RoleReactionCommand;
 import org.moss.discord.commands.EmbedCommand;
@@ -63,6 +64,7 @@ public class Main {
         commandHandler.registerCommand(new NicknameCommand());
         commandHandler.registerCommand(new AvatarCommand());
         commandHandler.registerCommand(new SpigetCommand());
+        commandHandler.registerCommand(new CommandsCommand(commandHandler));
         commandHandler.registerCommand(new EssentialsXCommand());
         commandHandler.registerCommand(new RoleReactionCommand(api));
         commandHandler.registerCommand(new EmbedCommand());
