@@ -33,6 +33,7 @@ public class RoleReactionCommand implements CommandExecutor, ReactionAddListener
         roleMap.put("\ud83C\uDF2F", Constants.ROLE_MLWC_UPDATES);
         roleMap.put("\uD83D\uDC8E", Constants.ROLE_GUILD_UPDATES);
         roleMap.put("\uD83C\uDF7A", Constants.ROLE_NVTFR_UPDATES);
+        roleMap.put("\uD83D\uDDDD", Constants.ROLE_PEX_UPDATES);
     }
 
     @Command(aliases = {"!rolepoll", ".rolepoll"}, usage = "!rolepoll", description = "Polls users for update roles")
@@ -88,6 +89,9 @@ public class RoleReactionCommand implements CommandExecutor, ReactionAddListener
                     case "430125681645453325": //NVTFR
                         broadcast(String.join(" ", args), channel, server.getRoleById(Constants.ROLE_NVTFR_UPDATES).get());
                         break;
+                    case "632427764707753994": //PEX
+                        broadcast(String.join(" ", args), channel, server.getRoleById(Constants.ROLE_PEX_UPDATES).get());
+                        break;
                     case "397536210236604427": //TEST
                         broadcast(String.join(" ", args), channel, server.getRoleById("585793006611726346").get());
                         break;
@@ -122,7 +126,8 @@ public class RoleReactionCommand implements CommandExecutor, ReactionAddListener
                         "\n`Click the \uD83C\uDF54 to subscribe to PlayerVaults`" +
                         "\n`Click the \ud83C\uDF2F to subscribe to LWC Extended`" +
                         "\n`Click the \uD83D\uDC8E to subscribe to Guilds`" +
-                        "\n`Click the \uD83C\uDF7A to subscribe to NuVotifier`");
+                        "\n`Click the \uD83C\uDF7A to subscribe to NuVotifier`" +
+                        "\n`Click the \ud83d\udddd\ufe0f to subscribe to PermissionsX`");
         return embed;
     }
 
