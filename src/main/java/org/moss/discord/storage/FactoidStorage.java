@@ -1,5 +1,6 @@
 package org.moss.discord.storage;
 
+@Deprecated
 public class FactoidStorage extends KeyValStorage {
 
     public FactoidStorage() {
