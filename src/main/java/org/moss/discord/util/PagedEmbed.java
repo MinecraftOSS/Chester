@@ -3,6 +3,7 @@ package org.moss.discord.util;
 import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.message.Messageable;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
+import org.javacord.api.entity.user.User;
 import org.javacord.api.event.message.reaction.SingleReactionEvent;
 import org.javacord.api.util.logging.ExceptionLogger;
 
@@ -20,16 +21,17 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class PagedEmbed {
 
-    public final static int FIELD_MAX_CHARS = 1024;
-    public final static int MAX_CHARS_PER_PAGE = 4500;
-    public final static int MAX_FIELDS_PER_PAGE = 8;
-    public final static int DELETE_EMOJIS_TIME = 15;
-    public final static TimeUnit DELETE_EMOJIS_UNIT = TimeUnit.MINUTES;
-    public final String PREV_PAGE_EMOJI = "\u2b05";
-    public final String NEXT_PAGE_EMOJI = "\u27a1";
+    private final static int FIELD_MAX_CHARS = 1024;
+    private final static int MAX_CHARS_PER_PAGE = 4500;
+    private int MAX_FIELDS_PER_PAGE = 8;
+    private final static int DELETE_EMOJIS_TIME = 15;
+    private final static TimeUnit DELETE_EMOJIS_UNIT = TimeUnit.MINUTES;
+    private final static String PREV_PAGE_EMOJI = "\u2b05";
+    private final static String NEXT_PAGE_EMOJI = "\u27a1";
 
     private final Messageable messageable;
     private final EmbedBuilder embed;
+    private final User user;
 
     private ConcurrentHashMap<Integer, List<Field>> pages = new ConcurrentHashMap<>();
     private List<Field> fields = new ArrayList<>();
@@ -45,6 +47,20 @@ public class PagedEmbed {
     public PagedEmbed(Messageable messageable, EmbedBuilder embed) {
         this.messageable = messageable;
         this.embed = embed;
+        this.user = null;
+    }
+
+    /**
+     * Creates a new PagedEmbed object and locks it to a user.
+     *
+     * @param messageable The Messageable in which the embed should be sent.
+     * @param embed       An EmbedBuilder the sent embed should be based on.
+     * @param user        A user to lock the embed with
+     */
+    public PagedEmbed(Messageable messageable, EmbedBuilder embed, User user) {
+        this.messageable = messageable;
+        this.embed = embed;
+        this.user = user;
     }
 
     /**
@@ -92,7 +108,6 @@ public class PagedEmbed {
         future.thenAcceptAsync(message -> {
             sentMessage.set(message);
             if (pages.size() != 1) {
-                System.out.println("Added arrows");
                 message.addReaction(PREV_PAGE_EMOJI);
                 message.addReaction(NEXT_PAGE_EMOJI);
                 message.addReactionAddListener(this::onReactionClick);
@@ -103,7 +118,6 @@ public class PagedEmbed {
                     .forEach((a, b) -> message.removeMessageAttachableListener(a)))
                     .removeAfter(DELETE_EMOJIS_TIME, DELETE_EMOJIS_UNIT)
                     .addRemoveHandler(() -> {
-                        System.out.println("Got remove");
                         sentMessage.get()
                                 .removeAllReactions();
                         sentMessage.get()
@@ -125,7 +139,7 @@ public class PagedEmbed {
         for (Field field : fields) {
             pages.putIfAbsent(thisPage, new ArrayList<>());
 
-            if (fieldCount <= MAX_FIELDS_PER_PAGE &&
+            if (fieldCount <= MAX_FIELDS_PER_PAGE-1 &&
                     pageChars <= FIELD_MAX_CHARS * fieldCount &&
                     totalChars < MAX_CHARS_PER_PAGE) {
                 pages.get(thisPage)
@@ -178,6 +192,7 @@ public class PagedEmbed {
     private void onReactionClick(SingleReactionEvent event) {
         event.getEmoji().asUnicodeEmoji().ifPresent(emoji -> {
             if (!event.getUser().isYourself()) {
+                if (user != null && !event.getUser().equals(user)) return;
                 switch (emoji) {
                     case PREV_PAGE_EMOJI:
                         if (page > 1)
@@ -192,7 +207,6 @@ public class PagedEmbed {
                             page++;
                         else if (page == pages.size())
                             page = 1;
-
                         this.refreshMessage();
                         break;
                     default:
@@ -204,6 +218,14 @@ public class PagedEmbed {
 
     public EmbedBuilder getEmbed() {
         return embed;
+    }
+
+    /**
+     * Sets the amount of fields per page.
+     * @param amount  The max amount of field per page.
+     */
+    public void setMaxFieldsPerPage(int amount) {
+        MAX_FIELDS_PER_PAGE = amount;
     }
 
     /**
