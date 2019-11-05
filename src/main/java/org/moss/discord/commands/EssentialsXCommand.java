@@ -9,6 +9,7 @@ import okhttp3.Request;
 import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.user.User;
+import org.moss.discord.util.PagedEmbed;
 
 import java.awt.*;
 import java.io.File;
@@ -83,71 +84,65 @@ public class EssentialsXCommand implements CommandExecutor {
         }
     }
 
-    @Command(aliases = {"!essc", ".essc"}, usage = "!essc <command>", description = "Show info about a EssentialsX command")
+    @Command(aliases = {"!essc", ".essc"}, usage = "!essc <command>", description = "Show info about an EssentialsX command")
     public void onCommand(String[] args, User user, TextChannel textChannel) {
         if (args.length >= 1) {
             List<JsonNode> commands = searchCommands(args[0]);
             if (commands.size() >= 1) {
-                EmbedBuilder embed = new EmbedBuilder();
-                embed.setColor(new Color(11825408));
-                embed.setTitle("Command Information").setUrl("https://essinfo.xeya.me/index.php?page=commands");
-
+                EmbedBuilder embed = new EmbedBuilder()
+                        .setColor(new Color(11825408))
+                        .setTitle("Command Information")
+                        .setUrl("https://essinfo.xeya.me/index.php?page=commands")
+                        .setAuthor(user);
+                PagedEmbed pagedEmbed = new PagedEmbed(textChannel, embed, user);
+                pagedEmbed.setMaxFieldsPerPage(5);
                 for (JsonNode command : commands) {
-                    embed.addInlineField(command.get("Command").asText(), String.format("```Usage: %s \n\nDescripton: %s \n\nAliases: %s```", command.get("Syntax").asText(), command.get("Description").asText(), command.get("Aliases").asText()));
+                    pagedEmbed.addField(command.get("Command").asText(), String.format("```Usage: %s \n\nDescripton: %s \n\nAliases: %s```", command.get("Syntax").asText(), command.get("Description").asText(), command.get("Aliases").asText()));
                 }
-
-                embed.setFooter("Requested By | " + user.getName());
-                textChannel.sendMessage(user.getMentionTag(), embed);
+                pagedEmbed.build().join();
             } else {
                 textChannel.sendMessage(new EmbedBuilder().setTitle("Command not found").setColor(Color.RED));
             }
         }
     }
 
-    @Command(aliases = {"!essp", ".essp"}, usage = "!essp <permission>", description = "Show info about a EssentialsX permission")
+    @Command(aliases = {"!essp", ".essp"}, usage = "!essp <permission>", description = "Show info about an EssentialsX permission")
     public void onPermCommand(String[] args, User user, TextChannel textChannel) {
         if (args.length >= 1) {
             List<JsonNode> perm = searchPermissions(args[0]);
             if (perm.size() != 0) {
-                EmbedBuilder embed = new EmbedBuilder();
-                embed.setColor(new Color(11825408));
-                embed.setTitle("Permission Information").setUrl("https://essinfo.xeya.me/index.php?page=permissions");
-
+                EmbedBuilder embed = new EmbedBuilder()
+                        .setColor(new Color(11825408))
+                        .setTitle("Permission Information")
+                        .setUrl("https://essinfo.xeya.me/index.php?page=permissions")
+                        .setAuthor(user);
+                PagedEmbed pagedEmbed = new PagedEmbed(textChannel, embed, user);
                 for (JsonNode node : perm) {
-                    embed.addField(node.get("Permission").asText(), String.format("```%s```", node.get("Description").asText()));
+                    pagedEmbed.addField(node.get("Permission").asText(), String.format("```%s```", node.get("Description").asText()));
                 }
-
-                embed.setFooter("Requested By | " + user.getName());
-                textChannel.sendMessage(user.getMentionTag(), embed);
+                pagedEmbed.build().join();
             } else {
                 textChannel.sendMessage(new EmbedBuilder().setTitle("Permission not found").setColor(Color.RED));
             }
         }
     }
 
-    @Command(aliases = {"!itemdb", ".itemdb"}, usage = "!itemdb <item>", description = "Show info about a EssentialsX Item")
+    @Command(aliases = {"!itemdb", ".itemdb"}, usage = "!itemdb <item>", description = "Show info about an EssentialsX Item")
     public void onItemDbCommand(String[] args, User user, TextChannel textChannel) {
         if (args.length >= 1) {
             List<String> items = searchItems(args[0]);
             if (items.size() != 0) {
-                EmbedBuilder embed = new EmbedBuilder();
-                embed.setColor(new Color(11825408));
-                embed.setTitle("Essentials ItemDB").setUrl("https://github.com/EssentialsX/Essentials/blob/2.x/Essentials/src/items.json");
-
+                EmbedBuilder embed = new EmbedBuilder()
+                        .setColor(new Color(11825408))
+                        .setTitle("Essentials ItemDB")
+                        .setUrl("https://github.com/EssentialsX/Essentials/blob/2.x/Essentials/src/items.json")
+                        .setAuthor(user);
+                PagedEmbed pagedEmbed = new PagedEmbed(textChannel, embed, user);
                 for (String item : items) {
                     List<String> db = itemDb.get(item);
-                    embed.addField(item.toUpperCase(), db.isEmpty() ? item : String.format("```%s```", String.join(" ", itemDb.get(item))));
+                    pagedEmbed.addField(item.toUpperCase(), db.isEmpty() ? String.format("```%s```", item) : String.format("```%s```", String.join(" ", itemDb.get(item))));
                 }
-                embed.setFooter("Requested By | " + user.getName());
-                textChannel.sendMessage(user.getMentionTag(), embed)
-                        .exceptionally(e -> {
-                    textChannel.sendMessage(user.getMentionTag(), new EmbedBuilder().setColor(new Color(11825408)).setTitle("Essentials ItemDB").addField("Results", String.format("```%s```", String.join(" ", items))))
-                            .exceptionally(ee -> {
-                        textChannel.sendMessage(user.getMentionTag(), new EmbedBuilder().setTitle("Please narrow your search").setColor(Color.RED));
-                        return null;
-                    });
-                    return null;
-                });
+                pagedEmbed.build().join();
             } else {
                 textChannel.sendMessage(new EmbedBuilder().setTitle("Item not found").setColor(Color.RED));
             }
