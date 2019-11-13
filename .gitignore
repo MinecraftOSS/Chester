@@ -132,3 +132,4 @@ fabric.properties
 # Bot data
 starboard.yml
 factoids.yml
+essx_*.json
