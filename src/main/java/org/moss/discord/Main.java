@@ -12,6 +12,7 @@ import org.moss.discord.commands.RoleReactionCommand;
 import org.moss.discord.commands.EmbedCommand;
 import org.moss.discord.commands.SayCommand;
 import org.moss.discord.commands.UserTagCommand;
+import org.moss.discord.commands.WolframAlphaCommand;
 import org.moss.discord.commands.XkcdCommand;
 import org.moss.discord.listeners.StarboardListener;
 import org.moss.discord.commands.GithubCommand;
@@ -71,6 +72,7 @@ public class Main {
         commandHandler.registerCommand(new SayCommand());
         commandHandler.registerCommand(new UserTagCommand(api));
         commandHandler.registerCommand(new XkcdCommand());
+        commandHandler.registerCommand(new WolframAlphaCommand());
 
         // Register listeners
         api.addListener(new ModLogListeners(api));
