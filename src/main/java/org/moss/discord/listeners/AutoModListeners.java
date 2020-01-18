@@ -12,6 +12,7 @@ import org.javacord.api.entity.message.MessageAttachment;
 import org.javacord.api.entity.message.MessageAuthor;
 import org.javacord.api.entity.message.embed.Embed;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
+import org.javacord.api.entity.permission.Role;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
 import org.javacord.api.event.message.MessageCreateEvent;
@@ -22,6 +23,7 @@ import java.awt.*;
 import java.io.File;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,6 +46,12 @@ public class AutoModListeners implements MessageCreateListener, CommandExecutor 
     private Map<Long, Instant> active = new HashMap<>();
     private Map<Long, MessageTracker> trackers = new HashMap<>();
     private ObjectMapper mapper = new ObjectMapper();
+    private List<String> protectedRoles = new ArrayList<String>() {
+        {
+            add("391029845225766912");
+            add("425708417663893505");
+        }
+    };
 
     String[] donts = {
             "Do not",
@@ -60,7 +68,8 @@ public class AutoModListeners implements MessageCreateListener, CommandExecutor 
             "You've been added to the naughty list",
             "EXTERMINATE!",
             "The ban-hammer awaits you",
-            "Hell will now be unleashed"
+            "Hell will now be unleashed",
+            "Every day we stray further from god."
     };
 
     String[] nopes = {
@@ -75,7 +84,15 @@ public class AutoModListeners implements MessageCreateListener, CommandExecutor 
             "https://i.imgur.com/ced9xSC.gif",
             "https://i.imgur.com/HFRKIpb.gif",
             "https://i.imgur.com/ebngidh.gif",
-            "https://i.imgur.com/7h0YLxS.gif"
+            "https://i.imgur.com/7h0YLxS.gif",
+            "https://i.imgur.com/hI6plU6.jpg",
+            "https://i.imgur.com/pWBhrwI.gif",
+            "https://i.imgur.com/g639DXN.gif",
+            "https://i.imgur.com/u4Wixvd.gif",
+            "https://i.imgur.com/ThMKJ7P.gif",
+            "https://i.imgur.com/cdsdmYA.gif",
+            "https://i.imgur.com/cVvUkWK.gif",
+            "https://i.imgur.com/soBdcGC.gif"
     };
 
     public AutoModListeners(DiscordApi api, CommandHandler commandHandler) {
@@ -91,8 +108,11 @@ public class AutoModListeners implements MessageCreateListener, CommandExecutor 
         }
     }
 
-    @Command(aliases = {"!pingok", ".pingok"}, usage = "!pingok", description = "Pings on the cannel are ok")
-    public void onOk(DiscordApi api, String[] args, TextChannel channel, User user, Message message) {
+    @Command(aliases = {"!pingok", ".pingok"}, usage = "!pingok", description = "Pings on the channel are ok")
+    public void onOk(DiscordApi api, String[] args, TextChannel channel, User user, Message message, Server server) {
+        if (!(server.canKickUsers(user) || hasProtectedRole(user.getRoles(server)))) {
+            return;
+        }
         try {
             if (data.exempts.get(user.getId()).contains(channel.getIdAsString())) {
                 data.exempts.get(user.getId()).remove(channel.getIdAsString());
@@ -187,10 +207,11 @@ public class AutoModListeners implements MessageCreateListener, CommandExecutor 
     public void parsePings(Message message) {
         if (message.getMentionedUsers().size() >= 1) {
             User perp = message.getUserAuthor().get();
+            Server server = message.getServer().get();
             MessageTracker tracker = getTrackedUser(perp.getId());
             boolean warn = false;
             for (User user : message.getMentionedUsers()) {
-                if (message.getServer().get().canKickUsers(user) && !userIsActive(user.getId())) {
+                if ((server.canKickUsers(user) || hasProtectedRole(user.getRoles(server))) && !userIsActive(user.getId())) {
                     if (data.exempts.containsKey(user.getId()) && data.exempts.get(user.getId()).contains(message.getChannel().getIdAsString())) {
                         continue;
                     }
@@ -278,7 +299,16 @@ public class AutoModListeners implements MessageCreateListener, CommandExecutor 
         public List<String> censoredWords;
     }
 
-     class MessageTracker {
+    private boolean hasProtectedRole(List<Role> roles) {
+        for (Role role : roles) {
+            if (protectedRoles.contains(role.getIdAsString())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    class MessageTracker {
 
         private AtomicInteger count;
         private String lastMessage;
