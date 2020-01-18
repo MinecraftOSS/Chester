@@ -1,0 +1,9 @@
+{
+  "data" : {
+    "exempts" : {
+      "171458204167831552" : [ "390969797250383883" ]
+    },
+    "blacklistedFiles" : [ ".jar", ".exe", ".zip" ],
+    "censoredWords" : [ "discord.gg", "discordapp.com/invite", "blackspigot", "amazingsexdating.com", "whatsappx.com", "bestoffersx.com", "kidsearncash.com", "l10n\\_2\\.x", "38875", "getbukkit" ]
+  }
+}

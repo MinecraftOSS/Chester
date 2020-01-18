@@ -5,9 +5,13 @@ import de.btobastian.sdcf4j.CommandExecutor;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.entity.message.Message;
+import org.javacord.api.entity.message.MessageAuthor;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
+
+import java.awt.*;
+import java.net.URL;
 
 public class AvatarCommand implements CommandExecutor {
 
@@ -23,6 +27,20 @@ public class AvatarCommand implements CommandExecutor {
                     channel.sendMessage(new EmbedBuilder().setImage(user.getAvatar())); //TODO LAAAARGER
                     return;
                 }
+            }
+        }
+    }
+
+    @Command(aliases = {"!setavatar"}, usage = "!setavatar <img>", description = "Sets the bot's avatar")
+    public void onSetAvatar(DiscordApi api, String[] args, TextChannel channel, Message message, MessageAuthor messageAuthor) {
+        if (args.length >= 1 && messageAuthor.canManageServer()) {
+            try {
+                URL url = new URL(args[0]); //pray to god its a URL
+                message.delete();
+                api.createAccountUpdater().setAvatar(url).update();
+                channel.sendMessage(new EmbedBuilder().setColor(Color.GREEN).setTitle("Avatar set!").setImage(args[0]));
+            } catch (Exception e) {
+                channel.sendMessage(new EmbedBuilder().setColor(Color.RED).setTitle("Unable to set avatar").setDescription("`!setavatar <url>`"));
             }
         }
     }
