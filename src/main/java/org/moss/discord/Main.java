@@ -76,7 +76,7 @@ public class Main {
 
         // Register listeners
         api.addListener(new ModLogListeners(api));
-        api.addListener(new AutoModListeners(api));
+        api.addListener(new AutoModListeners(api, commandHandler));
         api.addListener(new PrivateListener(api));
         api.addReactionAddListener(new StarboardListener(api));
 
