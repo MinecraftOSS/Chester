@@ -31,14 +31,14 @@ public class RoleReactionCommand implements CommandExecutor, ReactionAddListener
         roleMap.put("\uD83C\uDF6A", Constants.ROLE_FUUID_UPDATES);
         roleMap.put("\uD83C\uDF54", Constants.ROLE_PVX_UPDATES);
         roleMap.put("\ud83C\uDF2F", Constants.ROLE_MLWC_UPDATES);
-        roleMap.put("\uD83D\uDC8E", Constants.ROLE_GUILD_UPDATES);
         roleMap.put("\uD83C\uDF7A", Constants.ROLE_NVTFR_UPDATES);
         roleMap.put("\uD83D\uDDDD", Constants.ROLE_PEX_UPDATES);
+        roleMap.put("\uD83E\uDD5A", Constants.ROLE_EGG_UPDATES);
     }
 
     @Command(aliases = {"!rolepoll", ".rolepoll"}, usage = "!rolepoll", description = "Polls users for update roles")
     public void onCommand(DiscordApi api, TextChannel channel, User user, Server server, Message cmd) {
-        if (server.canBanUsers(user)) {
+        if (server.isAdmin(user)) {
             cmd.delete();
             try {
                 Message msg = channel.sendMessage(createPoll()).get();
@@ -50,7 +50,7 @@ public class RoleReactionCommand implements CommandExecutor, ReactionAddListener
 
     @Command(aliases = {"!rpupdate", ".rpupdate"}, usage = "!rpupdate", description = "Updates all roll polls.")
     public void onRPUpdate(DiscordApi api, TextChannel channel, User user, Server server, Message cmd) {
-        if (server.canBanUsers(user)) {
+        if (server.isAdmin(user)) {
             cmd.delete();
             try {
                 for (String key : storage.getMap().keySet()) {
@@ -80,9 +80,6 @@ public class RoleReactionCommand implements CommandExecutor, ReactionAddListener
                     case "426460690136694795": //pvx
                         broadcast(String.join(" ", args), channel, server.getRoleById(Constants.ROLE_PVX_UPDATES).get());
                         break;
-                    case "493936113837408256": //guilds
-                        broadcast(String.join(" ", args), channel, server.getRoleById(Constants.ROLE_GUILD_UPDATES).get());
-                        break;
                     case "479919913067216897": //LWCX
                         broadcast(String.join(" ", args), channel, server.getRoleById(Constants.ROLE_MLWC_UPDATES).get());
                         break;
@@ -91,6 +88,9 @@ public class RoleReactionCommand implements CommandExecutor, ReactionAddListener
                         break;
                     case "632427764707753994": //PEX
                         broadcast(String.join(" ", args), channel, server.getRoleById(Constants.ROLE_PEX_UPDATES).get());
+                        break;
+                    case "673969910585491466": //EGG
+                        broadcast(String.join(" ", args), channel, server.getRoleById(Constants.ROLE_EGG_UPDATES).get());
                         break;
                     case "397536210236604427": //TEST
                         broadcast(String.join(" ", args), channel, server.getRoleById("585793006611726346").get());
@@ -125,9 +125,9 @@ public class RoleReactionCommand implements CommandExecutor, ReactionAddListener
                         "\n`Click the \uD83C\uDF6A to subscribe to FactionsUUID`" +
                         "\n`Click the \uD83C\uDF54 to subscribe to PlayerVaults`" +
                         "\n`Click the \ud83C\uDF2F to subscribe to LWC Extended`" +
-                        "\n`Click the \uD83D\uDC8E to subscribe to Guilds`" +
                         "\n`Click the \uD83C\uDF7A to subscribe to NuVotifier`" +
-                        "\n`Click the \ud83d\udddd\ufe0f to subscribe to PermissionsX`");
+                        "\n`Click the \ud83d\udddd\ufe0f to subscribe to PermissionsEx`" +
+                        "\n`Click the \uD83E\uDD5A to subscribe to Egg82's plugins`");
         return embed;
     }
 
