@@ -6,11 +6,13 @@ import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
 import org.moss.discord.commands.AvatarCommand;
 import org.moss.discord.commands.BStatsCommand;
+import org.moss.discord.commands.CommandsCommand;
 import org.moss.discord.commands.EssentialsXCommand;
 import org.moss.discord.commands.RoleReactionCommand;
 import org.moss.discord.commands.EmbedCommand;
 import org.moss.discord.commands.SayCommand;
 import org.moss.discord.commands.UserTagCommand;
+import org.moss.discord.commands.WolframAlphaCommand;
 import org.moss.discord.commands.XkcdCommand;
 import org.moss.discord.listeners.StarboardListener;
 import org.moss.discord.commands.GithubCommand;
@@ -63,16 +65,18 @@ public class Main {
         commandHandler.registerCommand(new NicknameCommand());
         commandHandler.registerCommand(new AvatarCommand());
         commandHandler.registerCommand(new SpigetCommand());
+        commandHandler.registerCommand(new CommandsCommand(commandHandler));
         commandHandler.registerCommand(new EssentialsXCommand());
         commandHandler.registerCommand(new RoleReactionCommand(api));
         commandHandler.registerCommand(new EmbedCommand());
         commandHandler.registerCommand(new SayCommand());
         commandHandler.registerCommand(new UserTagCommand(api));
         commandHandler.registerCommand(new XkcdCommand());
+        commandHandler.registerCommand(new WolframAlphaCommand());
 
         // Register listeners
         api.addListener(new ModLogListeners(api));
-        api.addListener(new AutoModListeners(api));
+        api.addListener(new AutoModListeners(api, commandHandler));
         api.addListener(new PrivateListener(api));
         api.addReactionAddListener(new StarboardListener(api));
 

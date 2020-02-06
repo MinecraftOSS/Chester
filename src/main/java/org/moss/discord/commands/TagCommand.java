@@ -67,9 +67,9 @@ public class TagCommand implements CommandExecutor, MessageCreateListener {
         ArrayList<String> tagsList = new ArrayList<>(tagMap.keySet());
         Collections.sort(tagsList);
         for (String key : tagsList) {
-            s += String.format("`%s` ", key);
+            s += String.format("%s  ", key);
         }
-        channel.sendMessage(new EmbedBuilder().addField("Active Tags", s).setColor(Color.GREEN));
+        channel.sendMessage(new EmbedBuilder().setTitle("Active Tags").setDescription(String.format("```%s```", s)).setColor(Color.GREEN));
     }
 
     @Command(aliases = {"!tagset", "?tagset"}, usage = "!tagset <name> [message]", description = "Set a new tag")

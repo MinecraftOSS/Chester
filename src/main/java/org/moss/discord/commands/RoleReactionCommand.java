@@ -34,6 +34,7 @@ public class RoleReactionCommand implements CommandExecutor, ReactionAddListener
         roleMap.put("\uD83C\uDF7A", Constants.ROLE_NVTFR_UPDATES);
         roleMap.put("\uD83D\uDDDD", Constants.ROLE_PEX_UPDATES);
         roleMap.put("\uD83E\uDD5A", Constants.ROLE_EGG_UPDATES);
+
     }
 
     @Command(aliases = {"!rolepoll", ".rolepoll"}, usage = "!rolepoll", description = "Polls users for update roles")
