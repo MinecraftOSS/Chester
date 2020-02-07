@@ -1,0 +1,28 @@
+#00cd00|As I see it, yes
+#00cd00|It is certain
+#00cd00|It is decidedly so
+#00cd00|Most likely
+#00cd00|Outlook good
+#00cd00|Signs point to yes
+#00cd00|One would be wise to think so
+#00cd00|Naturally
+#00cd00|Without a doubt
+#00cd00|Yes
+#00cd00|Yes, definitely
+#00cd00|You may rely on it
+#ffa500|Reply hazy, try again
+#ffa500|Ask again later
+#ffa500|Better not tell you now
+#ffa500|Cannot predict now
+#ffa500|Concentrate and ask again
+#ffa500|You know the answer better than I
+#ffa500|Maybe...
+#ffa500|There is as yet insufficient data for a meaningful answer
+#ff0000|lol no
+#ff0000|You're kidding, right?
+#ff0000|Don't count on it
+#ff0000|In your dreams
+#ff0000|My reply is no
+#ff0000|My sources say no
+#ff0000|Outlook not so good
+#ff0000|Very doubtful
