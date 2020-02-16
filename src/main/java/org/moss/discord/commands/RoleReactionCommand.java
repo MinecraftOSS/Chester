@@ -36,6 +36,7 @@ public class RoleReactionCommand implements CommandExecutor, ReactionAddListener
         roleMap.put("\uD83E\uDD5A", Constants.ROLE_EGG_UPDATES);
         roleMap.put("\uD83C\uDFB2", Constants.ROLE_MNGMES_UPDATES);
         roleMap.put("\uD83C\uDF08", Constants.ROLE_PRISM_UPDATES);
+        roleMap.put("\uD83E\uDDCA", Constants.ROLE_PSTONES_UPDATES);
     }
 
     @Command(aliases = {"!rolepoll", ".rolepoll"}, usage = "!rolepoll", description = "Polls users for update roles")
@@ -67,6 +68,9 @@ public class RoleReactionCommand implements CommandExecutor, ReactionAddListener
         }
     }
 
+    /*
+    TODO: Map the channels instead.
+     */
     @Command(aliases = {"!update", ".update"}, usage = "!update", description = "Polls users for update roles")
     public void onUpdate(DiscordApi api, TextChannel channel, User user, Server server, String[] args, Message cmd) {
         if (server.canKickUsers(user)) {
@@ -99,6 +103,9 @@ public class RoleReactionCommand implements CommandExecutor, ReactionAddListener
                         break;
                     case "675838377198747678": //PRISM
                         broadcast(String.join(" ", args), channel, server.getRoleById(Constants.ROLE_PRISM_UPDATES).get());
+                        break;
+                    case "676271306714382385": //PSTONES
+                        broadcast(String.join(" ", args), channel, server.getRoleById(Constants.ROLE_PSTONES_UPDATES).get());
                         break;
                     case "397536210236604427": //TEST
                         broadcast(String.join(" ", args), channel, server.getRoleById("585793006611726346").get());
@@ -137,6 +144,7 @@ public class RoleReactionCommand implements CommandExecutor, ReactionAddListener
                         "\nClick the \ud83d\udddd\ufe0f to subscribe to PermissionsEx" +
                         "\nClick the \uD83E\uDD5A to subscribe to Egg82's plugins" +
                         "\nClick the \uD83C\uDFB2 to subscribe to Minigames" +
+                        "\nClick the \uD83E\uDDCA to subscribe to ProtectionStones" +
                         "\nClick the \uD83C\uDF08 to subscribe to Prism```");
         return embed;
     }

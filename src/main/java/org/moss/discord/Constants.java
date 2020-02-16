@@ -35,6 +35,7 @@ public class Constants {
     public static final String ROLE_EGG_UPDATES = "674701227916787742";
     public static final String ROLE_MNGMES_UPDATES = "675063350287138827";
     public static final String ROLE_PRISM_UPDATES = "675867609589219339";
+    public static final String ROLE_PSTONES_UPDATES = "676305976378523649";
 
     // Emojis
     public static final String[] EMOJI_STARS_UNICODE = {"\u2B50", "\uD83C\uDF1F", "\uD83E\uDD54"};
