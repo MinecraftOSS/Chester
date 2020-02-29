@@ -1,5 +1,7 @@
 package org.moss.discord.util;
 
+import org.apache.commons.lang.StringUtils;
+import org.javacord.api.entity.emoji.Emoji;
 import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.message.Messageable;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
@@ -8,7 +10,9 @@ import org.javacord.api.event.message.reaction.SingleReactionEvent;
 import org.javacord.api.util.logging.ExceptionLogger;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
@@ -29,6 +33,7 @@ public class EmbedPaged {
     private final Messageable messageable;
     private final User user;
 
+    private boolean buttonPaged = false;
     private ConcurrentHashMap<Integer, EmbedBuilder> pages = new ConcurrentHashMap<>();
     private int page;
     private AtomicReference<Message> sentMessage = new AtomicReference<>();
@@ -54,6 +59,11 @@ public class EmbedPaged {
         }
     }
 
+    public EmbedPaged setPagedButtons(boolean bool) {
+        buttonPaged = (bool && pages.size() <= 9);
+        return this;
+    }
+
 
     /**
      * Builds & sends the PagedEmbed.
@@ -63,14 +73,19 @@ public class EmbedPaged {
     @SuppressWarnings("Duplicates")
     public CompletableFuture<Message> build() {
         page = 1;
-
-        CompletableFuture<Message> future = messageable.sendMessage(pages.get(page));
+        CompletableFuture<Message> future = messageable.sendMessage(getPageInfo(), pages.get(page));
 
         future.thenAcceptAsync(message -> {
             sentMessage.set(message);
             if (pages.size() != 1) {
-                message.addReaction(PREV_PAGE_EMOJI);
-                message.addReaction(NEXT_PAGE_EMOJI);
+                if (buttonPaged) {
+                    for (int i = 1; i <= pages.size(); i++) {
+                        message.addReaction(i+"\u20E3");
+                    }
+                } else {
+                    message.addReaction(PREV_PAGE_EMOJI);
+                    message.addReaction(NEXT_PAGE_EMOJI);
+                }
                 message.addReactionAddListener(this::onReactionClick);
                 message.addReactionRemoveListener(this::onReactionClick);
             }
@@ -95,7 +110,7 @@ public class EmbedPaged {
      */
     private void refreshMessage() {
         if (sentMessage.get() != null) {
-            sentMessage.get().edit(pages.get(page));
+            sentMessage.get().edit(getPageInfo(), pages.get(page));
         }
     }
 
@@ -103,6 +118,11 @@ public class EmbedPaged {
         event.getEmoji().asUnicodeEmoji().ifPresent(emoji -> {
             if (!event.getUser().isYourself()) {
                 if (user != null && !event.getUser().equals(user)) return;
+                if (buttonPaged) {
+                    page = Integer.valueOf(emoji.replace("\u20E3", ""));
+                    this.refreshMessage();
+                    return;
+                }
                 switch (emoji) {
                     case PREV_PAGE_EMOJI:
                         if (page > 1)
@@ -125,4 +145,7 @@ public class EmbedPaged {
         });
     }
 
+    private String getPageInfo() {
+        return String.format("Page %d of %d", page, pages.size());
+    }
 }

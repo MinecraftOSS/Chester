@@ -10,9 +10,13 @@ import org.apache.commons.lang.WordUtils;
 import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.user.User;
+import org.moss.discord.util.EmbedPaged;
 
 import java.awt.*;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Objects;
 
 public class SpaceXCommand implements CommandExecutor {
@@ -20,23 +24,43 @@ public class SpaceXCommand implements CommandExecutor {
     private ObjectMapper mapper = new ObjectMapper();
     private OkHttpClient client = new OkHttpClient.Builder().build();
     String[] links = {"video_link","reddit_campaign", "reddit_launch", "reddit_recovery"};
+    String API_NEXT = "https://api.spacexdata.com/v3/launches/next";
+    String API_FUTURE = "https://api.spacexdata.com/v3/launches/upcoming";
+    String API_PAST = "https://api.spacexdata.com/v3/launches/past";
 
     @Command(aliases = {"!spacex", ".spacex"}, usage = "!spacex", description = "Spacex Command")
     public void spacex(TextChannel channel, String[] args, User user) {
         if (args.length == 1) {
             switch (args[0].toUpperCase()) {
-                case "NEXT":
-                    channel.sendMessage(user.getMentionTag(), createLaunchEmbed(makeRequest("https://api.spacexdata.com/v3/launches/next")));
-                    break;
                 case "FUTURE":
-                    //future
+                    List<EmbedBuilder> futurelaunches = new ArrayList<>();
+                    int i = 0;
+                    for (Iterator<JsonNode> it = makeRequest(API_FUTURE).elements(); it.hasNext();) {
+                        if (i >= 5) {
+                            break;
+                        }
+                        i++;
+                        futurelaunches.add(createLaunchEmbed(it.next()));
+                    }
+                    new EmbedPaged(channel, futurelaunches, user).build();
                     break;
                 case "PAST":
-                    //future
+                    List<EmbedBuilder> pastLaunches = new ArrayList<>();
+                    JsonNode pLaunches = makeRequest(API_PAST);
+                    int ii = 1;
+                    for (int ils = 0; ils <= 4; ils++) {
+                        JsonNode leNode = pLaunches.get(pLaunches.size()-ii);
+                        ii++;
+                        pastLaunches.add(createLaunchEmbed(leNode));
+                    }
+                    new EmbedPaged(channel, pastLaunches, user).setPagedButtons(true).build();
+                    break;
+                default:
+                    channel.sendMessage(user.getMentionTag(), createLaunchEmbed(makeRequest(API_NEXT)));
                     break;
             }
         } else {
-            channel.sendMessage(user.getMentionTag(), createLaunchEmbed(makeRequest("https://api.spacexdata.com/v3/launches/next")));
+            channel.sendMessage(user.getMentionTag(), createLaunchEmbed(makeRequest(API_NEXT)));
         }
     }
 
