@@ -12,6 +12,7 @@ import org.moss.discord.commands.EssentialsXCommand;
 import org.moss.discord.commands.RoleReactionCommand;
 import org.moss.discord.commands.EmbedCommand;
 import org.moss.discord.commands.SayCommand;
+import org.moss.discord.commands.SpaceXCommand;
 import org.moss.discord.commands.UserTagCommand;
 import org.moss.discord.commands.WolframAlphaCommand;
 import org.moss.discord.commands.XkcdCommand;
@@ -72,6 +73,7 @@ public class Main {
         commandHandler.registerCommand(new EmbedCommand());
         commandHandler.registerCommand(new SayCommand());
         commandHandler.registerCommand(new UserTagCommand(api));
+        commandHandler.registerCommand(new SpaceXCommand());
         commandHandler.registerCommand(new XkcdCommand());
         commandHandler.registerCommand(new WolframAlphaCommand());
         commandHandler.registerCommand(new EightBallCommand());
