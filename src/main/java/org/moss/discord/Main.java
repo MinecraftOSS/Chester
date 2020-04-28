@@ -1,7 +1,11 @@
 package org.moss.discord;
 
 import de.btobastian.sdcf4j.CommandHandler;
+import de.btobastian.sdcf4j.handler.JDA4Handler;
 import de.btobastian.sdcf4j.handler.JavacordHandler;
+import net.dv8tion.jda.api.AccountType;
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.JDABuilder;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
 import org.moss.discord.commands.AvatarCommand;
@@ -33,26 +37,28 @@ import org.moss.discord.listeners.PrivateListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.security.auth.login.LoginException;
+
 public class Main {
 
     // The logger for this class.
     private static final Logger logger = LoggerFactory.getLogger(Main.class);
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws LoginException, InterruptedException {
 
         if (args.length != 1) {
             logger.error("Invalid amount of arguments provided!");
             return;
         }
 
-        DiscordApi api = new DiscordApiBuilder().setToken(args[0]).login().join();
-        logger.info("Logged in to Discord account {}", api.getYourself().getName());
+        JDA api = new JDABuilder(AccountType.BOT).setToken(args[0]).build().awaitReady();
+        logger.info("Logged in to Discord account {}", api.getSelfUser().getName());
 
         // Create command handler
-        CommandHandler commandHandler = new JavacordHandler(api);
+        CommandHandler commandHandler = new JDA4Handler(api);
 
         // Give bot owner all permissions.
-        commandHandler.addPermission(String.valueOf(api.getOwnerId()), "*");
+        commandHandler.addPermission(api.getSelfUser().getId(), "*");
 
         // Register commands
         commandHandler.registerCommand(new BStatsCommand());
@@ -79,10 +85,10 @@ public class Main {
         commandHandler.registerCommand(new EightBallCommand());
 
         // Register listeners
-        api.addListener(new ModLogListeners(api));
-        api.addListener(new AutoModListeners(api, commandHandler));
-        api.addListener(new PrivateListener(api));
-        api.addReactionAddListener(new StarboardListener(api));
+        api.addEventListener(new ModLogListeners(api));
+        api.addEventListener(new AutoModListeners(api, commandHandler));
+        api.addEventListener(new PrivateListener(api));
+        api.addEventListener(new StarboardListener(api));
 
     }
 

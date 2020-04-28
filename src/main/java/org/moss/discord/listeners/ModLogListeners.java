@@ -1,234 +1,215 @@
 package org.moss.discord.listeners;
 
-import org.javacord.api.DiscordApi;
-import org.javacord.api.entity.auditlog.AuditLog;
-import org.javacord.api.entity.auditlog.AuditLogActionType;
-import org.javacord.api.entity.auditlog.AuditLogEntry;
-import org.javacord.api.entity.channel.TextChannel;
-import org.javacord.api.entity.message.Message;
-import org.javacord.api.entity.message.embed.EmbedBuilder;
-import org.javacord.api.event.message.MessageDeleteEvent;
-import org.javacord.api.event.message.MessageEditEvent;
-import org.javacord.api.event.server.member.ServerMemberBanEvent;
-import org.javacord.api.event.server.member.ServerMemberJoinEvent;
-import org.javacord.api.event.server.member.ServerMemberLeaveEvent;
-import org.javacord.api.event.user.UserChangeNameEvent;
-import org.javacord.api.event.user.UserChangeNicknameEvent;
-import org.javacord.api.listener.message.MessageDeleteListener;
-import org.javacord.api.listener.message.MessageEditListener;
-import org.javacord.api.listener.server.member.ServerMemberBanListener;
-import org.javacord.api.listener.server.member.ServerMemberJoinListener;
-import org.javacord.api.listener.server.member.ServerMemberLeaveListener;
-import org.javacord.api.listener.user.UserChangeNameListener;
-import org.javacord.api.listener.user.UserChangeNicknameListener;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.audit.ActionType;
+import net.dv8tion.jda.api.audit.AuditLogEntry;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.events.guild.GuildBanEvent;
+import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
+import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
+import net.dv8tion.jda.api.events.guild.member.update.GuildMemberUpdateNicknameEvent;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageDeleteEvent;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageUpdateEvent;
+import net.dv8tion.jda.api.events.user.update.UserUpdateNameEvent;
+import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.moss.discord.Constants;
 
+import javax.annotation.Nonnull;
 import java.awt.*;
-import java.util.Date;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Optional;
-import java.util.concurrent.Future;
+import java.util.Date;
 
-public class ModLogListeners implements MessageEditListener, MessageDeleteListener, ServerMemberBanListener, ServerMemberJoinListener, ServerMemberLeaveListener, UserChangeNicknameListener, UserChangeNameListener {
+public class ModLogListeners extends ListenerAdapter {
 
-    private DiscordApi api;
-    private Optional<TextChannel> modChannel;
+    private final TextChannel modChannel;
 
-    public ModLogListeners(DiscordApi api) {
+    private final Cache<String, Message> messageCache = CacheBuilder.newBuilder()
+        .maximumSize(100)
+        .build();
+
+    public ModLogListeners(JDA api) {
         modChannel = api.getTextChannelById(Constants.CHANNEL_MODLOG);
-        this.api = api;
     }
 
     @Override
-    public void onMessageDelete(MessageDeleteEvent ev) {
-        Message message;
-        String deletedBy = "Self";
-        AuditLog log;
-        try {
-            message = ev.getMessage().orElseGet(null);
-        } catch (Exception e) { //Message is not cached
+    public void onGuildMessageReceived(@Nonnull GuildMessageReceivedEvent event) {
+        messageCache.put(event.getMessageId(), event.getMessage());
+    }
+
+    @Override
+    public void onGuildMessageDelete(@Nonnull GuildMessageDeleteEvent ev) {
+        Message message = messageCache.getIfPresent(ev.getMessageId());
+
+        //Check if the message isn't cached
+        if (message == null) {
             return;
         }
 
-        Future<AuditLog> future = ev.getServer().get().getAuditLog(10, AuditLogActionType.MESSAGE_DELETE);
-
-        try {
-            log = future.get();
-            for (AuditLogEntry entry : log.getEntries()) {
-                if (entry.getTarget().get().getId() == ev.getMessage().get().getAuthor().getId() && entry.getCreationTimestamp().isAfter(Instant.now().minus(Duration.ofMinutes(1)))) {
-                    deletedBy = entry.getUser().get().getNicknameMentionTag();
-                    break;
+        ev.getGuild().retrieveAuditLogs().type(ActionType.MESSAGE_DELETE).queue(auditLogEntries -> {
+            String deletedBy = "Self";
+            for (AuditLogEntry entry : auditLogEntries) {
+                if (entry.getTargetId().equals(ev.getMessageId()) && entry.getTimeCreated().toInstant().isAfter(Instant.now().minus(Duration.ofMinutes(1)))) {
+                    deletedBy = entry.getUser().getAsMention();
                 }
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+            EmbedBuilder embed = new EmbedBuilder();
 
-        EmbedBuilder embed = new EmbedBuilder();
+            embed.setAuthor("DELETE");
+            embed.setColor(Color.RED);
+            embed.setThumbnail("https://i.imgur.com/bYGnGCp.png");
 
-        embed.setAuthor("DELETE");
-        embed.setColor(Color.RED);
-        embed.setThumbnail("https://i.imgur.com/bYGnGCp.png");
+            embed.addField("Author", message.getAuthor().getAsMention(), true);
+            embed.addField("Channel", String.format("<#%s>", ev.getChannel().getId()), true);
+            embed.addField("Deleted by", deletedBy, true);
 
-        embed.addInlineField("Author", message.getAuthor().asUser().get().getMentionTag());
-        embed.addInlineField("Channel", String.format("<#%s>", ev.getChannel().getId()));
-        embed.addInlineField("Deleted by", deletedBy);
+            embed.addField("Message", "```"+stripGrave(message.getContentStripped())+"```", false);
 
-        embed.addField("Message", "```"+stripGrave(ev.getMessage().get().getContent())+"```");
+            embed.setFooter(message.getAuthor().getId());
+            embed.setTimestamp(Instant.now());
 
-        embed.setFooter(ev.getMessage().get().getUserAuthor().get().getIdAsString());
-        embed.setTimestamp(Instant.now());
-
-        modChannel.get().sendMessage(embed);
+            modChannel.sendMessage(embed.build()).queue();
+            messageCache.invalidate(ev.getMessageId());
+        });
     }
 
     @Override
-    public void onMessageEdit(MessageEditEvent ev) {
+    public void onGuildMessageUpdate(@Nonnull GuildMessageUpdateEvent ev) {
         EmbedBuilder embed = new EmbedBuilder();
 
         embed.setAuthor("EDIT");
         embed.setColor(Color.YELLOW);
         embed.setThumbnail("https://i.imgur.com/bYGnGCp.png");
 
-        embed.addInlineField("Author", ev.getMessage().get().getAuthor().asUser().get().getMentionTag());
-        embed.addInlineField("Channel", String.format("<#%s>", ev.getChannel().getId()));
+        embed.addField("Author", ev.getMessage().getAuthor().getAsMention(), true);
+        embed.addField("Channel", String.format("<#%s>", ev.getChannel().getId()), true);
 
-        embed.addField("Was", "```"+stripGrave(ev.getOldContent().get())+"```");
-        embed.addField("Now", "```"+stripGrave(ev.getNewContent())+"```");
+        Message oldMessage = messageCache.getIfPresent(ev.getMessageId());
+        embed.addField("Was", (oldMessage == null ? "Unknown" : "```"+stripGrave(oldMessage.getContentRaw())+"```"), false);
+        embed.addField("Now", "```"+stripGrave(ev.getMessage().getContentRaw())+"```", false);
+        messageCache.put(ev.getMessageId(), ev.getMessage());
 
-        embed.setFooter(ev.getMessage().get().getUserAuthor().get().getIdAsString());
+        embed.setFooter(ev.getMessage().getAuthor().getId());
         embed.setTimestamp(Instant.now());
 
-        modChannel.get().sendMessage(embed);
+        modChannel.sendMessage(embed.build()).queue();
     }
 
     @Override
-    public void onServerMemberBan(ServerMemberBanEvent ev) {
-        String bannedBy = "Unknown";
-        String reason = "Because";
-        AuditLog auditLog;
-
-        Future<AuditLog> future = ev.getServer().getAuditLog(10, AuditLogActionType.MEMBER_BAN_ADD);
-
-        try {
-            auditLog = future.get();
-            for (AuditLogEntry entry : auditLog.getEntries()) {
-                if (entry.getTarget().get().getId() == ev.getUser().getId()) {
-                    bannedBy = entry.getUser().get().getNicknameMentionTag();
-                    reason = entry.getReason().get();
+    public void onGuildBan(@Nonnull GuildBanEvent ev) {
+        ev.getGuild().retrieveAuditLogs().type(ActionType.BAN).queue(auditLogEntries -> {
+            String bannedBy = "Unknown";
+            String reason = "Because";
+            for (AuditLogEntry entry : auditLogEntries) {
+                if (entry.getTargetId().equals(ev.getUser().getId())) {
+                    bannedBy = entry.getUser().getAsMention();
+                    reason = entry.getReason();
                     break;
                 }
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+            EmbedBuilder embed = new EmbedBuilder();
+            embed.setAuthor(ev.getUser().getName());
+            embed.setColor(Color.PINK);
+            embed.setThumbnail("https://i.imgur.com/8WJqz7B.png");
 
-        EmbedBuilder embed = new EmbedBuilder();
+            embed.addField("Banned By: ", bannedBy, true);
+            embed.addField("ID", ev.getUser().getId(), true);
+            embed.addField("Reason", reason, false);
 
-        embed.setAuthor(ev.getUser());
-        embed.setColor(Color.PINK);
-        embed.setThumbnail("https://i.imgur.com/8WJqz7B.png");
+            embed.setFooter(ev.getUser().getId());
+            embed.setTimestamp(Instant.now());
 
-        embed.addInlineField("Banned By: ", bannedBy);
-        embed.addInlineField("ID", ev.getUser().getIdAsString());
-        embed.addField("Reason", reason);
-
-        embed.setFooter(ev.getUser().getIdAsString());
-        embed.setTimestamp(Instant.now());
-
-        modChannel.get().sendMessage(embed);
+            modChannel.sendMessage(embed.build()).queue();
+        });
     }
 
     @Override
-    public void onServerMemberJoin(ServerMemberJoinEvent ev) {
+    public void onGuildMemberJoin(@Nonnull GuildMemberJoinEvent ev) {
         EmbedBuilder embed = new EmbedBuilder();
 
-        embed.setAuthor(ev.getUser());
+        embed.setAuthor(ev.getUser().getName());
         embed.setTitle("Joined the server");
         embed.setColor(Color.GREEN);
 
-        embed.addField("Created", Date.from(ev.getUser().getCreationTimestamp()).toString());
+        embed.addField("Created", Date.from(ev.getUser().getTimeCreated().toInstant()).toString(), false);
 
-        embed.setFooter(ev.getUser().getIdAsString());
+        embed.setFooter(ev.getUser().getId());
         embed.setTimestamp(Instant.now());
 
-        modChannel.get().sendMessage(embed);
+        modChannel.sendMessage(embed.build()).queue();
     }
 
+
     @Override
-    public void onServerMemberLeave(ServerMemberLeaveEvent ev) {
-        String kickedBy = "Unknown";
-        String kickReason = "Because";
-        AuditLog log;
-
-        Future<AuditLog> future = ev.getServer().getAuditLog(10, AuditLogActionType.MEMBER_KICK);
-
-        try {
-            log = future.get();
-            for (AuditLogEntry entry : log.getEntries()) {
-                if (entry.getTarget().get().getId() == ev.getUser().getId()) {
-                    kickedBy = entry.getUser().get().getNicknameMentionTag();
-                    kickReason = entry.getReason().get();
+    public void onGuildMemberRemove(@Nonnull GuildMemberRemoveEvent ev) {
+        ev.getGuild().retrieveAuditLogs().type(ActionType.KICK).queue(auditLogEntries -> {
+            String kickedBy = "Unknown";
+            String kickReason = "Because";
+            for (AuditLogEntry entry : auditLogEntries) {
+                if (entry.getTargetId().equals(ev.getUser().getId())) {
+                    kickedBy = entry.getUser().getAsMention();
+                    kickReason = entry.getReason();
                     break;
                 }
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+            EmbedBuilder embed = new EmbedBuilder();
+            embed.setAuthor(ev.getUser().getName());
 
-        EmbedBuilder embed = new EmbedBuilder();
-        embed.setAuthor(ev.getUser());
+            if (kickedBy.equalsIgnoreCase("unknown")) {
+                embed.setTitle("Left the server");
+                embed.setColor(Color.RED);
+            } else {
+                embed.setColor(Color.PINK);
+                embed.setThumbnail("https://i.imgur.com/6TqbP9o.png");
 
-        if (kickedBy.equalsIgnoreCase("unknown")) {
-            embed.setTitle("Left the server");
-            embed.setColor(Color.RED);
-        } else {
-            embed.setColor(Color.PINK);
-            embed.setThumbnail("https://i.imgur.com/6TqbP9o.png");
+                embed.addField("Kicked By: ", kickedBy, true);
+                embed.addField("Reason", kickReason, false);
+            }
 
-            embed.addInlineField("Kicked By: ", kickedBy);
-            embed.addField("Reason", kickReason);
-        }
-
-        embed.setFooter(ev.getUser().getIdAsString());
-        embed.setTimestamp(Instant.now());
-        modChannel.get().sendMessage(embed);
+            embed.setFooter(ev.getUser().getId());
+            embed.setTimestamp(Instant.now());
+            modChannel.sendMessage(embed.build()).queue();
+        });
     }
 
     @Override
-    public void onUserChangeName(UserChangeNameEvent ev) {
+    public void onUserUpdateName(@Nonnull UserUpdateNameEvent ev) {
         EmbedBuilder embed = new EmbedBuilder();
 
         embed.setAuthor("NAME CHANGE");
         embed.setColor(Color.YELLOW);
         embed.setThumbnail("https://i.imgur.com/bYGnGCp.png");
 
-        embed.addInlineField("Old", ev.getOldName());
-        embed.addInlineField("New", ev.getNewName());
+        embed.addField("Old", ev.getOldName(), true);
+        embed.addField("New", ev.getNewName(), true);
 
-        embed.setFooter(ev.getUser().getIdAsString());
+        embed.setFooter(ev.getUser().getId());
         embed.setTimestamp(Instant.now());
 
-        modChannel.get().sendMessage(embed);
+        modChannel.sendMessage(embed.build()).queue();
     }
 
     @Override
-    public void onUserChangeNickname(UserChangeNicknameEvent ev) {
+    public void onGuildMemberUpdateNickname(@Nonnull GuildMemberUpdateNicknameEvent ev) {
         EmbedBuilder embed = new EmbedBuilder();
 
         embed.setAuthor("NICK CHANGE");
         embed.setColor(Color.YELLOW);
         embed.setThumbnail("https://i.imgur.com/bYGnGCp.png");
 
-        embed.addInlineField("Old", ev.getOldNickname().get());
-        embed.addInlineField("New", ev.getNewNickname().get());
-        embed.addField("ID", ev.getUser().getIdAsString());
+        embed.addField("Old", ev.getOldNickname(), true);
+        embed.addField("New", ev.getNewNickname(), true);
+        embed.addField("ID", ev.getUser().getId(), false);
 
-        embed.setFooter(ev.getUser().getIdAsString());
+        embed.setFooter(ev.getUser().getId());
         embed.setTimestamp(Instant.now());
 
-        modChannel.get().sendMessage(embed);
+        modChannel.sendMessage(embed.build()).queue();
     }
 
     public String stripGrave(String string) {

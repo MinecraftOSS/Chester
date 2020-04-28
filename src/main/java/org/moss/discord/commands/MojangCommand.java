@@ -3,15 +3,17 @@ package org.moss.discord.commands;
 import com.fasterxml.jackson.databind.JsonNode;
 import de.btobastian.sdcf4j.Command;
 import de.btobastian.sdcf4j.CommandExecutor;
-import org.javacord.api.DiscordApi;
-import org.javacord.api.entity.channel.TextChannel;
-import org.javacord.api.entity.message.embed.EmbedBuilder;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.entities.TextChannel;
 import org.moss.discord.util.BStatsUtil;
+
+import java.time.Instant;
 
 public class MojangCommand implements CommandExecutor {
 
     @Command(aliases = {"!mojang", "!mcstatus"}, usage = "!mojang", description = "Shows mojang servers")
-    public void onCommand(DiscordApi api, TextChannel channel, String[] args) {
+    public void onCommand(JDA api, TextChannel channel, String[] args) {
         BStatsUtil bStatsUtil = new BStatsUtil(api);
         EmbedBuilder embed = new EmbedBuilder();
         try {
@@ -20,25 +22,25 @@ public class MojangCommand implements CommandExecutor {
             embed.setAuthor("Mojang Status");
             embed.setThumbnail("https://i.imgur.com/uPuh3cT.png");
 
-            embed.addInlineField("Minecraft | Website", parseStatus(status.get(0).get("minecraft.net").asText()));
-            embed.addInlineField("Minecraft | Session", parseStatus(status.get(1).get("session.minecraft.net").asText()) +"\n");
+            embed.addField("Minecraft | Website", parseStatus(status.get(0).get("minecraft.net").asText()), true);
+            embed.addField("Minecraft | Session", parseStatus(status.get(1).get("session.minecraft.net").asText()) +"\n", true);
 
-            embed.addInlineField("Minecraft | Textures", parseStatus(status.get(6).get("textures.minecraft.net").asText()));
-            embed.addInlineField("Mojang | Accounts", parseStatus(status.get(2).get("account.mojang.com").asText()) +"\n");
+            embed.addField("Minecraft | Textures", parseStatus(status.get(6).get("textures.minecraft.net").asText()), true);
+            embed.addField("Mojang | Accounts", parseStatus(status.get(2).get("account.mojang.com").asText()) +"\n", true);
 
-            embed.addInlineField("Mojang | AuthServer", parseStatus(status.get(3).get("authserver.mojang.com").asText()));
-            embed.addInlineField("Mojang | Session", parseStatus(status.get(4).get("sessionserver.mojang.com").asText()) +"\n");
+            embed.addField("Mojang | AuthServer", parseStatus(status.get(3).get("authserver.mojang.com").asText()), true);
+            embed.addField("Mojang | Session", parseStatus(status.get(4).get("sessionserver.mojang.com").asText()) +"\n", true);
 
-            embed.addInlineField("Mojang | API", parseStatus(status.get(5).get("api.mojang.com").asText()));
-            embed.addInlineField("Mojang | Website", parseStatus(status.get(7).get("mojang.com").asText()));
+            embed.addField("Mojang | API", parseStatus(status.get(5).get("api.mojang.com").asText()), true);
+            embed.addField("Mojang | Website", parseStatus(status.get(7).get("mojang.com").asText()), true);
 
-            embed.setTimestampToNow();
+            embed.setTimestamp(Instant.now());
 
         } catch (Exception e) {
-            embed.addField("Error", "```"+e.toString() + " @ " +e.getStackTrace()[0]+"```");
+            embed.addField("Error", "```"+e.toString() + " @ " +e.getStackTrace()[0]+"```", false);
         }
 
-        channel.sendMessage(embed);
+        channel.sendMessage(embed.build()).queue();
     }
 
     public String parseStatus(String status) {

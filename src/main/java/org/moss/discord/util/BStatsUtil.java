@@ -2,9 +2,9 @@ package org.moss.discord.util;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import net.dv8tion.jda.api.JDA;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import org.javacord.api.DiscordApi;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -26,14 +26,14 @@ public class BStatsUtil {
     /**
      * The Discord api instance.
      */
-    private final DiscordApi api;
+    private final JDA api;
 
     /**
      * Creates a new bStats util.
      *
      * @param api A Discord api instance.
      */
-    public BStatsUtil(DiscordApi api) {
+    public BStatsUtil(JDA api) {
         this.api = api;
     }
 
@@ -49,7 +49,7 @@ public class BStatsUtil {
             } catch (IOException e) {
                 throw new CompletionException(e);
             }
-        }, api.getThreadPool().getExecutorService());
+        }, api.getCallbackPool());
     }
 
     /**
@@ -64,7 +64,7 @@ public class BStatsUtil {
             } catch (IOException e) {
                 throw new CompletionException(e);
             }
-        }, api.getThreadPool().getExecutorService());
+        }, api.getCallbackPool());
     }
 
     /**
@@ -117,7 +117,7 @@ public class BStatsUtil {
             } catch (IOException e) {
                 throw new CompletionException(e);
             }
-        }, api.getThreadPool().getExecutorService());
+        }, api.getCallbackPool());
     }
 
     /**

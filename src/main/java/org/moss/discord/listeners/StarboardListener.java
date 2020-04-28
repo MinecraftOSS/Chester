@@ -1,87 +1,85 @@
 package org.moss.discord.listeners;
 
-import java.awt.Color;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-
-import org.javacord.api.DiscordApi;
-import org.javacord.api.entity.channel.TextChannel;
-import org.javacord.api.entity.emoji.Emoji;
-import org.javacord.api.entity.message.Message;
-import org.javacord.api.entity.message.Reaction;
-import org.javacord.api.entity.message.embed.EmbedBuilder;
-import org.javacord.api.event.message.reaction.ReactionAddEvent;
-import org.javacord.api.listener.message.reaction.ReactionAddListener;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.MessageReaction;
+import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
+import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.moss.discord.Constants;
 import org.moss.discord.storage.StarboardStorage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class StarboardListener implements ReactionAddListener {
+import javax.annotation.Nonnull;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+
+public class StarboardListener extends ListenerAdapter {
 
     private static final Logger logger = LoggerFactory.getLogger(StarboardListener.class);
-    private static Collection<String> starEmojis = Arrays.asList(Constants.EMOJI_STARS_UNICODE);
+    private static final Collection<String> starEmojis = Arrays.asList(Constants.EMOJI_STARS_UNICODE);
 
-    private DiscordApi api;
-    private StarboardStorage storage = new StarboardStorage();
+    private final JDA api;
+    private final StarboardStorage storage = new StarboardStorage();
 
-    public StarboardListener(DiscordApi dApi) {
+    public StarboardListener(JDA dApi) {
         api = dApi;
     }
 
     @Override
-    public void onReactionAdd(ReactionAddEvent event) {
-        if (storage.isStarred(event.getMessageId()) || storage.isStarboardMessage(event.getMessageId())) return;
+    public void onGuildMessageReactionAdd(@Nonnull GuildMessageReactionAddEvent event) {
+        if (storage.isStarred(event.getMessageIdLong()) || storage.isStarboardMessage(event.getMessageIdLong())) return;
 
-        Message message = event.requestMessage().join();
-        
-        long totalStars = countStars(message.getReactions());
+        event.getChannel().retrieveMessageById(event.getMessageId()).queue(message -> {
+            long totalStars = countStars(message.getReactions());
 
-        if (totalStars >= Constants.STARS_MINIMUM) {
-            postStarboard(message);
-        }
+            if (totalStars >= Constants.STARS_MINIMUM) {
+                postStarboard(message);
+            }
+        });
     }
 
-    private long countStars(List<Reaction> reactions) {
+    private long countStars(List<MessageReaction> reactions) {
         return reactions.stream()
-            .filter(r -> isStar(r.getEmoji()))
-            .map(Reaction::getUsers)
+            .filter(r -> isStar(r.getReactionEmote()))
+            .map(MessageReaction::retrieveUsers)
             .distinct()
             .count();
     }
     
     private void postStarboard(Message message) {
-        Optional<TextChannel> starboardChannel = api.getTextChannelById(Constants.CHANNEL_STARBOARD);
-        if (!starboardChannel.isPresent()) return; // Starboard is disabled
+        TextChannel starboardChannel = api.getTextChannelById(Constants.CHANNEL_STARBOARD);
+        if (starboardChannel == null) return; // Starboard is disabled
 
         EmbedBuilder embed = new EmbedBuilder();
 
-        String author = message.getAuthor().getDiscriminatedName();
-        String channel = message.getServerTextChannel().get().getMentionTag();
-        String content = message.getContent();
+        String author = message.getAuthor().getName() + "#" + message.getAuthor().getDiscriminator();
+        String channel = message.getTextChannel().getAsMention();
+        String content = message.getContentRaw();
 
-        embed.setAuthor(message.getAuthor());
+        embed.setAuthor(message.getAuthor().getName());
         embed.setColor(Constants.COLOR_STARBOARD);
         embed.setDescription("```markdown\n" + content + "\n```");
-        embed.setTimestamp(message.getCreationTimestamp());
+        embed.setTimestamp(message.getTimeCreated());
         embed.setThumbnail("https://cdn.discordapp.com/attachments/397536210236604427/431107224308547604/ecMd5Gecn.png");
-        embed.addInlineField("Author", author);
-        embed.addInlineField("Channel", channel);
+        embed.addField("Author", author, true);
+        embed.addField("Channel", channel, true);
         embed.setFooter("Posted");
 
-        starboardChannel.get().sendMessage(embed).thenAcceptAsync(starMessage -> {
-            storage.set(message.getIdAsString(), starMessage.getIdAsString());
+        starboardChannel.sendMessage(embed.build()).queue(starMessage -> {
+            storage.set(message.getId(), starMessage.getId());
             logger.info("Posted {} to starboard as {}", message.getId(), starMessage.getId());
-        }).exceptionally(t -> {
-            logger.warn("Failed to post to starboard", t);
-            return null;
         });
     }
 
-    private static boolean isStar(Emoji emoji) {
-        return starEmojis.contains(emoji.asUnicodeEmoji().orElseGet(() -> emoji.asCustomEmoji().get().getName()));
+    private static boolean isStar(MessageReaction.ReactionEmote emoji) {
+        if (emoji.isEmoji()) {
+            return starEmojis.contains(emoji.getEmoji());
+        }
+        return starEmojis.contains(emoji.getEmote().getName());
     }
 
 }

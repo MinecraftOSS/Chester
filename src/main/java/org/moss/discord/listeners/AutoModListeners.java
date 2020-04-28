@@ -5,48 +5,37 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import de.btobastian.sdcf4j.Command;
 import de.btobastian.sdcf4j.CommandExecutor;
 import de.btobastian.sdcf4j.CommandHandler;
-import org.javacord.api.DiscordApi;
-import org.javacord.api.entity.channel.TextChannel;
-import org.javacord.api.entity.message.Message;
-import org.javacord.api.entity.message.MessageAttachment;
-import org.javacord.api.entity.message.MessageAuthor;
-import org.javacord.api.entity.message.embed.Embed;
-import org.javacord.api.entity.message.embed.EmbedBuilder;
-import org.javacord.api.entity.permission.Role;
-import org.javacord.api.entity.server.Server;
-import org.javacord.api.entity.user.User;
-import org.javacord.api.event.message.MessageCreateEvent;
-import org.javacord.api.listener.message.MessageCreateListener;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.MessageBuilder;
+import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.moss.discord.Constants;
 
+import javax.annotation.Nonnull;
 import java.awt.*;
 import java.io.File;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.concurrent.Callable;
-import java.util.concurrent.CompletableFuture;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class AutoModListeners implements MessageCreateListener, CommandExecutor {
+public class AutoModListeners extends ListenerAdapter implements CommandExecutor {
 
-    DiscordApi api;
+    JDA api;
     private ModerationData data;
-    private Optional<TextChannel> modChannel;
-    private Map<Long, Instant> active = new HashMap<>();
-    private Map<Long, MessageTracker> trackers = new HashMap<>();
-    private ObjectMapper mapper = new ObjectMapper();
-    private List<String> protectedRoles = new ArrayList<String>() {
+    private final TextChannel modChannel;
+    private final Map<Long, Instant> active = new HashMap<>();
+    private final Map<Long, MessageTracker> trackers = new HashMap<>();
+    private final ObjectMapper mapper = new ObjectMapper();
+    private final List<String> protectedRoles = new ArrayList<String>() {
         {
             add("391029845225766912");
             add("425708417663893505");
@@ -95,7 +84,7 @@ public class AutoModListeners implements MessageCreateListener, CommandExecutor 
             "https://i.imgur.com/soBdcGC.gif"
     };
 
-    public AutoModListeners(DiscordApi api, CommandHandler commandHandler) {
+    public AutoModListeners(JDA api, CommandHandler commandHandler) {
         this.api = api;
         commandHandler.registerCommand(this);
         modChannel = api.getTextChannelById(Constants.CHANNEL_MODLOG);
@@ -109,96 +98,104 @@ public class AutoModListeners implements MessageCreateListener, CommandExecutor 
     }
 
     @Command(aliases = {"!pingok", ".pingok"}, usage = "!pingok", description = "Pings on the channel are ok")
-    public void onOk(DiscordApi api, String[] args, TextChannel channel, User user, Message message, Server server) {
-        if (!(server.canKickUsers(user) || hasProtectedRole(user.getRoles(server)))) {
+    public void onOk(JDA api, String[] args, TextChannel channel, Member user, Message message, Guild server) {
+        if (user == null) {
+            return;
+        }
+        if (!(server.getMember(api.getSelfUser()).canInteract(user) || hasProtectedRole(user.getRoles()))) {
             return;
         }
         try {
-            if (data.exempts.get(user.getId()).contains(channel.getIdAsString())) {
-                data.exempts.get(user.getId()).remove(channel.getIdAsString());
-                message.addReaction("\ud83d\ude08");
+            if (data.exempts.get(user.getIdLong()).contains(channel.getId())) {
+                data.exempts.get(user.getIdLong()).remove(channel.getId());
+                message.addReaction("\ud83d\ude08").queue();
             } else {
-                data.exempts.computeIfAbsent(user.getId(), daList -> new TreeSet<>()).add(channel.getIdAsString());
-                message.addReaction("\ud83d\ude01");
+                data.exempts.computeIfAbsent(user.getIdLong(), daList -> new TreeSet<>()).add(channel.getId());
+                message.addReaction("\ud83d\ude01").queue();
             }
         } catch (Exception e) {
-            data.exempts.computeIfAbsent(user.getId(), daList -> new TreeSet<>()).add(channel.getIdAsString());
-            message.addReaction("\ud83d\ude01");
+            data.exempts.computeIfAbsent(user.getIdLong(), daList -> new TreeSet<>()).add(channel.getId());
+            message.addReaction("\ud83d\ude01").queue();
         }
         saveModData();
     }
 
     @Command(aliases = {"!fileblacklist", ".fileblacklist"}, usage = "!fileblacklist <Extension>", description = "Adds a file blacklist")
-    public void addBlackList(DiscordApi api, String[] args, TextChannel channel, MessageAuthor author, Message message) {
-        if (author.canBanUsersFromServer() && args.length >= 1) {
+    public void addBlackList(JDA api, String[] args, TextChannel channel, Member author, Message message) {
+        if (author == null) {
+            return;
+        }
+        if (author.hasPermission(Permission.BAN_MEMBERS) && args.length >= 1) {
             if (args[0].startsWith(".")) {
                 if (data.blacklistedFiles.contains(args[0])) {
                     data.blacklistedFiles.remove(args[0].toLowerCase());
-                    message.addReaction("\uD83D\uDC4E");
+                    message.addReaction("\uD83D\uDC4E").queue();
                 } else {
                     data.blacklistedFiles.add(args[0].toLowerCase());
-                    message.addReaction("\uD83D\uDC4D");
+                    message.addReaction("\uD83D\uDC4D").queue();
                 }
                 saveModData();
             } else {
-                channel.sendMessage(new EmbedBuilder().setColor(Color.RED).setTitle("Invalid file extension"));
+                channel.sendMessage(new EmbedBuilder().setColor(Color.RED).setTitle("Invalid file extension").build()).queue();
             }
         }
     }
 
     @Command(aliases = {"!addcensor", ".addcensor"}, usage = "!addcensor <Word/Regex>", description = "Adds the words to the censor list")
-    public void addCensor(DiscordApi api, String[] args, TextChannel channel, MessageAuthor author, Message message) {
-        if (author.canBanUsersFromServer() && args.length >= 1) {
+    public void addCensor(JDA api, String[] args, TextChannel channel, Member author, Message message) {
+        if (author == null) {
+            return;
+        }
+        if (author.hasPermission(Permission.BAN_MEMBERS) && args.length >= 1) {
             if (data.censoredWords.contains(args[0])) {
                 data.censoredWords.remove(args[0].toLowerCase());
-                message.addReaction("\uD83D\uDC4E");
+                message.addReaction("\uD83D\uDC4E").queue();
             } else {
                 data.censoredWords.add(args[0].toLowerCase());
-                message.addReaction("\uD83D\uDC4D");
+                message.addReaction("\uD83D\uDC4D").queue();
             }
             saveModData();
         }
     }
 
-
     @Override
-    public void onMessageCreate(MessageCreateEvent ev) {
-        if (ev.getMessage().getAuthor().isYourself() || ev.getMessage().getAuthor().canKickUsersFromServer()) {
-            active.put(ev.getMessage().getAuthor().getId(), Instant.now());
+    public void onGuildMessageReceived(@Nonnull GuildMessageReceivedEvent ev) {
+        if (ev.getMessage().getAuthor().getId().equals(ev.getJDA().getSelfUser().getId()) || ev.getMessage().getMember().hasPermission(Permission.KICK_MEMBERS)) {
+            active.put(ev.getMessage().getAuthor().getIdLong(), Instant.now());
             return;
         }
 
         parsePings(ev.getMessage());
 
         if (!ev.getMessage().getEmbeds().isEmpty()) {
-            for (Embed embed : ev.getMessage().getEmbeds()) {
-                String title = embed.getTitle().orElse("");
+            for (MessageEmbed embed : ev.getMessage().getEmbeds()) {
+                String title = embed.getTitle() == null ? "" : embed.getTitle();
                 System.out.println(title);
                 for (String pattern : data.censoredWords) {
                     if (title.toLowerCase().contains(pattern)) {
-                        ev.getMessage().delete("Pattern trigger: " + pattern);
-                        logCensorMessage(ev.getMessage().getUserAuthor(), pattern, ev.getChannel().getIdAsString());
+                        ev.getMessage().delete().reason("Pattern trigger: " + pattern).queue();
+                        logCensorMessage(ev.getMessage().getAuthor(), pattern, ev.getChannel().getId());
                         return;
                     }
                 }
             }
         }
 
-        for (MessageAttachment messageAttachment : ev.getMessage().getAttachments()) {
+        for (Message.Attachment messageAttachment : ev.getMessage().getAttachments()) {
             String fileName = messageAttachment.getFileName();
             if (data.blacklistedFiles.contains(fileName.substring(fileName.lastIndexOf('.')))) {
-                ev.getMessage().delete("Blacklisted File: " + fileName);
-                logFileMessage(ev.getMessage().getUserAuthor(), fileName, ev.getChannel().getIdAsString());
+                ev.getMessage().delete().reason("Blacklisted File: " + fileName).queue();
+                logFileMessage(ev.getMessage().getAuthor(), fileName, ev.getChannel().getId());
                 return;
             }
         }
 
-        String message = ev.getMessage().getContent();
+        String message = ev.getMessage().getContentRaw();
         for (String pattern : data.censoredWords) {
             Matcher mat = Pattern.compile(pattern).matcher(message.toLowerCase());
             if (mat.find()) {
-                ev.getMessage().delete("Pattern trigger: " + pattern);
-                logCensorMessage(ev.getMessage().getUserAuthor(), mat.group(), ev.getChannel().getIdAsString());
+                ev.getMessage().delete().reason("Pattern trigger: " + pattern).queue();
+                logCensorMessage(ev.getMessage().getAuthor(), mat.group(), ev.getChannel().getId());
                 return;
             }
         }
@@ -206,21 +203,20 @@ public class AutoModListeners implements MessageCreateListener, CommandExecutor 
 
     public void parsePings(Message message) {
         if (message.getMentionedUsers().size() >= 1) {
-            User perp = message.getUserAuthor().get();
-            Server server = message.getServer().get();
-            MessageTracker tracker = getTrackedUser(perp.getId());
+            Member perp = message.getMember();
+            MessageTracker tracker = getTrackedUser(perp.getIdLong());
             boolean warn = false;
-            for (User user : message.getMentionedUsers()) {
-                if ((server.canKickUsers(user) || hasProtectedRole(user.getRoles(server))) && !userIsActive(user.getId())) {
-                    if (data.exempts.containsKey(user.getId()) && data.exempts.get(user.getId()).contains(message.getChannel().getIdAsString())) {
+            for (Member user : message.getMentionedMembers()) {
+                if ((perp.hasPermission(Permission.KICK_MEMBERS) || hasProtectedRole(user.getRoles())) && !userIsActive(user.getIdLong())) {
+                    if (data.exempts.containsKey(user.getIdLong()) && data.exempts.get(user.getIdLong()).contains(message.getChannel().getId())) {
                         continue;
                     }
                     tracker.updatePings();
                     warn = true;
                 }
                 if (tracker.getCount() > 3) { //4th ping will ban the user.
-                    message.getServer().get().banUser(perp, 0, "Mass ping");
-                    message.getChannel().sendMessage(new EmbedBuilder().setColor(Color.RED).setDescription(String.format("User %s has been permanently banned for mass ping.", perp.getMentionTag())));
+                    message.getGuild().ban(perp, 0, "Mass ping").queue();
+                    message.getChannel().sendMessage(new EmbedBuilder().setColor(Color.RED).setDescription(String.format("User %s has been permanently banned for mass ping.", perp.getAsMention())).build()).queue();
                     return;
                 }
             }
@@ -230,52 +226,52 @@ public class AutoModListeners implements MessageCreateListener, CommandExecutor 
                 embed.setImage(nopes[ThreadLocalRandom.current().nextInt(nopes.length)]);
                 embed.setDescription("It looks like you're trying to randomly ping a staff");
                 embed.setFooter(String.format(" Warning %d/3", tracker.getCount()) + " | " + donts[ThreadLocalRandom.current().nextInt(donts.length)] );
-                message.getChannel().sendMessage(perp.getMentionTag(),embed).thenAcceptAsync(msg -> api.getThreadPool().getScheduler().schedule((Callable<CompletableFuture<Void>>) msg::delete, 30, TimeUnit.MINUTES));
-                perp.sendMessage(embed);
+                message.getChannel().sendMessage(new MessageBuilder().setContent(perp.getAsMention()).setEmbed(embed.build()).build()).queue(msg -> api.getRateLimitPool().schedule(() -> msg.delete().queue(), 30, TimeUnit.MINUTES));
+                perp.getUser().openPrivateChannel().queue(privateChannel -> privateChannel.sendMessage(embed.build()).queue());
             }
         }
     }
 
     private boolean userIsActive(long userId) {
-        if (!active.keySet().contains(userId)) {
+        if (!active.containsKey(userId)) {
             return false;
         }
         return (Duration.between(active.get(userId), Instant.now()).toMinutes() <= 15);
     }
 
-    public void logCensorMessage(Optional<User> user, String pattern, String chanId) {
+    public void logCensorMessage(User user, String pattern, String chanId) {
         EmbedBuilder embed = new EmbedBuilder();
 
         embed.setAuthor("CENSOR");
         embed.setColor(Color.CYAN);
         embed.setThumbnail("https://i.imgur.com/bYGnGCp.png");
 
-        embed.addInlineField("Author", user.get().getMentionTag());
-        embed.addInlineField("Channel", String.format("<#%s>", chanId));
+        embed.addField("Author", user.getAsMention(), true);
+        embed.addField("Channel", String.format("<#%s>", chanId), true);
 
-        embed.addField("Pattern", String.format("```%s```", pattern));
+        embed.addField("Pattern", String.format("```%s```", pattern), false);
 
-        embed.setFooter(user.get().getIdAsString());
+        embed.setFooter(user.getId());
         embed.setTimestamp(Instant.now());
-        modChannel.get().sendMessage(embed);
+        modChannel.sendMessage(embed.build()).queue();
     }
 
-    public void logFileMessage(Optional<User> user, String fileName, String chanId) {
+    public void logFileMessage(User user, String fileName, String chanId) {
         EmbedBuilder embed = new EmbedBuilder();
 
         embed.setAuthor("FILE");
         embed.setColor(Color.CYAN);
         embed.setThumbnail("https://i.imgur.com/bYGnGCp.png");
 
-        embed.addInlineField("Author", user.get().getMentionTag());
-        embed.addInlineField("Channel", String.format("<#%s>", chanId));
+        embed.addField("Author", user.getAsMention(), true);
+        embed.addField("Channel", String.format("<#%s>", chanId), true);
 
-        embed.addField("File", String.format("```%s```", fileName));
+        embed.addField("File", String.format("```%s```", fileName), false);
 
-        embed.setFooter(user.get().getIdAsString());
+        embed.setFooter(user.getId());
         embed.setTimestamp(Instant.now());
 
-        modChannel.get().sendMessage(embed);
+        modChannel.sendMessage(embed.build()).queue();
     }
 
     private void saveModData() {
@@ -287,7 +283,7 @@ public class AutoModListeners implements MessageCreateListener, CommandExecutor 
     }
 
     private MessageTracker getTrackedUser(long id) {
-        if (!trackers.keySet().contains(id)) {
+        if (!trackers.containsKey(id)) {
             trackers.put(id, new MessageTracker());
         }
         return trackers.get(id);
@@ -301,7 +297,7 @@ public class AutoModListeners implements MessageCreateListener, CommandExecutor 
 
     private boolean hasProtectedRole(List<Role> roles) {
         for (Role role : roles) {
-            if (protectedRoles.contains(role.getIdAsString())) {
+            if (protectedRoles.contains(role.getId())) {
                 return true;
             }
         }
@@ -310,7 +306,7 @@ public class AutoModListeners implements MessageCreateListener, CommandExecutor 
 
     class MessageTracker {
 
-        private AtomicInteger count;
+        private final AtomicInteger count;
         private String lastMessage;
 
         public int updatePings () {
@@ -323,7 +319,7 @@ public class AutoModListeners implements MessageCreateListener, CommandExecutor 
 
         MessageTracker() {
             this.count = new AtomicInteger(0);
-            api.getThreadPool().getScheduler().scheduleAtFixedRate(() -> {
+            api.getRateLimitPool().scheduleAtFixedRate(() -> {
                 if (count.get() > 0) {
                     count.decrementAndGet();
                 }

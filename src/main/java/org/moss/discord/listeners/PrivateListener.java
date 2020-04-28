@@ -1,54 +1,54 @@
 package org.moss.discord.listeners;
 
-import org.javacord.api.DiscordApi;
-import org.javacord.api.entity.channel.TextChannel;
-import org.javacord.api.entity.message.MessageAttachment;
-import org.javacord.api.entity.message.embed.EmbedBuilder;
-import org.javacord.api.event.message.MessageCreateEvent;
-import org.javacord.api.listener.GloballyAttachableListener;
-import org.javacord.api.listener.message.MessageCreateListener;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.PrivateChannel;
+import net.dv8tion.jda.api.events.message.priv.PrivateMessageReceivedEvent;
+import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.moss.discord.Constants;
 
+import javax.annotation.Nonnull;
 import java.awt.*;
 import java.time.Instant;
-import java.util.Optional;
 
-public class PrivateListener implements MessageCreateListener {
+public class PrivateListener extends ListenerAdapter {
 
-    DiscordApi api;
-    private Optional<TextChannel> privateChannel;
+    JDA api;
+    private final PrivateChannel privateChannel;
 
-    public PrivateListener(DiscordApi api) {
+    public PrivateListener(JDA api) {
         this.api = api;
-        privateChannel = api.getTextChannelById(Constants.CHANNEL_PRIVATE);
+        privateChannel = api.getPrivateChannelById(Constants.CHANNEL_PRIVATE);
     }
 
     @Override
-    public void onMessageCreate(MessageCreateEvent ev) {
-        String message = ev.getMessage().getContent();
+    public void onPrivateMessageReceived(@Nonnull PrivateMessageReceivedEvent ev) {
+        String message = ev.getMessage().getContentRaw();
         if (message.toLowerCase().startsWith("private")) {
             EmbedBuilder embed = new EmbedBuilder();
-            String attachments = "";
+            StringBuilder attachments = new StringBuilder();
 
-            for (MessageAttachment attachment : ev.getMessage().getAttachments()) {
-                attachments += "**Name:** " + attachment.getFileName() + "\n" + attachment.getUrl()+"\n";
+            for (Message.Attachment attachment : ev.getMessage().getAttachments()) {
+                attachments.append("**Name:** ").append(attachment.getFileName()).append("\n").append(attachment.getUrl()).append("\n");
             }
 
-            embed.setAuthor(ev.getMessage().getAuthor());
+            embed.setAuthor(ev.getMessage().getAuthor().getName());
             embed.setColor(Color.CYAN);
             embed.setThumbnail("https://i.imgur.com/zY8VBQ8.png");
 
-            embed.addInlineField("Author", ev.getMessage().getUserAuthor().get().getMentionTag());
-            embed.addInlineField("Channel", String.format("<#%s>", ev.getChannel().getId()));
+            embed.addField("Author", ev.getMessage().getAuthor().getAsMention(), true);
+            embed.addField("Channel", String.format("<#%s>", ev.getChannel().getId()), true);
 
-            embed.addField("Message", "```"+message.replace("`", "")+"```");
-            embed.addField("Attachments", attachments.isEmpty() ? "None" : attachments);
+            embed.addField("Message", "```"+message.replace("`", "")+"```", false);
+            embed.addField("Attachments", (attachments.length() == 0) ? "None" : attachments.toString(),false);
 
             embed.setTimestamp(Instant.now());
 
-            privateChannel.get().sendMessage(embed);
+            privateChannel.sendMessage(embed.build()).queue();
 
-            ev.getMessage().delete("Private");
+            ev.getMessage().delete().reason("Private").queue();
         }
     }
+
 }
