@@ -2,10 +2,10 @@ package org.moss.discord.commands;
 
 import de.btobastian.sdcf4j.Command;
 import de.btobastian.sdcf4j.CommandExecutor;
-import org.javacord.api.DiscordApi;
-import org.javacord.api.entity.permission.Role;
-import org.javacord.api.entity.server.Server;
-import org.javacord.api.entity.user.User;
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Role;
 import org.moss.discord.Constants;
 
 import java.util.List;
@@ -13,19 +13,19 @@ import java.util.List;
 public class NicknameCommand implements CommandExecutor {
 
     @Command(aliases = {"!setnick", ".setnick"}, usage = "!setnick <name>", description = "Sets the nickname of the bot")
-    public void onCommand(DiscordApi api, String[] args, User user, Server server) {
-        if (hasPermission(user.getRoles(server))) {
+    public void onCommand(JDA api, String[] args, Member user, Guild server) {
+        if (hasPermission(user.getRoles())) {
             if (args.length == 1) {
-                api.getYourself().updateNickname(server, args[0]);
+                server.getMember(api.getSelfUser()).modifyNickname(args[0]).queue();
             } else {
-                api.getYourself().updateNickname(server, api.getYourself().getName());
+                server.getMember(api.getSelfUser()).modifyNickname(null).queue();
             }
         }
     }
 
     public Boolean hasPermission(List<Role> roles) { //TODO one class to rule them all
         for (Role role : roles) {
-            String roleId = role.getIdAsString();
+            String roleId = role.getId();
             if ((roleId.equals(Constants.ROLE_MODERATOR) || roleId.equals(Constants.ROLE_ADMIN))) {
                 return true;
             }

@@ -2,12 +2,11 @@ package org.moss.discord.util;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import org.javacord.api.entity.message.embed.EmbedBuilder;
-import org.javacord.api.entity.server.Server;
-import org.javacord.api.entity.user.User;
-import org.javacord.core.entity.message.embed.EmbedImpl;
 
 import java.awt.*;
 import java.io.IOException;
@@ -35,7 +34,7 @@ public class EmbedUtil {
         return new EmbedBuilder().setColor(Color.RED).setTitle("Invalid embed");
     }
 
-    public EmbedBuilder fromJson(String url, User user, Server server, String... args) {
+    public EmbedBuilder fromJson(String url, Member user, Guild server, String... args) {
         try {
             JsonNode jsonEmbed = makeRequest(url);
             return new EmbedImpl(jsonAsString(new KeywordsUtil(jsonEmbed.get("embed").toString(), user, server, args).replace())).toBuilder();
@@ -45,7 +44,7 @@ public class EmbedUtil {
         return new EmbedBuilder().setColor(Color.RED).setTitle("Invalid embed");
     }
 
-    public EmbedBuilder fromString(String json, User user, Server server, String... args) {
+    public EmbedBuilder fromString(String json, Member user, Guild server, String... args) {
         try {
             return new EmbedImpl(jsonAsString(new KeywordsUtil(json, user, server, args).replace())).toBuilder();
         } catch (Exception e) {
@@ -54,7 +53,7 @@ public class EmbedUtil {
         return new EmbedBuilder().setColor(Color.RED).setTitle("Invalid embed");
     }
 
-    public EmbedBuilder parseString(String message, User user, Server server, String... args) {
+    public EmbedBuilder parseString(String message, Member user, Guild server, String... args) {
         if (message.startsWith("<embed>")) {
             return fromJson(message.substring(7), user, server, args);
         }

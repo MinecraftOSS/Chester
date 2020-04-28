@@ -3,23 +3,22 @@ package org.moss.discord.commands;
 import com.fasterxml.jackson.databind.JsonNode;
 import de.btobastian.sdcf4j.Command;
 import de.btobastian.sdcf4j.CommandExecutor;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.entities.TextChannel;
 import org.apache.batik.transcoder.TranscoderException;
 import org.apache.batik.transcoder.TranscoderInput;
 import org.apache.batik.transcoder.TranscoderOutput;
 import org.apache.batik.transcoder.image.JPEGTranscoder;
-import org.javacord.api.DiscordApi;
-import org.javacord.api.entity.channel.TextChannel;
-import org.javacord.api.entity.message.embed.EmbedBuilder;
-import org.javacord.api.exception.MissingPermissionsException;
-import org.javacord.api.util.logging.ExceptionLogger;
 import org.moss.discord.util.BStatsUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.Color;
+import java.awt.*;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.time.Instant;
 
 public class BStatsCommand implements CommandExecutor {
 
@@ -29,7 +28,7 @@ public class BStatsCommand implements CommandExecutor {
     private static final Logger logger = LoggerFactory.getLogger(BStatsCommand.class);
 
     @Command(aliases = {"!bStats"}, usage = "!bStats <pluginName>", description = "Shows some stats about the given plugin.")
-    public void onCommand(DiscordApi api, TextChannel channel, String[] args) {
+    public void onCommand(JDA api, TextChannel channel, String[] args) {
         BStatsUtil bStatsUtil = new BStatsUtil(api);
 
         if (args.length >= 1) {
@@ -37,7 +36,7 @@ public class BStatsCommand implements CommandExecutor {
             bStatsUtil.getPlugin(String.join(" ", args)).thenAcceptAsync(plugin -> {
                 // Check if a plugin with this name exists
                 if (plugin == null) {
-                    channel.sendMessage(new EmbedBuilder().setTitle("Unknown plugin!").setColor(Color.RED)).join();
+                    channel.sendMessage(new EmbedBuilder().setTitle("Unknown plugin!").setColor(Color.RED).build()).queue();
                     return;
                 }
 
@@ -57,15 +56,15 @@ public class BStatsCommand implements CommandExecutor {
                 // Create the embed
                 embed.setTitle(name + " by " + owner);
                 embed.setDescription("[View on bStats](https://bstats.org/plugin/" + softwareUrl + "/" + name + ")");
-                embed.addInlineField("\uD83D\uDD0C Servers", "```\n" + String.valueOf(serverCount) + "\n```");
-                embed.addInlineField("\uD83D\uDC76 Players", "```\n" + String.valueOf(playerCount) + "\n```");
-                embed.addInlineField("⚙ Software", "```\n" + softwareName + "\n```");
-                embed.setImage(signatureAsStream, "jpg");
-                embed.setTimestampToNow();
+                embed.addField("\uD83D\uDD0C Servers", "```\n" + serverCount + "\n```", true);
+                embed.addField("\uD83D\uDC76 Players", "```\n" + playerCount + "\n```", true);
+                embed.addField("⚙ Software", "```\n" + softwareName + "\n```", true);
+                embed.setImage("attachment://photo.jpg");
+                embed.setTimestamp(Instant.now());
 
                 // Send the embed
-                channel.sendMessage(embed).join();
-            }).exceptionally(ExceptionLogger.get(MissingPermissionsException.class));
+                channel.sendFile(signatureAsStream, "photo.jpg").embed(embed.build()).queue();
+            });
         }
 
         // No plugin name provided. Send help message.
@@ -73,8 +72,7 @@ public class BStatsCommand implements CommandExecutor {
             EmbedBuilder embed = new EmbedBuilder()
                     .setDescription("**Usage**: !bStats <pluginName>")
                     .setColor(Color.RED);
-            channel.sendMessage(embed)
-                    .exceptionally(ExceptionLogger.get(MissingPermissionsException.class));
+            channel.sendMessage(embed.build()).queue();
         }
     }
 

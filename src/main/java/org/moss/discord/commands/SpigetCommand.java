@@ -3,15 +3,16 @@ package org.moss.discord.commands;
 import com.fasterxml.jackson.databind.JsonNode;
 import de.btobastian.sdcf4j.Command;
 import de.btobastian.sdcf4j.CommandExecutor;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.entities.TextChannel;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
-import org.javacord.api.DiscordApi;
-import org.javacord.api.entity.channel.TextChannel;
-import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.moss.discord.util.BStatsUtil;
 
 import java.awt.*;
 import java.text.MessageFormat;
+import java.time.Instant;
 import java.util.Iterator;
 
 public class SpigetCommand implements CommandExecutor {
@@ -19,12 +20,12 @@ public class SpigetCommand implements CommandExecutor {
     String queryurl = "https://api.spiget.org/v2/search/resources/{0}?field=name&size=5&page={1}&fields=id,name,tag,rating";
 
     @Command(aliases = {"!spiget", "!plsearch"}, usage = "!spiget <Query>", description = "Search spigots resources")
-    public void onCommand(DiscordApi api, TextChannel channel, String[] args) {
+    public void onCommand(JDA api, TextChannel channel, String[] args) {
         String query = String.join(" ", args);
         String lastIndex = query.substring(query.lastIndexOf(" ")+1);
         int page = 1;
         if (StringUtils.isNumeric(lastIndex) && !lastIndex.equals("1")) {
-            page = Integer.valueOf(lastIndex);
+            page = Integer.parseInt(lastIndex);
             query = String.join(" ", (String[]) ArrayUtils.remove(args, args.length-1));
         }
         BStatsUtil bStatsUtil = new BStatsUtil(api);
@@ -42,15 +43,15 @@ public class SpigetCommand implements CommandExecutor {
 
                 embed.setAuthor("Spiget Search");
                 embed.setColor(Color.GREEN);
-                embed.addField("Results", result.toString());
+                embed.addField("Results", result.toString(), false);
 
-                embed.setTimestampToNow();
+                embed.setTimestamp(Instant.now());
 
             } catch (Exception e) {
                 e.printStackTrace();
                 embed.setTitle("No resources found!").setColor(Color.RED);
             }
         }
-        channel.sendMessage(embed);
+        channel.sendMessage(embed.build()).queue();
     }
 }

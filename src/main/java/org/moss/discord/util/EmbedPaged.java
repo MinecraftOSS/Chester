@@ -1,18 +1,18 @@
 package org.moss.discord.util;
 
-import org.apache.commons.lang.StringUtils;
-import org.javacord.api.entity.emoji.Emoji;
-import org.javacord.api.entity.message.Message;
-import org.javacord.api.entity.message.Messageable;
-import org.javacord.api.entity.message.embed.EmbedBuilder;
-import org.javacord.api.entity.user.User;
-import org.javacord.api.event.message.reaction.SingleReactionEvent;
-import org.javacord.api.util.logging.ExceptionLogger;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.MessageBuilder;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.MessageChannel;
+import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageDeleteEvent;
+import net.dv8tion.jda.api.events.message.guild.react.GenericGuildMessageReactionEvent;
+import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
+import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionRemoveEvent;
+import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import javax.annotation.Nonnull;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
@@ -23,29 +23,30 @@ import java.util.concurrent.atomic.AtomicReference;
  * https://github.com/burdoto/javacord-utilities/blob/master/src/main/java/de/kaleidox/javacord/util/ui/messages/paging/PagedEmbed.java
  */
 
-public class EmbedPaged {
+public class EmbedPaged extends ListenerAdapter {
 
     private final static int DELETE_EMOJIS_TIME = 15;
     private final static TimeUnit DELETE_EMOJIS_UNIT = TimeUnit.MINUTES;
     private final static String PREV_PAGE_EMOJI = "\u2b05";
     private final static String NEXT_PAGE_EMOJI = "\u27a1";
 
-    private final Messageable messageable;
+    private final MessageChannel messageable;
     private final User user;
+    private final EmbedPaged instance = this;
 
     private boolean buttonPaged = false;
-    private ConcurrentHashMap<Integer, EmbedBuilder> pages = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Integer, EmbedBuilder> pages = new ConcurrentHashMap<>();
     private int page;
-    private AtomicReference<Message> sentMessage = new AtomicReference<>();
+    private final AtomicReference<Message> sentMessage = new AtomicReference<>();
 
-    public EmbedPaged(Messageable messageable, List<EmbedBuilder> embeds) {
+    public EmbedPaged(MessageChannel messageable, List<EmbedBuilder> embeds) {
         this.messageable = messageable;
         addPages(embeds);
         this.user = null;
     }
 
 
-    public EmbedPaged(Messageable messageable, List<EmbedBuilder> embeds, User user) {
+    public EmbedPaged(MessageChannel messageable, List<EmbedBuilder> embeds, User user) {
         this.messageable = messageable;
         addPages(embeds);
         this.user = user;
@@ -73,35 +74,24 @@ public class EmbedPaged {
     @SuppressWarnings("Duplicates")
     public CompletableFuture<Message> build() {
         page = 1;
-        CompletableFuture<Message> future = messageable.sendMessage(getPageInfo(), pages.get(page));
 
-        future.thenAcceptAsync(message -> {
-            sentMessage.set(message);
-            if (pages.size() != 1) {
-                if (buttonPaged) {
-                    for (int i = 1; i <= pages.size(); i++) {
-                        message.addReaction(i+"\u20E3");
+
+        CompletableFuture<Message> future = new CompletableFuture<>();
+            messageable.sendMessage(new MessageBuilder().setContent(getPageInfo()).setEmbed(pages.get(page).build()).build()).queue(message -> {
+                sentMessage.set(message);
+                if (pages.size() != 1) {
+                    if (buttonPaged) {
+                        for (int i = 1; i <= pages.size(); i++) {
+                            message.addReaction(i+"\u20E3").queue();
+                        }
+                    } else {
+                        message.addReaction(PREV_PAGE_EMOJI).queue();
+                        message.addReaction(NEXT_PAGE_EMOJI).queue();
                     }
-                } else {
-                    message.addReaction(PREV_PAGE_EMOJI);
-                    message.addReaction(NEXT_PAGE_EMOJI);
+                    message.getJDA().addEventListener(instance);
+                    future.complete(message);
                 }
-                message.addReactionAddListener(this::onReactionClick);
-                message.addReactionRemoveListener(this::onReactionClick);
-            }
-
-            message.addMessageDeleteListener(delete -> message.getMessageAttachableListeners()
-                    .forEach((a, b) -> message.removeMessageAttachableListener(a)))
-                    .removeAfter(DELETE_EMOJIS_TIME, DELETE_EMOJIS_UNIT)
-                    .addRemoveHandler(() -> {
-                        sentMessage.get()
-                                .removeAllReactions();
-                        sentMessage.get()
-                                .getMessageAttachableListeners()
-                                .forEach((a, b) -> message.removeMessageAttachableListener(a));
-                    });
-        }).exceptionally(ExceptionLogger.get());
-
+            });
         return future;
     }
 
@@ -110,25 +100,26 @@ public class EmbedPaged {
      */
     private void refreshMessage() {
         if (sentMessage.get() != null) {
-            sentMessage.get().edit(getPageInfo(), pages.get(page));
+            sentMessage.get().editMessage(new MessageBuilder().setContent(getPageInfo()).setEmbed(pages.get(page).build()).build()).queue();
         }
     }
 
-    private void onReactionClick(SingleReactionEvent event) {
-        event.getEmoji().asUnicodeEmoji().ifPresent(emoji -> {
-            if (!event.getUser().isYourself()) {
+    private void onReactionClick(GenericGuildMessageReactionEvent event) {
+        if (event.getReactionEmote().isEmoji()) {
+            if (!event.getUser().getId().equals(event.getJDA().getSelfUser().getId())) {
                 if (user != null && !event.getUser().equals(user)) return;
                 if (buttonPaged) {
-                    page = Integer.valueOf(emoji.replace("\u20E3", ""));
+                    page = Integer.parseInt(event.getReactionEmote().getEmoji().replace("\u20E3", ""));
                     this.refreshMessage();
                     return;
                 }
-                switch (emoji) {
+                switch (event.getReactionEmote().getEmoji()) {
                     case PREV_PAGE_EMOJI:
                         if (page > 1)
                             page--;
                         else if (page == 1)
                             page = pages.size();
+
                         this.refreshMessage();
                         break;
                     case NEXT_PAGE_EMOJI:
@@ -142,7 +133,28 @@ public class EmbedPaged {
                         break;
                 }
             }
-        });
+        }
+    }
+
+    @Override
+    public void onGuildMessageReactionAdd(@Nonnull GuildMessageReactionAddEvent event) {
+        if (event.getMessageId().equals(sentMessage.get().getId())) {
+            onReactionClick(event);
+        }
+    }
+
+    @Override
+    public void onGuildMessageReactionRemove(@Nonnull GuildMessageReactionRemoveEvent event) {
+        if (event.getMessageId().equals(sentMessage.get().getId())) {
+            onReactionClick(event);
+        }
+    }
+
+    @Override
+    public void onGuildMessageDelete(@Nonnull GuildMessageDeleteEvent event) {
+        if (event.getMessageId().equals(sentMessage.get().getId())) {
+            event.getJDA().removeEventListener(instance);
+        }
     }
 
     private String getPageInfo() {

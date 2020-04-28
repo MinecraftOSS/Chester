@@ -4,13 +4,14 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.btobastian.sdcf4j.Command;
 import de.btobastian.sdcf4j.CommandExecutor;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.MessageBuilder;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.TextChannel;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import org.apache.commons.lang.StringUtils;
-import org.javacord.api.DiscordApi;
-import org.javacord.api.entity.channel.TextChannel;
-import org.javacord.api.entity.message.embed.EmbedBuilder;
-import org.javacord.api.entity.user.User;
 
 import java.awt.*;
 import java.util.Objects;
@@ -22,18 +23,17 @@ public class XkcdCommand implements CommandExecutor {
     private OkHttpClient client = new OkHttpClient.Builder().build();
 
     @Command(aliases = {"!xkcd", "!.xkcd"}, usage = "!xkcd <Query>", description = "Search xkcd")
-    public void onCommand(DiscordApi api, User user, TextChannel channel, String[] args) {
+    public void onCommand(JDA api, Member user, TextChannel channel, String[] args) {
         if (args.length >= 1) {
             String id = search(String.join(" ", args));
             if (id != null) {
                 JsonNode node = xkcd_info(id);
                 EmbedBuilder embed = new EmbedBuilder().setColor(Color.YELLOW);
                 String link = node.get("link").asText();
-                embed.setTitle("xkcd: " + node.get("safe_title").asText());
-                embed.setUrl(link.equalsIgnoreCase("") ? String.format("https://xkcd.com/%s/", id) : link);
+                embed.setTitle("xkcd: " + node.get("safe_title").asText(), link.equalsIgnoreCase("") ? String.format("https://xkcd.com/%s/", id) : link);
                 embed.setImage(node.get("img").asText());
                 embed.setFooter(node.get("alt").asText());
-                channel.sendMessage(user.getMentionTag(), embed);
+                channel.sendMessage(new MessageBuilder().setContent(user.getAsMention()).setEmbed(embed.build()).build()).queue();
             }
         }
     }

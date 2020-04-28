@@ -1,12 +1,16 @@
 package org.moss.discord.util;
 
-import org.javacord.api.entity.message.Message;
-import org.javacord.api.entity.message.Messageable;
-import org.javacord.api.entity.message.embed.EmbedBuilder;
-import org.javacord.api.entity.user.User;
-import org.javacord.api.event.message.reaction.SingleReactionEvent;
-import org.javacord.api.util.logging.ExceptionLogger;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.MessageChannel;
+import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageDeleteEvent;
+import net.dv8tion.jda.api.events.message.guild.react.GenericGuildMessageReactionEvent;
+import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
+import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionRemoveEvent;
+import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -19,7 +23,7 @@ import java.util.concurrent.atomic.AtomicReference;
  * https://github.com/burdoto/javacord-utilities/blob/master/src/main/java/de/kaleidox/javacord/util/ui/messages/paging/PagedEmbed.java
  */
 
-public class PagedEmbed {
+public class PagedEmbed extends ListenerAdapter {
 
     private final static int FIELD_MAX_CHARS = 1024;
     private final static int MAX_CHARS_PER_PAGE = 4500;
@@ -29,14 +33,15 @@ public class PagedEmbed {
     private final static String PREV_PAGE_EMOJI = "\u2b05";
     private final static String NEXT_PAGE_EMOJI = "\u27a1";
 
-    private final Messageable messageable;
+    private final PagedEmbed instance = this;
+    private final MessageChannel messageable;
     private final EmbedBuilder embed;
     private final User user;
 
-    private ConcurrentHashMap<Integer, List<Field>> pages = new ConcurrentHashMap<>();
-    private List<Field> fields = new ArrayList<>();
+    private final ConcurrentHashMap<Integer, List<Field>> pages = new ConcurrentHashMap<>();
+    private final List<Field> fields = new ArrayList<>();
     private int page;
-    private AtomicReference<Message> sentMessage = new AtomicReference<>();
+    private final AtomicReference<Message> sentMessage = new AtomicReference<>();
 
     /**
      * Creates a new PagedEmbed object.
@@ -44,7 +49,7 @@ public class PagedEmbed {
      * @param messageable The Messageable in which the embed should be sent.
      * @param embed       An EmbedBuilder the sent embed should be based on.
      */
-    public PagedEmbed(Messageable messageable, EmbedBuilder embed) {
+    public PagedEmbed(MessageChannel messageable, EmbedBuilder embed) {
         this.messageable = messageable;
         this.embed = embed;
         this.user = null;
@@ -57,7 +62,7 @@ public class PagedEmbed {
      * @param embed       An EmbedBuilder the sent embed should be based on.
      * @param user        A user to lock the embed with
      */
-    public PagedEmbed(Messageable messageable, EmbedBuilder embed, User user) {
+    public PagedEmbed(MessageChannel messageable, EmbedBuilder embed, User user) {
         this.messageable = messageable;
         this.embed = embed;
         this.user = user;
@@ -84,11 +89,11 @@ public class PagedEmbed {
      */
     public PagedEmbed addField(String title, String text, boolean inline) {
         fields.add(
-                new Field(
-                        title,
-                        text,
-                        inline
-                )
+            new Field(
+                title,
+                text,
+                inline
+            )
         );
 
         return this;
@@ -103,29 +108,17 @@ public class PagedEmbed {
         page = 1;
         refreshPages();
 
-        CompletableFuture<Message> future = messageable.sendMessage(embed);
 
-        future.thenAcceptAsync(message -> {
+        CompletableFuture<Message> future = new CompletableFuture<>();
+        messageable.sendMessage(embed.build()).queue(message -> {
             sentMessage.set(message);
             if (pages.size() != 1) {
-                message.addReaction(PREV_PAGE_EMOJI);
-                message.addReaction(NEXT_PAGE_EMOJI);
-                message.addReactionAddListener(this::onReactionClick);
-                message.addReactionRemoveListener(this::onReactionClick);
+                message.addReaction(PREV_PAGE_EMOJI).queue();
+                message.addReaction(NEXT_PAGE_EMOJI).queue();
+                message.getJDA().addEventListener(instance);
             }
-
-            message.addMessageDeleteListener(delete -> message.getMessageAttachableListeners()
-                    .forEach((a, b) -> message.removeMessageAttachableListener(a)))
-                    .removeAfter(DELETE_EMOJIS_TIME, DELETE_EMOJIS_UNIT)
-                    .addRemoveHandler(() -> {
-                        sentMessage.get()
-                                .removeAllReactions();
-                        sentMessage.get()
-                                .getMessageAttachableListeners()
-                                .forEach((a, b) -> message.removeMessageAttachableListener(a));
-                    });
-        }).exceptionally(ExceptionLogger.get());
-
+            future.complete(message);
+        });
         return future;
     }
 
@@ -169,7 +162,7 @@ public class PagedEmbed {
      */
     private void refreshMessage() {
         // Refresh the embed to the current page
-        embed.removeAllFields();
+        embed.clearFields();
 
         pages.get(page)
                 .forEach(field -> {
@@ -184,16 +177,15 @@ public class PagedEmbed {
 
         // Edit sent message
         if (sentMessage.get() != null) {
-            sentMessage.get()
-                    .edit(embed);
+            sentMessage.get().editMessage(embed.build()).queue();
         }
     }
 
-    private void onReactionClick(SingleReactionEvent event) {
-        event.getEmoji().asUnicodeEmoji().ifPresent(emoji -> {
-            if (!event.getUser().isYourself()) {
+    private void onReactionClick(GenericGuildMessageReactionEvent event) {
+        if (event.getReactionEmote().isEmoji()) {
+            if (!event.getUser().getId().equals(event.getJDA().getSelfUser().getId())) {
                 if (user != null && !event.getUser().equals(user)) return;
-                switch (emoji) {
+                switch (event.getReactionEmote().getEmoji()) {
                     case PREV_PAGE_EMOJI:
                         if (page > 1)
                             page--;
@@ -213,7 +205,28 @@ public class PagedEmbed {
                         break;
                 }
             }
-        });
+        }
+    }
+
+    @Override
+    public void onGuildMessageReactionAdd(@Nonnull GuildMessageReactionAddEvent event) {
+        if (event.getMessageId().equals(sentMessage.get().getId())) {
+            onReactionClick(event);
+        }
+    }
+
+    @Override
+    public void onGuildMessageReactionRemove(@Nonnull GuildMessageReactionRemoveEvent event) {
+        if (event.getMessageId().equals(sentMessage.get().getId())) {
+            onReactionClick(event);
+        }
+    }
+
+    @Override
+    public void onGuildMessageDelete(@Nonnull GuildMessageDeleteEvent event) {
+        if (event.getMessageId().equals(sentMessage.get().getId())) {
+            event.getJDA().removeEventListener(instance);
+        }
     }
 
     public EmbedBuilder getEmbed() {
@@ -231,7 +244,7 @@ public class PagedEmbed {
     /**
      * This subclass represents an embed field for the PagedEmbed.
      */
-    class Field {
+    static class Field {
         private final String title;
         private final String text;
         private final boolean inline;

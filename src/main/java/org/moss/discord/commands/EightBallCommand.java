@@ -2,10 +2,11 @@ package org.moss.discord.commands;
 
 import de.btobastian.sdcf4j.Command;
 import de.btobastian.sdcf4j.CommandExecutor;
-import org.javacord.api.DiscordApi;
-import org.javacord.api.entity.channel.TextChannel;
-import org.javacord.api.entity.message.embed.EmbedBuilder;
-import org.javacord.api.entity.user.User;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.MessageBuilder;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.TextChannel;
 
 import java.awt.*;
 import java.io.File;
@@ -33,15 +34,15 @@ public class EightBallCommand implements CommandExecutor {
     }
 
     @Command(aliases = {"!8ball"}, usage = "!8ball", description = "Asks the all knowing 8ball")
-    public void onCommand(DiscordApi api, TextChannel channel, User user, String[] args) {
+    public void onCommand(JDA api, TextChannel channel, Member user, String[] args) {
         if (args.length == 0) {
-            channel.sendMessage(user.getMentionTag() + " `!8ball <question>`");
+            channel.sendMessage(user.getAsMention() + " `!8ball <question>`").queue();
             return;
         }
-        channel.sendMessage(new EmbedBuilder().setTitle("Chester shakes the magic 8ball..").setImage(img)).thenAcceptAsync(message -> {
+        channel.sendMessage(new EmbedBuilder().setTitle("Chester shakes the magic 8ball..").setImage(img).build()).queue(message -> {
             String[] answer = responses.get(ThreadLocalRandom.current().nextInt(responses.size() -1)).split("\\|");
             EmbedBuilder builder = new EmbedBuilder().setColor(Color.decode(answer[0])).setTitle(answer[1]);
-            message.getApi().getThreadPool().getScheduler().schedule(() -> message.edit(user.getMentionTag(), builder),4, TimeUnit.SECONDS);
+            message.getJDA().getRateLimitPool().schedule(() -> message.editMessage(new MessageBuilder().setContent(user.getAsMention()).setEmbed(builder.build()).build()).queue(),4, TimeUnit.SECONDS);
         });
 
     }

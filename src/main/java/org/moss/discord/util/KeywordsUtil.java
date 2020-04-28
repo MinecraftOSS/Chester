@@ -1,18 +1,18 @@
 package org.moss.discord.util;
 
-import org.javacord.api.entity.server.Server;
-import org.javacord.api.entity.user.User;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
 
 import java.time.Instant;
 
 public class KeywordsUtil {
 
     private String template;
-    private User user;
-    private Server server;
+    private Member user;
+    private Guild server;
     private String[] args;
 
-    public KeywordsUtil(String template, User user, Server server, String... args) {
+    public KeywordsUtil(String template, Member user, Guild server, String... args) {
         this.template = template;
         this.user = user;
         this.server = server;
@@ -21,8 +21,8 @@ public class KeywordsUtil {
 
     public String replace() {
         return template
-                .replace("{USER}", user.getDisplayName(server))
-                .replace("{USER_TAG}", user.getMentionTag())
+                .replace("{USER}", user.getEffectiveName())
+                .replace("{USER_TAG}", user.getAsMention())
                 .replace("{TIMESTAMP_NOW}", Instant.now().toString())
                 .replace("{ARGS}", String.join(" ", args))
                 .replace("{USER_COUNT}", String.valueOf(server.getMemberCount()));

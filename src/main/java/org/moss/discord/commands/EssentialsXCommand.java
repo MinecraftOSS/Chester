@@ -4,35 +4,31 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.btobastian.sdcf4j.Command;
 import de.btobastian.sdcf4j.CommandExecutor;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.TextChannel;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import org.javacord.api.entity.channel.TextChannel;
-import org.javacord.api.entity.message.embed.EmbedBuilder;
-import org.javacord.api.entity.user.User;
 import org.moss.discord.util.PagedEmbed;
 
 import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 public class EssentialsXCommand implements CommandExecutor {
 
 
-    private static String itemdbURL = "https://raw.githubusercontent.com/EssentialsX/Essentials/2.x/Essentials/src/items.json";
-    private static String commanddbURL = "https://essinfo.xeya.me/index.php?page=commands&raw-data=true";
-    private static String permissionsdbURL = "https://essinfo.xeya.me/index.php?page=permissions&raw-data=true";
+    private static final String itemdbURL = "https://raw.githubusercontent.com/EssentialsX/Essentials/2.x/Essentials/src/items.json";
+    private static final String commanddbURL = "https://essinfo.xeya.me/index.php?page=commands&raw-data=true";
+    private static final String permissionsdbURL = "https://essinfo.xeya.me/index.php?page=permissions&raw-data=true";
 
     private JsonNode essxCommands;
     private JsonNode essxPermissions;
-    private Map<String, List<String>> itemDb = new HashMap<>();
+    private final Map<String, List<String>> itemDb = new HashMap<>();
 
-    private ObjectMapper mapper = new ObjectMapper();
+    private final ObjectMapper mapper = new ObjectMapper();
     private static final OkHttpClient client = new OkHttpClient.Builder().build();
 
     public EssentialsXCommand() {
@@ -85,66 +81,63 @@ public class EssentialsXCommand implements CommandExecutor {
     }
 
     @Command(aliases = {"!essc", ".essc"}, usage = "!essc <command>", description = "Show info about an EssentialsX command")
-    public void onCommand(String[] args, User user, TextChannel textChannel) {
+    public void onCommand(String[] args, Member user, TextChannel textChannel) {
         if (args.length >= 1) {
             List<JsonNode> commands = searchCommands(args[0]);
             if (commands.size() >= 1) {
                 EmbedBuilder embed = new EmbedBuilder()
                         .setColor(new Color(11825408))
-                        .setTitle("Command Information")
-                        .setUrl("https://essinfo.xeya.me/index.php?page=commands")
-                        .setAuthor(user);
-                PagedEmbed pagedEmbed = new PagedEmbed(textChannel, embed, user);
+                        .setTitle("Command Information", "https://essinfo.xeya.me/index.php?page=commands")
+                        .setAuthor(user.getUser().getName());
+                PagedEmbed pagedEmbed = new PagedEmbed(textChannel, embed, user.getUser());
                 pagedEmbed.setMaxFieldsPerPage(5);
                 for (JsonNode command : commands) {
                     pagedEmbed.addField(command.get("Command").asText(), String.format("```Usage: %s \n\nDescripton: %s \n\nAliases: %s```", command.get("Syntax").asText(), command.get("Description").asText(), command.get("Aliases").asText()));
                 }
                 pagedEmbed.build().join();
             } else {
-                textChannel.sendMessage(new EmbedBuilder().setTitle("Command not found").setColor(Color.RED));
+                textChannel.sendMessage(new EmbedBuilder().setTitle("Command not found").setColor(Color.RED).build()).queue();
             }
         }
     }
 
     @Command(aliases = {"!essp", ".essp"}, usage = "!essp <permission>", description = "Show info about an EssentialsX permission")
-    public void onPermCommand(String[] args, User user, TextChannel textChannel) {
+    public void onPermCommand(String[] args, Member user, TextChannel textChannel) {
         if (args.length >= 1) {
             List<JsonNode> perm = searchPermissions(args[0]);
             if (perm.size() != 0) {
                 EmbedBuilder embed = new EmbedBuilder()
                         .setColor(new Color(11825408))
-                        .setTitle("Permission Information")
-                        .setUrl("https://essinfo.xeya.me/index.php?page=permissions")
-                        .setAuthor(user);
-                PagedEmbed pagedEmbed = new PagedEmbed(textChannel, embed, user);
+                        .setTitle("Permission Information", "https://essinfo.xeya.me/index.php?page=permissions")
+                        .setAuthor(user.getUser().getName());
+                PagedEmbed pagedEmbed = new PagedEmbed(textChannel, embed, user.getUser());
                 for (JsonNode node : perm) {
                     pagedEmbed.addField(node.get("Permission").asText(), String.format("```%s```", node.get("Description").asText()));
                 }
                 pagedEmbed.build().join();
             } else {
-                textChannel.sendMessage(new EmbedBuilder().setTitle("Permission not found").setColor(Color.RED));
+                textChannel.sendMessage(new EmbedBuilder().setTitle("Permission not found").setColor(Color.RED).build()).queue();
             }
         }
     }
 
     @Command(aliases = {"!itemdb", ".itemdb"}, usage = "!itemdb <item>", description = "Show info about an EssentialsX Item")
-    public void onItemDbCommand(String[] args, User user, TextChannel textChannel) {
+    public void onItemDbCommand(String[] args, Member user, TextChannel textChannel) {
         if (args.length >= 1) {
             List<String> items = searchItems(args[0]);
             if (items.size() != 0) {
                 EmbedBuilder embed = new EmbedBuilder()
                         .setColor(new Color(11825408))
-                        .setTitle("Essentials ItemDB")
-                        .setUrl("https://github.com/EssentialsX/Essentials/blob/2.x/Essentials/src/items.json")
-                        .setAuthor(user);
-                PagedEmbed pagedEmbed = new PagedEmbed(textChannel, embed, user);
+                        .setTitle("Essentials ItemDB", "https://github.com/EssentialsX/Essentials/blob/2.x/Essentials/src/items.json")
+                        .setAuthor(user.getUser().getName());
+                PagedEmbed pagedEmbed = new PagedEmbed(textChannel, embed, user.getUser());
                 for (String item : items) {
                     List<String> db = itemDb.get(item);
                     pagedEmbed.addField(item.toUpperCase(), db.isEmpty() ? String.format("```%s```", item) : String.format("```%s```", String.join(" ", itemDb.get(item))));
                 }
                 pagedEmbed.build().join();
             } else {
-                textChannel.sendMessage(new EmbedBuilder().setTitle("Item not found").setColor(Color.RED));
+                textChannel.sendMessage(new EmbedBuilder().setTitle("Item not found").setColor(Color.RED).build()).queue();
             }
         }
     }

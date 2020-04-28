@@ -2,11 +2,12 @@ package org.moss.discord.commands;
 
 import de.btobastian.sdcf4j.Command;
 import de.btobastian.sdcf4j.CommandExecutor;
-import org.javacord.api.DiscordApi;
-import org.javacord.api.entity.channel.TextChannel;
-import org.javacord.api.entity.message.Message;
-import org.javacord.api.entity.message.embed.EmbedBuilder;
-import org.javacord.api.entity.user.User;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.MessageBuilder;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.TextChannel;
 
 import java.awt.*;
 import java.io.BufferedReader;
@@ -25,28 +26,23 @@ public class WolframAlphaCommand implements CommandExecutor {
     private Message msg;
 
     @Command(aliases = {"!wolfram", "!wa"}, usage = "!wolfram <Query>", description = "Search wolframalpha")
-    public void onCommand(DiscordApi api, User user, TextChannel channel, String[] args) {
+    public void onCommand(JDA api, Member user, TextChannel channel, String[] args) {
         long epoch = System.currentTimeMillis();
         String url = query.replace("<QUERY>", String.join("%20", args))+key;
         String link = queryLink.replace("<QUERY>", String.join("%20", args));
-        channel.sendMessage(new EmbedBuilder().setTitle("Querying WolframAlpha")).thenAcceptAsync(message -> msg = message);
+        channel.sendMessage(new EmbedBuilder().setTitle("Querying WolframAlpha").build()).queue(message -> msg = message);
         try {
             String reply = "Yes";
             URLConnection connection = new URL(url).openConnection();
             BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
             reply = reader.lines().collect(Collectors.joining("\n"));
-            msg.edit(user.getMentionTag(), new EmbedBuilder()
-                    .setTitle("Answer")
-                    .setUrl(link)
-                    .setDescription(String.format("```%s```", reply))
-                    .setColor(Color.GREEN)
-                    .setFooter("Took " +(System.currentTimeMillis() - epoch) +"ms"))
-                    .exceptionally(e -> {
-                        msg.edit(user.getMentionTag(), new EmbedBuilder().setColor(Color.RED).setTitle("Unable to query WolframAlpha"));
-                        return null;
-                    });
+            msg.editMessage(new MessageBuilder().setContent(user.getAsMention()).setEmbed(new EmbedBuilder()
+                .setTitle("Answer", link)
+                .setDescription(String.format("```%s```", reply))
+                .setColor(Color.GREEN)
+                .setFooter("Took " +(System.currentTimeMillis() - epoch) +"ms").build()).build()).queue();
         } catch (IOException e) {
-            msg.edit(user.getMentionTag(), new EmbedBuilder().setColor(Color.RED).setTitle("Unable to query WolframAlpha"));
+            msg.editMessage(new MessageBuilder().setContent(user.getAsMention()).setEmbed(new EmbedBuilder().setColor(Color.RED).setTitle("Unable to query WolframAlpha").build()).build()).queue();
             e.printStackTrace();
         }
     }
