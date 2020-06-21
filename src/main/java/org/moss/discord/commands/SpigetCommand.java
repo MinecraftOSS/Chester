@@ -35,7 +35,10 @@ public class SpigetCommand implements CommandExecutor {
                 StringBuilder result = new StringBuilder();
                 for (Iterator<JsonNode> i = search.elements(); i.hasNext();) {
                     JsonNode resource = i.next();
-                    String name = String.format("[%s](https://www.spigotmc.org/resources/%s/) | %s \u2605", resource.get("name").asText(), resource.get("id").asText(), resource.get("rating").get("average").asText());
+                    DecimalFormat df = new DecimalFormat("#.##");
+                    double input = resource.get("rating").get("average").asDouble();
+                    String message = df.format(input);
+                    String name = String.format("[%s](https://www.spigotmc.org/resources/%s/) | %s \u2605", resource.get("name").asText(), resource.get("id").asText(), message);
                     String tag = String.format("```%s```", resource.get("tag").asText());
                     result.append(name).append(tag).append("\n");
                 }
