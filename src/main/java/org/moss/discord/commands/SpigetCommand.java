@@ -33,9 +33,9 @@ public class SpigetCommand implements CommandExecutor {
             try {
                 JsonNode search = bStatsUtil.makeRequest(MessageFormat.format(queryurl, query, page));
                 StringBuilder result = new StringBuilder();
+                DecimalFormat df = new DecimalFormat("#.##");
                 for (Iterator<JsonNode> i = search.elements(); i.hasNext();) {
                     JsonNode resource = i.next();
-                    DecimalFormat df = new DecimalFormat("#.##");
                     double input = resource.get("rating").get("average").asDouble();
                     String message = df.format(input);
                     String name = String.format("[%s](https://www.spigotmc.org/resources/%s/) | %s \u2605", resource.get("name").asText(), resource.get("id").asText(), message);
