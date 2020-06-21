@@ -23,10 +23,10 @@ import java.util.Objects;
 
 public class EssentialsXCommand implements CommandExecutor {
 
-
+    
     private static String itemdbURL = "https://raw.githubusercontent.com/EssentialsX/Essentials/2.x/Essentials/src/items.json";
-    private static String commanddbURL = "https://essinfo.xeya.me/index.php?page=commands&raw-data=true";
-    private static String permissionsdbURL = "https://essinfo.xeya.me/index.php?page=permissions&raw-data=true";
+    private static String commanddbURL = "https://raw.githubusercontent.com/Xeyame/essinfo.xeya.me/master/data/commands.json";
+    private static String permissionsdbURL = "https://raw.githubusercontent.com/Xeyame/essinfo.xeya.me/master/data/permissions.json";
 
     private JsonNode essxCommands;
     private JsonNode essxPermissions;
@@ -97,7 +97,7 @@ public class EssentialsXCommand implements CommandExecutor {
                 PagedEmbed pagedEmbed = new PagedEmbed(textChannel, embed, user);
                 pagedEmbed.setMaxFieldsPerPage(5);
                 for (JsonNode command : commands) {
-                    pagedEmbed.addField(command.get("Command").asText(), String.format("```Usage: %s \n\nDescripton: %s \n\nAliases: %s```", command.get("Syntax").asText(), command.get("Description").asText(), command.get("Aliases").asText()));
+                    pagedEmbed.addField(command.get(1).asText(), String.format("```Usage: %s \n\nDescripton: %s \n\nAliases: %s```", command.get(4).asText(), command.get(3).asText(), command.get(2).asText()));
                 }
                 pagedEmbed.build().join();
             } else {
@@ -118,7 +118,7 @@ public class EssentialsXCommand implements CommandExecutor {
                         .setAuthor(user);
                 PagedEmbed pagedEmbed = new PagedEmbed(textChannel, embed, user);
                 for (JsonNode node : perm) {
-                    pagedEmbed.addField(node.get("Permission").asText(), String.format("```%s```", node.get("Description").asText()));
+                    pagedEmbed.addField(node.get(2).asText(), String.format("```%s```", node.get(3).asText()));
                 }
                 pagedEmbed.build().join();
             } else {
@@ -151,9 +151,8 @@ public class EssentialsXCommand implements CommandExecutor {
 
     private List<JsonNode> searchCommands(String param) {
         List<JsonNode> nodes = new ArrayList<>();
-        for (Iterator<String> it = essxCommands.fieldNames(); it.hasNext();) {
-            JsonNode command = essxCommands.get(it.next());
-            if (param.equalsIgnoreCase(command.get("Command").asText()) || command.get("Aliases").asText().contains(param)) {
+        for (JsonNode command : essxCommands.get("data")) {
+            if (param.equalsIgnoreCase(command.get(1).asText()) || command.get(2).asText().contains(param)) {
                 nodes.add(command);
             }
         }
@@ -162,9 +161,8 @@ public class EssentialsXCommand implements CommandExecutor {
 
     private List<JsonNode> searchPermissions(String param) {
         List<JsonNode> nodes = new ArrayList<>();
-        for (Iterator<String> it = essxPermissions.fieldNames(); it.hasNext();) {
-            JsonNode permNode = essxPermissions.get(it.next());
-            if (permNode.get("Command").asText().contains(param) || permNode.get("Permission").asText().contains(param)) {
+        for (JsonNode permNode : essxPermissions.get("data")) {
+            if (permNode.get(1).asText().contains(param) || permNode.get(2).asText().contains(param)) {
                 nodes.add(permNode);
             }
         }
