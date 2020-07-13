@@ -6,6 +6,7 @@ import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
 import org.moss.discord.commands.AvatarCommand;
 import org.moss.discord.commands.BStatsCommand;
+import org.moss.discord.commands.ColorsCommand;
 import org.moss.discord.commands.CommandsCommand;
 import org.moss.discord.commands.EightBallCommand;
 import org.moss.discord.commands.EssentialsXCommand;
@@ -77,6 +78,7 @@ public class Main {
         commandHandler.registerCommand(new XkcdCommand());
         commandHandler.registerCommand(new WolframAlphaCommand());
         commandHandler.registerCommand(new EightBallCommand());
+        commandHandler.registerCommand(new ColorsCommand());
 
         // Register listeners
         api.addListener(new ModLogListeners(api));

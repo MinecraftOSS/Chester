@@ -11,6 +11,7 @@ import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.moss.discord.util.BStatsUtil;
 
 import java.awt.*;
+import java.text.DecimalFormat;
 import java.text.MessageFormat;
 import java.util.Iterator;
 

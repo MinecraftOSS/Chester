@@ -23,7 +23,7 @@ import java.util.Objects;
 
 public class EssentialsXCommand implements CommandExecutor {
 
-    
+
     private static String itemdbURL = "https://raw.githubusercontent.com/EssentialsX/Essentials/2.x/Essentials/src/items.json";
     private static String commanddbURL = "https://raw.githubusercontent.com/Xeyame/essinfo.xeya.me/master/data/commands.json";
     private static String permissionsdbURL = "https://raw.githubusercontent.com/Xeyame/essinfo.xeya.me/master/data/permissions.json";
@@ -68,7 +68,10 @@ public class EssentialsXCommand implements CommandExecutor {
             JsonNode essxItemDB = mapper.readTree(new File("./essx_items.json"));
 
             Request request = new Request.Builder().url(itemdbURL).build();
-            JsonNode essxItemDB2 =  mapper.readTree(Objects.requireNonNull(client.newCall(request).execute().body()).string().replace("#version: ${full.version}", ""));
+            JsonNode essxItemDB2 =  mapper.readTree(Objects.requireNonNull(client.newCall(request).execute().body()).string()
+                    .replace("#version: ${full.version}", "")
+                    .replace("# This file is for internal EssentialsX usage.","")
+                    .replace("# We recommend using custom_items.yml to add custom aliases.",""));
 
             if (essxItemDB2.size() > essxItemDB.size()) {
                 System.out.println("Updating Essentials ItemDB.");
