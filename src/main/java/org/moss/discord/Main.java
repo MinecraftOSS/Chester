@@ -8,13 +8,16 @@ import org.moss.discord.commands.AvatarCommand;
 import org.moss.discord.commands.BStatsCommand;
 import org.moss.discord.commands.ColorsCommand;
 import org.moss.discord.commands.CommandsCommand;
+import org.moss.discord.commands.DatabaseCommand;
 import org.moss.discord.commands.EightBallCommand;
 import org.moss.discord.commands.EssentialsXCommand;
+import org.moss.discord.commands.ProfileCommand;
 import org.moss.discord.commands.RoleReactionCommand;
 import org.moss.discord.commands.EmbedCommand;
 import org.moss.discord.commands.SayCommand;
 import org.moss.discord.commands.SpaceXCommand;
 import org.moss.discord.commands.UserTagCommand;
+import org.moss.discord.commands.VerifyCommand;
 import org.moss.discord.commands.WolframAlphaCommand;
 import org.moss.discord.commands.XkcdCommand;
 import org.moss.discord.listeners.StarboardListener;
@@ -31,8 +34,11 @@ import org.moss.discord.commands.moderation.PruneCommand;
 import org.moss.discord.listeners.AutoModListeners;
 import org.moss.discord.listeners.ModLogListeners;
 import org.moss.discord.listeners.PrivateListener;
+import org.moss.discord.util.DatabaseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.File;
 
 public class Main {
 
@@ -48,6 +54,8 @@ public class Main {
 
         DiscordApi api = new DiscordApiBuilder().setToken(args[0]).login().join();
         logger.info("Logged in to Discord account {}", api.getYourself().getName());
+
+        new DatabaseUtil(api).initSqlite(new File("chester.db"));
 
         // Create command handler
         CommandHandler commandHandler = new JavacordHandler(api);
@@ -79,6 +87,9 @@ public class Main {
         commandHandler.registerCommand(new WolframAlphaCommand());
         commandHandler.registerCommand(new EightBallCommand());
         commandHandler.registerCommand(new ColorsCommand());
+        commandHandler.registerCommand(new VerifyCommand());
+        commandHandler.registerCommand(new ProfileCommand());
+        commandHandler.registerCommand(new DatabaseCommand());
 
         // Register listeners
         api.addListener(new ModLogListeners(api));
