@@ -1,7 +1,6 @@
-package org.moss.discord.commands;
+package org.moss.discord.plugins;
 
 import de.btobastian.sdcf4j.Command;
-import de.btobastian.sdcf4j.CommandExecutor;
 import org.apache.commons.lang.StringUtils;
 import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.entity.message.Message;
@@ -9,14 +8,19 @@ import org.javacord.api.entity.message.MessageAuthor;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
+import org.moss.discord.Chester;
 import org.moss.discord.Constants;
 import org.moss.discord.util.VerificationUtil;
 
 import java.awt.*;
 
-public class VerifyCommand implements CommandExecutor {
+public class SpigotVerify extends Chester {
 
     private VerificationUtil verificationUtil = new VerificationUtil();
+
+    public SpigotVerify() {
+        getCommandHandler().registerCommand(this);
+    }
 
     @Command(aliases = {"!spigot"}, usage = "!spigot <Spigot ID>", description = "Spigot linking")
     public void onCommand(User user, Server server, TextChannel channel, String[] args) {

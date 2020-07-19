@@ -1,12 +1,12 @@
-package org.moss.discord.commands;
+package org.moss.discord.plugins;
 
 import de.btobastian.sdcf4j.Command;
-import de.btobastian.sdcf4j.CommandExecutor;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.user.User;
+import org.moss.discord.Chester;
 
 import java.awt.*;
 import java.io.BufferedReader;
@@ -16,13 +16,17 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.stream.Collectors;
 
-public class WolframAlphaCommand implements CommandExecutor {
+public class WolframAlpha extends Chester {
 
     private String query = "https://api.wolframalpha.com/v1/result?i=<QUERY>&appid=";
     private String queryLink = "https://www.wolframalpha.com/input/?i=<QUERY>";
     private String key = "DEMO";
 
     private Message msg;
+
+    public WolframAlpha() {
+        getCommandHandler().registerCommand(this);
+    }
 
     @Command(aliases = {"!wolfram", "!wa"}, usage = "!wolfram <Query>", description = "Search wolframalpha")
     public void onCommand(DiscordApi api, User user, TextChannel channel, String[] args) {

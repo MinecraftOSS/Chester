@@ -1,9 +1,8 @@
-package org.moss.discord.commands;
+package org.moss.discord.plugins;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.btobastian.sdcf4j.Command;
-import de.btobastian.sdcf4j.CommandExecutor;
 import org.apache.commons.lang.ArrayUtils;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.channel.TextChannel;
@@ -14,6 +13,7 @@ import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.javacord.api.listener.message.MessageCreateListener;
+import org.moss.discord.Chester;
 import org.moss.discord.Constants;
 import org.moss.discord.util.EmbedUtil;
 import org.moss.discord.util.KeywordsUtil;
@@ -31,14 +31,15 @@ import java.util.Set;
 import java.util.StringJoiner;
 import java.util.TreeSet;
 
-public class UserTagCommand implements CommandExecutor, MessageCreateListener {
+public class UserFactoids extends Chester implements MessageCreateListener {
 
     private UserTagData data = new UserTagData();
     private EmbedUtil embedUtil = new EmbedUtil();
     private ObjectMapper mapper = new ObjectMapper();
 
-    public UserTagCommand(DiscordApi api) {
-        api.addListener(this);
+    public UserFactoids() {
+        getDiscordApi().addListener(this);
+        getCommandHandler().registerCommand(this);
         try {
             JsonNode jsonTags = mapper.readTree(new File("./user_tags.json")).get("data");
             data = mapper.readValue(jsonTags.toString(), UserTagData.class);

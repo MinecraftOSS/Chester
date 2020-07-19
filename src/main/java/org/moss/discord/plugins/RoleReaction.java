@@ -1,4 +1,4 @@
-package org.moss.discord.commands;
+package org.moss.discord.plugins;
 
 import de.btobastian.sdcf4j.Command;
 import de.btobastian.sdcf4j.CommandExecutor;
@@ -13,6 +13,7 @@ import org.javacord.api.event.message.reaction.ReactionAddEvent;
 import org.javacord.api.event.message.reaction.ReactionRemoveEvent;
 import org.javacord.api.listener.message.reaction.ReactionAddListener;
 import org.javacord.api.listener.message.reaction.ReactionRemoveListener;
+import org.moss.discord.Chester;
 import org.moss.discord.Constants;
 import org.moss.discord.storage.RolePollStorage;
 
@@ -20,13 +21,14 @@ import java.awt.*;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class RoleReactionCommand implements CommandExecutor, ReactionAddListener, ReactionRemoveListener {
+public class RoleReaction extends Chester implements ReactionAddListener, ReactionRemoveListener {
 
     RolePollStorage storage = new RolePollStorage();
     Map<String, String> roleMap = new LinkedHashMap<>();
 
-    public RoleReactionCommand(DiscordApi api) {
-        api.addListener(this);
+    public RoleReaction() {
+        getDiscordApi().addListener(this);
+        getCommandHandler().registerCommand(this);
         roleMap.put("\uD83C\uDF4D", Constants.ROLE_ESSX_UPDATES);
         roleMap.put("\uD83C\uDF6A", Constants.ROLE_FUUID_UPDATES);
         roleMap.put("\uD83C\uDF54", Constants.ROLE_PVX_UPDATES);

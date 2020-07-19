@@ -1,11 +1,11 @@
-package org.moss.discord.commands;
+package org.moss.discord.plugins;
 
 import de.btobastian.sdcf4j.Command;
-import de.btobastian.sdcf4j.CommandExecutor;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.user.User;
+import org.moss.discord.Chester;
 
 import java.awt.*;
 import java.io.File;
@@ -15,12 +15,13 @@ import java.util.Scanner;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
-public class EightBallCommand implements CommandExecutor {
+public class EightBall extends Chester {
 
     List<String> responses = new ArrayList<>();
     String img = "https://i.imgur.com/nBRPBMf.gif";
 
-    public EightBallCommand() {
+    public EightBall() {
+        getCommandHandler().registerCommand(this);
         try {
             File file = new File("data/8ball_responses.txt");
             Scanner sc = new Scanner(file);

@@ -1,9 +1,8 @@
-package org.moss.discord.commands;
+package org.moss.discord.plugins;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.btobastian.sdcf4j.Command;
-import de.btobastian.sdcf4j.CommandExecutor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import org.apache.commons.lang.StringUtils;
@@ -11,15 +10,20 @@ import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.user.User;
+import org.moss.discord.Chester;
 
 import java.awt.*;
 import java.util.Objects;
 
-public class XkcdCommand implements CommandExecutor {
+public class Xkcd extends Chester {
 
     private String searchURL = "https://relevantxkcd.appspot.com/process?action=xkcd&query=%s";
     private ObjectMapper mapper = new ObjectMapper();
     private OkHttpClient client = new OkHttpClient.Builder().build();
+
+    public Xkcd() {
+        getCommandHandler().registerCommand(this);
+    }
 
     @Command(aliases = {"!xkcd", "!.xkcd"}, usage = "!xkcd <Query>", description = "Search xkcd")
     public void onCommand(DiscordApi api, User user, TextChannel channel, String[] args) {

@@ -1,14 +1,14 @@
-package org.moss.discord.commands;
+package org.moss.discord.plugins;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.btobastian.sdcf4j.Command;
-import de.btobastian.sdcf4j.CommandExecutor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.user.User;
+import org.moss.discord.Chester;
 import org.moss.discord.util.PagedEmbed;
 
 import java.awt.*;
@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-public class EssentialsXCommand implements CommandExecutor {
+public class EssentialsX extends Chester {
 
 
     private static String itemdbURL = "https://raw.githubusercontent.com/EssentialsX/Essentials/2.x/Essentials/src/items.json";
@@ -35,7 +35,8 @@ public class EssentialsXCommand implements CommandExecutor {
     private ObjectMapper mapper = new ObjectMapper();
     private static final OkHttpClient client = new OkHttpClient.Builder().build();
 
-    public EssentialsXCommand() {
+    public EssentialsX() {
+        getCommandHandler().registerCommand(this);
         try {
             essxCommands = mapper.readTree(new File("./essx_commands.json"));
             JsonNode cmdb2 =  mapper.readTree(Objects.requireNonNull(client.newCall(new Request.Builder().url(commanddbURL).build()).execute().body()).string());

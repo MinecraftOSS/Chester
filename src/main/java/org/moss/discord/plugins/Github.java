@@ -1,27 +1,28 @@
-package org.moss.discord.commands;
+package org.moss.discord.plugins;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import de.btobastian.sdcf4j.Command;
-import de.btobastian.sdcf4j.CommandExecutor;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.exception.MissingPermissionsException;
 import org.javacord.api.util.logging.ExceptionLogger;
+import org.moss.discord.Chester;
 import org.moss.discord.util.BStatsUtil;
 
 import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 
-public class GithubCommand implements CommandExecutor {
+public class Github extends Chester {
 
     Map<String, String> shortcuts = new HashMap<>();
 
     String repos = "https://api.github.com/repos/%s";
     String issuerepos = "https://api.github.com/repos/%s/issues";
 
-    public GithubCommand() {
+    public Github() {
+        getCommandHandler().registerCommand(this);
         shortcuts.put("essx", "EssentialsX/Essentials"); //TODO: Make configurable
         shortcuts.put("ess", "EssentialsX/Essentials");
         shortcuts.put("essentialsx", "EssentialsX/Essentials");

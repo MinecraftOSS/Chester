@@ -1,22 +1,24 @@
-package org.moss.discord.commands;
+package org.moss.discord.plugins;
 
 import de.btobastian.sdcf4j.Command;
-import de.btobastian.sdcf4j.CommandExecutor;
-
-import org.apache.commons.lang.ArrayUtils;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.activity.ActivityType;
 import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.entity.permission.Role;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
+import org.moss.discord.Chester;
 import org.moss.discord.Constants;
 
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-public class PresenceCommand implements CommandExecutor {
+public class Presence extends Chester {
+
+    public Presence() {
+        getCommandHandler().registerCommand(this);
+    }
 
     @Command(aliases = {"!presence", ".presence"}, usage = "!presence <Sstatus>", description = "Sets the status presence of the bot")
     public void onCommand(DiscordApi api, String[] args, TextChannel channel, User user, Server server) {

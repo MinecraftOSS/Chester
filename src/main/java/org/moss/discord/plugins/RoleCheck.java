@@ -1,17 +1,20 @@
-package org.moss.discord.commands;
+package org.moss.discord.plugins;
 
 import de.btobastian.sdcf4j.Command;
-import de.btobastian.sdcf4j.CommandExecutor;
 import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.entity.message.Message;
-import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.permission.Role;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
+import org.moss.discord.Chester;
 
 import java.util.stream.Collectors;
 
-public class RoleCheckCommand implements CommandExecutor {
+public class RoleCheck extends Chester {
+
+    public RoleCheck() {
+        getCommandHandler().registerCommand(this);
+    }
 
     @Command(aliases = {"!rolecheck", ".rolecheck"}, usage = "!rolecheck <User>", description = "Checks users' role")
     public void onCommand(TextChannel channel, String[] args, Message message, Server server) {

@@ -1,13 +1,13 @@
-package org.moss.discord.commands;
+package org.moss.discord.plugins;
 
 import de.btobastian.sdcf4j.Command;
-import de.btobastian.sdcf4j.CommandExecutor;
 import org.apache.commons.lang.StringUtils;
 import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
+import org.moss.discord.Chester;
 import org.moss.discord.util.VerificationUtil;
 
 import java.time.Instant;
@@ -18,9 +18,13 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class ProfileCommand implements CommandExecutor {
+public class Profile extends Chester {
 
     VerificationUtil veriUtil = new VerificationUtil();
+
+    public Profile() {
+        getCommandHandler().registerCommand(this);
+    }
 
     @Command(aliases = {"!profile"}, usage = "!profile <User>", description = "View user profiles")
     public void onCommand(User user, Server server, TextChannel channel, Message message, String[] args) {

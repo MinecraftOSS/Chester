@@ -1,9 +1,8 @@
-package org.moss.discord.commands;
+package org.moss.discord.plugins;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.btobastian.sdcf4j.Command;
-import de.btobastian.sdcf4j.CommandExecutor;
 import org.apache.commons.lang.ArrayUtils;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.channel.TextChannel;
@@ -12,6 +11,7 @@ import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.javacord.api.listener.message.MessageCreateListener;
+import org.moss.discord.Chester;
 import org.moss.discord.util.EmbedUtil;
 import org.moss.discord.util.KeywordsUtil;
 
@@ -26,14 +26,15 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.StringJoiner;
 
-public class TagCommand implements CommandExecutor, MessageCreateListener {
+public class Factoids extends Chester implements MessageCreateListener {
 
     private Map<String, Factoid> tagMap = new HashMap<>();
     EmbedUtil util = new EmbedUtil();
     private ObjectMapper mapper = new ObjectMapper();
 
-    public TagCommand(DiscordApi api) {
-        api.addListener(this);
+    public Factoids() {
+        getDiscordApi().addListener(this);
+        getCommandHandler().registerCommand(this);
         try {
             JsonNode jsonTags = mapper.readTree(new File("./factoids.json")).get("tags");
             for (int i = 0; i < jsonTags.size(); i++) {

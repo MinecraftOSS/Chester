@@ -1,7 +1,6 @@
-package org.moss.discord.commands;
+package org.moss.discord.plugins;
 
 import de.btobastian.sdcf4j.Command;
-import de.btobastian.sdcf4j.CommandExecutor;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.entity.message.Message;
@@ -9,11 +8,16 @@ import org.javacord.api.entity.message.MessageAuthor;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
+import org.moss.discord.Chester;
 
 import java.awt.*;
 import java.net.URL;
 
-public class AvatarCommand implements CommandExecutor {
+public class Avatar extends Chester {
+
+    public Avatar() {
+        getCommandHandler().registerCommand(this);
+    }
 
     @Command(aliases = {"!avatar", ".avatar"}, usage = "!avatar <User>", description = "Shows the users' avatar")
     public void onCommand(DiscordApi api, String[] args, TextChannel channel, Message message, Server server) {

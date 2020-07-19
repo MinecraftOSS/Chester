@@ -1,8 +1,7 @@
-package org.moss.discord.commands;
+package org.moss.discord.plugins;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import de.btobastian.sdcf4j.Command;
-import de.btobastian.sdcf4j.CommandExecutor;
 import org.apache.batik.transcoder.TranscoderException;
 import org.apache.batik.transcoder.TranscoderInput;
 import org.apache.batik.transcoder.TranscoderOutput;
@@ -12,21 +11,27 @@ import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.exception.MissingPermissionsException;
 import org.javacord.api.util.logging.ExceptionLogger;
+import org.moss.discord.Chester;
 import org.moss.discord.util.BStatsUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.Color;
+import java.awt.*;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 
-public class BStatsCommand implements CommandExecutor {
+public class BStats extends Chester {
 
     /**
      * The logger for this class.
      */
-    private static final Logger logger = LoggerFactory.getLogger(BStatsCommand.class);
+    private static final Logger logger = LoggerFactory.getLogger(BStats.class);
+
+    public BStats() {
+        getCommandHandler().registerCommand(this);
+    }
+
 
     @Command(aliases = {"!bStats"}, usage = "!bStats <pluginName>", description = "Shows some stats about the given plugin.")
     public void onCommand(DiscordApi api, TextChannel channel, String[] args) {

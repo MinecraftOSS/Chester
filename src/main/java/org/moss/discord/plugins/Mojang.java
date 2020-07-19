@@ -1,14 +1,18 @@
-package org.moss.discord.commands;
+package org.moss.discord.plugins;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import de.btobastian.sdcf4j.Command;
-import de.btobastian.sdcf4j.CommandExecutor;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
+import org.moss.discord.Chester;
 import org.moss.discord.util.BStatsUtil;
 
-public class MojangCommand implements CommandExecutor {
+public class Mojang extends Chester {
+
+    public Mojang() {
+        getCommandHandler().registerCommand(this);
+    }
 
     @Command(aliases = {"!mojang", "!mcstatus"}, usage = "!mojang", description = "Shows mojang servers")
     public void onCommand(DiscordApi api, TextChannel channel, String[] args) {

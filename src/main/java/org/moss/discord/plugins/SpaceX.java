@@ -1,25 +1,24 @@
-package org.moss.discord.commands;
+package org.moss.discord.plugins;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.btobastian.sdcf4j.Command;
-import de.btobastian.sdcf4j.CommandExecutor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import org.apache.commons.lang.WordUtils;
 import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.user.User;
+import org.moss.discord.Chester;
 import org.moss.discord.util.EmbedPaged;
 
 import java.awt.*;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
-public class SpaceXCommand implements CommandExecutor {
+public class SpaceX extends Chester {
 
     private ObjectMapper mapper = new ObjectMapper();
     private OkHttpClient client = new OkHttpClient.Builder().build();
@@ -27,6 +26,10 @@ public class SpaceXCommand implements CommandExecutor {
     String API_NEXT = "https://api.spacexdata.com/v3/launches/next";
     String API_FUTURE = "https://api.spacexdata.com/v3/launches/upcoming";
     String API_PAST = "https://api.spacexdata.com/v3/launches/past";
+
+    public SpaceX() {
+        getCommandHandler().registerCommand(this);
+    }
 
     @Command(aliases = {"!spacex", ".spacex"}, usage = "!spacex", description = "Spacex Command")
     public void spacex(TextChannel channel, String[] args, User user) {
