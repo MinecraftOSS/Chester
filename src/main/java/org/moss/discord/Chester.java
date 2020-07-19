@@ -43,8 +43,8 @@ public class Chester implements CommandExecutor {
             for (ClassPath.ClassInfo classinfo : classPath.getTopLevelClasses("org.moss.discord.plugins")) {
                 logger.info("Loading {}", classinfo.getSimpleName());
                 Class<?> classy = classinfo.load();
-                Object o = classy.newInstance();
-                classy.getDeclaredMethod("init").invoke(o);
+                ChesterPlugin plugin = (ChesterPlugin) classy.newInstance();
+                plugin.init();
             }
         } catch (Exception e) {
             e.printStackTrace();
