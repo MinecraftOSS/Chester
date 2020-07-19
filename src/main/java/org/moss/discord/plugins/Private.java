@@ -1,26 +1,24 @@
-package org.moss.discord.listeners;
+package org.moss.discord.plugins;
 
-import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.entity.message.MessageAttachment;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.event.message.MessageCreateEvent;
-import org.javacord.api.listener.GloballyAttachableListener;
 import org.javacord.api.listener.message.MessageCreateListener;
+import org.moss.discord.Chester;
 import org.moss.discord.Constants;
 
 import java.awt.*;
 import java.time.Instant;
 import java.util.Optional;
 
-public class PrivateListener implements MessageCreateListener {
+public class Private extends Chester implements MessageCreateListener {
 
-    DiscordApi api;
     private Optional<TextChannel> privateChannel;
 
-    public PrivateListener(DiscordApi api) {
-        this.api = api;
-        privateChannel = api.getTextChannelById(Constants.CHANNEL_PRIVATE);
+    public Private() {
+        getDiscordApi().addListener(this);
+        privateChannel = getDiscordApi().getTextChannelById(Constants.CHANNEL_PRIVATE);
     }
 
     @Override

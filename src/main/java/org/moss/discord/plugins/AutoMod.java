@@ -1,10 +1,8 @@
-package org.moss.discord.listeners;
+package org.moss.discord.plugins;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.btobastian.sdcf4j.Command;
-import de.btobastian.sdcf4j.CommandExecutor;
-import de.btobastian.sdcf4j.CommandHandler;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.entity.message.Message;
@@ -17,6 +15,7 @@ import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.javacord.api.listener.message.MessageCreateListener;
+import org.moss.discord.Chester;
 import org.moss.discord.Constants;
 
 import java.awt.*;
@@ -38,7 +37,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class AutoModListeners implements MessageCreateListener, CommandExecutor {
+public class AutoMod extends Chester implements MessageCreateListener {
 
     DiscordApi api;
     private ModerationData data;
@@ -95,9 +94,10 @@ public class AutoModListeners implements MessageCreateListener, CommandExecutor 
             "https://i.imgur.com/soBdcGC.gif"
     };
 
-    public AutoModListeners(DiscordApi api, CommandHandler commandHandler) {
-        this.api = api;
-        commandHandler.registerCommand(this);
+    public AutoMod() {
+        this.api = getDiscordApi();
+        getCommandHandler().registerCommand(this);
+        api.addListener(this);
         modChannel = api.getTextChannelById(Constants.CHANNEL_MODLOG);
         data = new ModerationData();
         try {

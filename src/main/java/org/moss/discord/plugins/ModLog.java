@@ -1,4 +1,4 @@
-package org.moss.discord.listeners;
+package org.moss.discord.plugins;
 
 import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.auditlog.AuditLog;
@@ -21,6 +21,7 @@ import org.javacord.api.listener.server.member.ServerMemberJoinListener;
 import org.javacord.api.listener.server.member.ServerMemberLeaveListener;
 import org.javacord.api.listener.user.UserChangeNameListener;
 import org.javacord.api.listener.user.UserChangeNicknameListener;
+import org.moss.discord.Chester;
 import org.moss.discord.Constants;
 
 import java.awt.*;
@@ -30,14 +31,15 @@ import java.time.Instant;
 import java.util.Optional;
 import java.util.concurrent.Future;
 
-public class ModLogListeners implements MessageEditListener, MessageDeleteListener, ServerMemberBanListener, ServerMemberJoinListener, ServerMemberLeaveListener, UserChangeNicknameListener, UserChangeNameListener {
+public class ModLog extends Chester implements MessageEditListener, MessageDeleteListener, ServerMemberBanListener, ServerMemberJoinListener, ServerMemberLeaveListener, UserChangeNicknameListener, UserChangeNameListener {
 
     private DiscordApi api;
     private Optional<TextChannel> modChannel;
 
-    public ModLogListeners(DiscordApi api) {
+    public ModLog() {
+        this.api = getDiscordApi();
+        api.addListener(this);
         modChannel = api.getTextChannelById(Constants.CHANNEL_MODLOG);
-        this.api = api;
     }
 
     @Override

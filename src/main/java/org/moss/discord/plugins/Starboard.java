@@ -1,12 +1,5 @@
-package org.moss.discord.listeners;
+package org.moss.discord.plugins;
 
-import java.awt.Color;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-
-import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.entity.emoji.Emoji;
 import org.javacord.api.entity.message.Message;
@@ -14,21 +7,26 @@ import org.javacord.api.entity.message.Reaction;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.event.message.reaction.ReactionAddEvent;
 import org.javacord.api.listener.message.reaction.ReactionAddListener;
+import org.moss.discord.Chester;
 import org.moss.discord.Constants;
 import org.moss.discord.storage.StarboardStorage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class StarboardListener implements ReactionAddListener {
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
 
-    private static final Logger logger = LoggerFactory.getLogger(StarboardListener.class);
+public class Starboard extends Chester implements ReactionAddListener {
+
+    private static final Logger logger = LoggerFactory.getLogger(Starboard.class);
     private static Collection<String> starEmojis = Arrays.asList(Constants.EMOJI_STARS_UNICODE);
 
-    private DiscordApi api;
     private StarboardStorage storage = new StarboardStorage();
 
-    public StarboardListener(DiscordApi dApi) {
-        api = dApi;
+    public Starboard() {
+        getDiscordApi().addListener(this);
     }
 
     @Override
@@ -36,7 +34,7 @@ public class StarboardListener implements ReactionAddListener {
         if (storage.isStarred(event.getMessageId()) || storage.isStarboardMessage(event.getMessageId())) return;
 
         Message message = event.requestMessage().join();
-        
+
         long totalStars = countStars(message.getReactions());
 
         if (totalStars >= Constants.STARS_MINIMUM) {
@@ -51,9 +49,9 @@ public class StarboardListener implements ReactionAddListener {
             .distinct()
             .count();
     }
-    
+
     private void postStarboard(Message message) {
-        Optional<TextChannel> starboardChannel = api.getTextChannelById(Constants.CHANNEL_STARBOARD);
+        Optional<TextChannel> starboardChannel = getDiscordApi().getTextChannelById(Constants.CHANNEL_STARBOARD);
         if (!starboardChannel.isPresent()) return; // Starboard is disabled
 
         EmbedBuilder embed = new EmbedBuilder();
