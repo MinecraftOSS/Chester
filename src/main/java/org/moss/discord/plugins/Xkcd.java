@@ -11,17 +11,19 @@ import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.user.User;
 import org.moss.discord.Chester;
+import org.moss.discord.ChesterPlugin;
 
 import java.awt.*;
 import java.util.Objects;
 
-public class Xkcd extends Chester {
+public class Xkcd extends Chester implements ChesterPlugin {
 
     private String searchURL = "https://relevantxkcd.appspot.com/process?action=xkcd&query=%s";
     private ObjectMapper mapper = new ObjectMapper();
     private OkHttpClient client = new OkHttpClient.Builder().build();
 
-    public Xkcd() {
+    @Override
+    public void init() {
         getCommandHandler().registerCommand(this);
     }
 

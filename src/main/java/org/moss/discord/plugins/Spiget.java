@@ -8,6 +8,7 @@ import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.moss.discord.Chester;
+import org.moss.discord.ChesterPlugin;
 import org.moss.discord.util.BStatsUtil;
 
 import java.awt.*;
@@ -15,13 +16,15 @@ import java.text.DecimalFormat;
 import java.text.MessageFormat;
 import java.util.Iterator;
 
-public class Spiget extends Chester {
+public class Spiget extends Chester implements ChesterPlugin {
 
     String queryurl = "https://api.spiget.org/v2/search/resources/{0}?field=name&size=5&page={1}&fields=id,name,tag,rating";
 
-    public Spiget() {
+    @Override
+    public void init() {
         getCommandHandler().registerCommand(this);
     }
+
 
     @Command(aliases = {"!spiget", "!plsearch"}, usage = "!spiget <Query>", description = "Search spigots resources")
     public void onCommand(DiscordApi api, TextChannel channel, String[] args) {

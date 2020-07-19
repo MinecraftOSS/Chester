@@ -7,6 +7,7 @@ import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.user.User;
 import org.moss.discord.Chester;
+import org.moss.discord.ChesterPlugin;
 
 import java.awt.*;
 import java.io.BufferedReader;
@@ -16,7 +17,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.stream.Collectors;
 
-public class WolframAlpha extends Chester {
+public class WolframAlpha extends Chester implements ChesterPlugin {
 
     private String query = "https://api.wolframalpha.com/v1/result?i=<QUERY>&appid=";
     private String queryLink = "https://www.wolframalpha.com/input/?i=<QUERY>";
@@ -24,7 +25,8 @@ public class WolframAlpha extends Chester {
 
     private Message msg;
 
-    public WolframAlpha() {
+    @Override
+    public void init() {
         getCommandHandler().registerCommand(this);
     }
 

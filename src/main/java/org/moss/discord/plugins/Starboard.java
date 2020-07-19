@@ -8,6 +8,7 @@ import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.event.message.reaction.ReactionAddEvent;
 import org.javacord.api.listener.message.reaction.ReactionAddListener;
 import org.moss.discord.Chester;
+import org.moss.discord.ChesterPlugin;
 import org.moss.discord.Constants;
 import org.moss.discord.storage.StarboardStorage;
 import org.slf4j.Logger;
@@ -18,16 +19,18 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
-public class Starboard extends Chester implements ReactionAddListener {
+public class Starboard extends Chester implements ChesterPlugin, ReactionAddListener {
 
     private static final Logger logger = LoggerFactory.getLogger(Starboard.class);
     private static Collection<String> starEmojis = Arrays.asList(Constants.EMOJI_STARS_UNICODE);
 
     private StarboardStorage storage = new StarboardStorage();
 
-    public Starboard() {
-        getDiscordApi().addListener(this);
+    @Override
+    public void init() {
+        getCommandHandler().registerCommand(this);
     }
+
 
     @Override
     public void onReactionAdd(ReactionAddEvent event) {

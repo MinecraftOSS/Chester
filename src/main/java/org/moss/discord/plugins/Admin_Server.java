@@ -9,12 +9,15 @@ import org.javacord.api.entity.message.MessageSet;
 import org.javacord.api.entity.user.User;
 import org.javacord.api.util.logging.ExceptionLogger;
 import org.moss.discord.Chester;
+import org.moss.discord.ChesterPlugin;
 
-public class Admin_Server extends Chester {
+public class Admin_Server extends Chester implements ChesterPlugin {
 
-    public Admin_Server() {
+    @Override
+    public void init() {
         getCommandHandler().registerCommand(this);
     }
+
 
     @Command(aliases = {"!ban"}, usage = "!ban <username> <reason>", description = "Bans a chosen user.")
     public void onBan(TextChannel channel, String[] args, Message message, MessageAuthor author) {

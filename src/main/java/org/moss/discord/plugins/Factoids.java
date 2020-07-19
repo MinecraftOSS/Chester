@@ -12,6 +12,7 @@ import org.javacord.api.entity.user.User;
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.javacord.api.listener.message.MessageCreateListener;
 import org.moss.discord.Chester;
+import org.moss.discord.ChesterPlugin;
 import org.moss.discord.util.EmbedUtil;
 import org.moss.discord.util.KeywordsUtil;
 
@@ -26,13 +27,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.StringJoiner;
 
-public class Factoids extends Chester implements MessageCreateListener {
+public class Factoids extends Chester implements ChesterPlugin, MessageCreateListener {
 
     private Map<String, Factoid> tagMap = new HashMap<>();
     EmbedUtil util = new EmbedUtil();
     private ObjectMapper mapper = new ObjectMapper();
 
-    public Factoids() {
+    @Override
+    public void init() {
         getDiscordApi().addListener(this);
         getCommandHandler().registerCommand(this);
         try {

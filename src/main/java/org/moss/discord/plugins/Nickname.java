@@ -7,15 +7,18 @@ import org.javacord.api.entity.permission.Role;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
 import org.moss.discord.Chester;
+import org.moss.discord.ChesterPlugin;
 import org.moss.discord.Constants;
 
 import java.util.List;
 
-public class Nickname extends Chester {
+public class Nickname extends Chester implements ChesterPlugin {
 
-    public Nickname() {
+    @Override
+    public void init() {
         getCommandHandler().registerCommand(this);
     }
+
 
     @Command(aliases = {"!setnick", ".setnick"}, usage = "!setnick <name>", description = "Sets the nickname of the bot")
     public void onCommand(DiscordApi api, String[] args, User user, Server server) {

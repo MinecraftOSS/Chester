@@ -7,18 +7,21 @@ import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
 import org.moss.discord.Chester;
+import org.moss.discord.ChesterPlugin;
 import org.moss.discord.Constants;
 import org.moss.discord.util.EmbedUtil;
 
 import java.awt.*;
 
-public class Embed extends Chester {
+public class Embed extends Chester implements ChesterPlugin {
 
     EmbedUtil embedUtil = new EmbedUtil();
 
-    public Embed() {
+    @Override
+    public void init() {
         getCommandHandler().registerCommand(this);
     }
+
 
     @Command(aliases = {"!embed", ".embed"}, usage = "!embed <url>", description = "Makes an embed from a json text")
     public void onCommand(String[] args, User user, TextChannel channel, MessageAuthor messageAuthor, Server server) {

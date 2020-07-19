@@ -6,17 +6,19 @@ import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.javacord.api.listener.message.MessageCreateListener;
 import org.moss.discord.Chester;
+import org.moss.discord.ChesterPlugin;
 import org.moss.discord.Constants;
 
 import java.awt.*;
 import java.time.Instant;
 import java.util.Optional;
 
-public class Private extends Chester implements MessageCreateListener {
+public class Private extends Chester implements ChesterPlugin, MessageCreateListener {
 
     private Optional<TextChannel> privateChannel;
 
-    public Private() {
+    @Override
+    public void init() {
         getDiscordApi().addListener(this);
         privateChannel = getDiscordApi().getTextChannelById(Constants.CHANNEL_PRIVATE);
     }

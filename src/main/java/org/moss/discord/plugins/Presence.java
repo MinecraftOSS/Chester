@@ -8,17 +8,20 @@ import org.javacord.api.entity.permission.Role;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
 import org.moss.discord.Chester;
+import org.moss.discord.ChesterPlugin;
 import org.moss.discord.Constants;
 
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-public class Presence extends Chester {
+public class Presence extends Chester implements ChesterPlugin {
 
-    public Presence() {
+    @Override
+    public void init() {
         getCommandHandler().registerCommand(this);
     }
+
 
     @Command(aliases = {"!presence", ".presence"}, usage = "!presence <Sstatus>", description = "Sets the status presence of the bot")
     public void onCommand(DiscordApi api, String[] args, TextChannel channel, User user, Server server) {

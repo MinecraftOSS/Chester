@@ -9,15 +9,18 @@ import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
 import org.moss.discord.Chester;
+import org.moss.discord.ChesterPlugin;
 
 import java.awt.*;
 import java.net.URL;
 
-public class Avatar extends Chester {
+public class Avatar extends Chester implements ChesterPlugin {
 
-    public Avatar() {
+    @Override
+    public void init() {
         getCommandHandler().registerCommand(this);
     }
+
 
     @Command(aliases = {"!avatar", ".avatar"}, usage = "!avatar <User>", description = "Shows the users' avatar")
     public void onCommand(DiscordApi api, String[] args, TextChannel channel, Message message, Server server) {

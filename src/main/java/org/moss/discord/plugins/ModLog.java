@@ -22,6 +22,7 @@ import org.javacord.api.listener.server.member.ServerMemberLeaveListener;
 import org.javacord.api.listener.user.UserChangeNameListener;
 import org.javacord.api.listener.user.UserChangeNicknameListener;
 import org.moss.discord.Chester;
+import org.moss.discord.ChesterPlugin;
 import org.moss.discord.Constants;
 
 import java.awt.*;
@@ -31,12 +32,13 @@ import java.time.Instant;
 import java.util.Optional;
 import java.util.concurrent.Future;
 
-public class ModLog extends Chester implements MessageEditListener, MessageDeleteListener, ServerMemberBanListener, ServerMemberJoinListener, ServerMemberLeaveListener, UserChangeNicknameListener, UserChangeNameListener {
+public class ModLog extends Chester implements ChesterPlugin, MessageEditListener, MessageDeleteListener, ServerMemberBanListener, ServerMemberJoinListener, ServerMemberLeaveListener, UserChangeNicknameListener, UserChangeNameListener {
 
     private DiscordApi api;
     private Optional<TextChannel> modChannel;
 
-    public ModLog() {
+    @Override
+    public void init() {
         this.api = getDiscordApi();
         api.addListener(this);
         modChannel = api.getTextChannelById(Constants.CHANNEL_MODLOG);

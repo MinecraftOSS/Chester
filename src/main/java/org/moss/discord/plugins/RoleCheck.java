@@ -7,14 +7,17 @@ import org.javacord.api.entity.permission.Role;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
 import org.moss.discord.Chester;
+import org.moss.discord.ChesterPlugin;
 
 import java.util.stream.Collectors;
 
-public class RoleCheck extends Chester {
+public class RoleCheck extends Chester implements ChesterPlugin {
 
-    public RoleCheck() {
+    @Override
+    public void init() {
         getCommandHandler().registerCommand(this);
     }
+
 
     @Command(aliases = {"!rolecheck", ".rolecheck"}, usage = "!rolecheck <User>", description = "Checks users' role")
     public void onCommand(TextChannel channel, String[] args, Message message, Server server) {

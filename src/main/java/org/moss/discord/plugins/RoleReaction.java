@@ -14,6 +14,7 @@ import org.javacord.api.event.message.reaction.ReactionRemoveEvent;
 import org.javacord.api.listener.message.reaction.ReactionAddListener;
 import org.javacord.api.listener.message.reaction.ReactionRemoveListener;
 import org.moss.discord.Chester;
+import org.moss.discord.ChesterPlugin;
 import org.moss.discord.Constants;
 import org.moss.discord.storage.RolePollStorage;
 
@@ -21,12 +22,13 @@ import java.awt.*;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class RoleReaction extends Chester implements ReactionAddListener, ReactionRemoveListener {
+public class RoleReaction extends Chester implements ChesterPlugin, ReactionAddListener, ReactionRemoveListener {
 
     RolePollStorage storage = new RolePollStorage();
     Map<String, String> roleMap = new LinkedHashMap<>();
 
-    public RoleReaction() {
+    @Override
+    public void init() {
         getDiscordApi().addListener(this);
         getCommandHandler().registerCommand(this);
         roleMap.put("\uD83C\uDF4D", Constants.ROLE_ESSX_UPDATES);

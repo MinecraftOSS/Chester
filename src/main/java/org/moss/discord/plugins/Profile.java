@@ -8,6 +8,7 @@ import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
 import org.moss.discord.Chester;
+import org.moss.discord.ChesterPlugin;
 import org.moss.discord.util.VerificationUtil;
 
 import java.time.Instant;
@@ -18,13 +19,15 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class Profile extends Chester {
+public class Profile extends Chester implements ChesterPlugin {
 
     VerificationUtil veriUtil = new VerificationUtil();
 
-    public Profile() {
+    @Override
+    public void init() {
         getCommandHandler().registerCommand(this);
     }
+
 
     @Command(aliases = {"!profile"}, usage = "!profile <User>", description = "View user profiles")
     public void onCommand(User user, Server server, TextChannel channel, Message message, String[] args) {

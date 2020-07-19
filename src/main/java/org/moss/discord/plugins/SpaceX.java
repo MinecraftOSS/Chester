@@ -10,6 +10,7 @@ import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.user.User;
 import org.moss.discord.Chester;
+import org.moss.discord.ChesterPlugin;
 import org.moss.discord.util.EmbedPaged;
 
 import java.awt.*;
@@ -18,7 +19,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
-public class SpaceX extends Chester {
+public class SpaceX extends Chester implements ChesterPlugin {
 
     private ObjectMapper mapper = new ObjectMapper();
     private OkHttpClient client = new OkHttpClient.Builder().build();
@@ -27,7 +28,8 @@ public class SpaceX extends Chester {
     String API_FUTURE = "https://api.spacexdata.com/v3/launches/upcoming";
     String API_PAST = "https://api.spacexdata.com/v3/launches/past";
 
-    public SpaceX() {
+    @Override
+    public void init() {
         getCommandHandler().registerCommand(this);
     }
 

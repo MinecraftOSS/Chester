@@ -9,18 +9,21 @@ import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
 import org.moss.discord.Chester;
+import org.moss.discord.ChesterPlugin;
 import org.moss.discord.Constants;
 import org.moss.discord.util.VerificationUtil;
 
 import java.awt.*;
 
-public class SpigotVerify extends Chester {
+public class SpigotVerify extends Chester implements ChesterPlugin {
 
     private VerificationUtil verificationUtil = new VerificationUtil();
 
-    public SpigotVerify() {
+    @Override
+    public void init() {
         getCommandHandler().registerCommand(this);
     }
+
 
     @Command(aliases = {"!spigot"}, usage = "!spigot <Spigot ID>", description = "Spigot linking")
     public void onCommand(User user, Server server, TextChannel channel, String[] args) {

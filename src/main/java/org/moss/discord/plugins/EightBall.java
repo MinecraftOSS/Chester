@@ -6,6 +6,7 @@ import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.user.User;
 import org.moss.discord.Chester;
+import org.moss.discord.ChesterPlugin;
 
 import java.awt.*;
 import java.io.File;
@@ -15,12 +16,13 @@ import java.util.Scanner;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
-public class EightBall extends Chester {
+public class EightBall extends Chester implements ChesterPlugin {
 
     List<String> responses = new ArrayList<>();
     String img = "https://i.imgur.com/nBRPBMf.gif";
 
-    public EightBall() {
+    @Override
+    public void init() {
         getCommandHandler().registerCommand(this);
         try {
             File file = new File("data/8ball_responses.txt");

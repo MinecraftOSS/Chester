@@ -6,16 +6,19 @@ import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.user.User;
 import org.moss.discord.Chester;
+import org.moss.discord.ChesterPlugin;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.Arrays;
 
-public class Colors extends Chester {
+public class Colors extends Chester implements ChesterPlugin {
 
-    public Colors() {
+    @Override
+    public void init() {
         getCommandHandler().registerCommand(this);
     }
+
 
     @Command(aliases = {"!color"}, usage = "!color <rgb,hex>", description = "Parses colours")
     public void onCommand(User user, TextChannel channel, String[] args) {

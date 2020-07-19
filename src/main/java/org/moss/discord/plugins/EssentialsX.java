@@ -9,6 +9,7 @@ import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.user.User;
 import org.moss.discord.Chester;
+import org.moss.discord.ChesterPlugin;
 import org.moss.discord.util.PagedEmbed;
 
 import java.awt.*;
@@ -21,8 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-public class EssentialsX extends Chester {
-
+public class EssentialsX extends Chester implements ChesterPlugin {
 
     private static String itemdbURL = "https://raw.githubusercontent.com/EssentialsX/Essentials/2.x/Essentials/src/items.json";
     private static String commanddbURL = "https://raw.githubusercontent.com/Xeyame/essinfo.xeya.me/master/data/commands.json";
@@ -35,7 +35,8 @@ public class EssentialsX extends Chester {
     private ObjectMapper mapper = new ObjectMapper();
     private static final OkHttpClient client = new OkHttpClient.Builder().build();
 
-    public EssentialsX() {
+    @Override
+    public void init() {
         getCommandHandler().registerCommand(this);
         try {
             essxCommands = mapper.readTree(new File("./essx_commands.json"));

@@ -5,13 +5,15 @@ import co.aikar.idb.DbRow;
 import de.btobastian.sdcf4j.Command;
 import org.javacord.api.entity.channel.TextChannel;
 import org.moss.discord.Chester;
+import org.moss.discord.ChesterPlugin;
 
 import java.sql.SQLException;
 import java.util.List;
 
-public class Database extends Chester {
+public class Database extends Chester implements ChesterPlugin {
 
-    public Database() {
+    @Override
+    public void init() {
         getCommandHandler().registerCommand(this);
     }
 

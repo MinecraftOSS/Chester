@@ -12,6 +12,7 @@ import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.exception.MissingPermissionsException;
 import org.javacord.api.util.logging.ExceptionLogger;
 import org.moss.discord.Chester;
+import org.moss.discord.ChesterPlugin;
 import org.moss.discord.util.BStatsUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,16 +22,18 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 
-public class BStats extends Chester {
+public class BStats extends Chester implements ChesterPlugin {
 
     /**
      * The logger for this class.
      */
     private static final Logger logger = LoggerFactory.getLogger(BStats.class);
 
-    public BStats() {
+    @Override
+    public void init() {
         getCommandHandler().registerCommand(this);
     }
+
 
 
     @Command(aliases = {"!bStats"}, usage = "!bStats <pluginName>", description = "Shows some stats about the given plugin.")

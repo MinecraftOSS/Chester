@@ -6,13 +6,16 @@ import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.moss.discord.Chester;
+import org.moss.discord.ChesterPlugin;
 import org.moss.discord.util.BStatsUtil;
 
-public class Mojang extends Chester {
+public class Mojang extends Chester implements ChesterPlugin {
 
-    public Mojang() {
+    @Override
+    public void init() {
         getCommandHandler().registerCommand(this);
     }
+
 
     @Command(aliases = {"!mojang", "!mcstatus"}, usage = "!mojang", description = "Shows mojang servers")
     public void onCommand(DiscordApi api, TextChannel channel, String[] args) {

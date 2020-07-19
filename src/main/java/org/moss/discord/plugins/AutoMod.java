@@ -16,6 +16,7 @@ import org.javacord.api.entity.user.User;
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.javacord.api.listener.message.MessageCreateListener;
 import org.moss.discord.Chester;
+import org.moss.discord.ChesterPlugin;
 import org.moss.discord.Constants;
 
 import java.awt.*;
@@ -37,7 +38,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class AutoMod extends Chester implements MessageCreateListener {
+public class AutoMod extends Chester implements ChesterPlugin, MessageCreateListener {
 
     DiscordApi api;
     private ModerationData data;
@@ -94,7 +95,8 @@ public class AutoMod extends Chester implements MessageCreateListener {
             "https://i.imgur.com/soBdcGC.gif"
     };
 
-    public AutoMod() {
+    @Override
+    public void init() {
         this.api = getDiscordApi();
         getCommandHandler().registerCommand(this);
         api.addListener(this);

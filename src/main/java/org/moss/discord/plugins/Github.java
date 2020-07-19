@@ -8,20 +8,22 @@ import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.exception.MissingPermissionsException;
 import org.javacord.api.util.logging.ExceptionLogger;
 import org.moss.discord.Chester;
+import org.moss.discord.ChesterPlugin;
 import org.moss.discord.util.BStatsUtil;
 
 import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Github extends Chester {
+public class Github extends Chester implements ChesterPlugin {
 
     Map<String, String> shortcuts = new HashMap<>();
 
     String repos = "https://api.github.com/repos/%s";
     String issuerepos = "https://api.github.com/repos/%s/issues";
 
-    public Github() {
+    @Override
+    public void init() {
         getCommandHandler().registerCommand(this);
         shortcuts.put("essx", "EssentialsX/Essentials"); //TODO: Make configurable
         shortcuts.put("ess", "EssentialsX/Essentials");

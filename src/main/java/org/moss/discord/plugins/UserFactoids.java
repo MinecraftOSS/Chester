@@ -14,6 +14,7 @@ import org.javacord.api.entity.user.User;
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.javacord.api.listener.message.MessageCreateListener;
 import org.moss.discord.Chester;
+import org.moss.discord.ChesterPlugin;
 import org.moss.discord.Constants;
 import org.moss.discord.util.EmbedUtil;
 import org.moss.discord.util.KeywordsUtil;
@@ -31,13 +32,14 @@ import java.util.Set;
 import java.util.StringJoiner;
 import java.util.TreeSet;
 
-public class UserFactoids extends Chester implements MessageCreateListener {
+public class UserFactoids extends Chester implements ChesterPlugin, MessageCreateListener {
 
     private UserTagData data = new UserTagData();
     private EmbedUtil embedUtil = new EmbedUtil();
     private ObjectMapper mapper = new ObjectMapper();
 
-    public UserFactoids() {
+    @Override
+    public void init() {
         getDiscordApi().addListener(this);
         getCommandHandler().registerCommand(this);
         try {
