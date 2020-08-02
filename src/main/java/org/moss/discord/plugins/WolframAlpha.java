@@ -6,8 +6,9 @@ import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.user.User;
+import org.moss.chesterapi.Settings;
 import org.moss.discord.Chester;
-import org.moss.discord.ChesterPlugin;
+import org.moss.chesterapi.ChesterPlugin;
 
 import java.awt.*;
 import java.io.BufferedReader;
@@ -21,7 +22,6 @@ public class WolframAlpha extends Chester implements ChesterPlugin {
 
     private String query = "https://api.wolframalpha.com/v1/result?i=<QUERY>&appid=";
     private String queryLink = "https://www.wolframalpha.com/input/?i=<QUERY>";
-    private String key = "DEMO";
 
     private Message msg;
 
@@ -33,7 +33,7 @@ public class WolframAlpha extends Chester implements ChesterPlugin {
     @Command(aliases = {"!wolfram", "!wa"}, usage = "!wolfram <Query>", description = "Search wolframalpha")
     public void onCommand(DiscordApi api, User user, TextChannel channel, String[] args) {
         long epoch = System.currentTimeMillis();
-        String url = query.replace("<QUERY>", String.join("%20", args))+key;
+        String url = query.replace("<QUERY>", String.join("%20", args))+Settings.getWolframKey();
         String link = queryLink.replace("<QUERY>", String.join("%20", args));
         channel.sendMessage(new EmbedBuilder().setTitle("Querying WolframAlpha")).thenAcceptAsync(message -> msg = message);
         try {

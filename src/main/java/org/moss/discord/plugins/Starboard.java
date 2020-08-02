@@ -8,7 +8,7 @@ import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.event.message.reaction.ReactionAddEvent;
 import org.javacord.api.listener.message.reaction.ReactionAddListener;
 import org.moss.discord.Chester;
-import org.moss.discord.ChesterPlugin;
+import org.moss.chesterapi.ChesterPlugin;
 import org.moss.discord.Constants;
 import org.moss.discord.storage.StarboardStorage;
 import org.slf4j.Logger;

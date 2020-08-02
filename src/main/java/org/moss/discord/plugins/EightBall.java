@@ -1,12 +1,11 @@
 package org.moss.discord.plugins;
 
 import de.btobastian.sdcf4j.Command;
-import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.user.User;
+import org.moss.chesterapi.ChesterPlugin;
 import org.moss.discord.Chester;
-import org.moss.discord.ChesterPlugin;
 
 import java.awt.*;
 import java.io.File;
@@ -36,7 +35,7 @@ public class EightBall extends Chester implements ChesterPlugin {
     }
 
     @Command(aliases = {"!8ball"}, usage = "!8ball", description = "Asks the all knowing 8ball")
-    public void onCommand(DiscordApi api, TextChannel channel, User user, String[] args) {
+    public void onCommand(TextChannel channel, User user, String[] args) {
         if (args.length == 0) {
             channel.sendMessage(user.getMentionTag() + " `!8ball <question>`");
             return;

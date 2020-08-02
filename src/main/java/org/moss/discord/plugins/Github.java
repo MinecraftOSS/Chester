@@ -8,7 +8,7 @@ import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.exception.MissingPermissionsException;
 import org.javacord.api.util.logging.ExceptionLogger;
 import org.moss.discord.Chester;
-import org.moss.discord.ChesterPlugin;
+import org.moss.chesterapi.ChesterPlugin;
 import org.moss.discord.util.BStatsUtil;
 
 import java.awt.*;
@@ -38,7 +38,7 @@ public class Github extends Chester implements ChesterPlugin {
         shortcuts.put("pvx", "drtshock/PlayerVaults");
     }
 
-    @Command(aliases = {"!github", "!gh"}, usage = "!github <username|repo> <issue #>", description = "Shows some stats about the given repository.")
+    @Command(aliases = {"!github", "!gh"}, usage = "!github <user/repo> <issue #>", description = "Shows some stats about the given repository.")
     public void onCommand(DiscordApi api, TextChannel channel, String[] args) {
 
         if (args.length == 1) { //TODO: Fancier embed

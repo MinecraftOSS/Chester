@@ -10,7 +10,7 @@ import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.user.User;
 import org.moss.discord.Chester;
-import org.moss.discord.ChesterPlugin;
+import org.moss.chesterapi.ChesterPlugin;
 import org.moss.discord.util.EmbedPaged;
 
 import java.awt.*;
@@ -33,7 +33,7 @@ public class SpaceX extends Chester implements ChesterPlugin {
         getCommandHandler().registerCommand(this);
     }
 
-    @Command(aliases = {"!spacex", ".spacex"}, usage = "!spacex", description = "Spacex Command")
+    @Command(aliases = {"!spacex"}, usage = "!spacex", description = "Spacex Command")
     public void spacex(TextChannel channel, String[] args, User user) {
         if (args.length == 1) {
             switch (args[0].toUpperCase()) {

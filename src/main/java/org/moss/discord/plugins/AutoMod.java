@@ -16,7 +16,7 @@ import org.javacord.api.entity.user.User;
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.javacord.api.listener.message.MessageCreateListener;
 import org.moss.discord.Chester;
-import org.moss.discord.ChesterPlugin;
+import org.moss.chesterapi.ChesterPlugin;
 import org.moss.discord.Constants;
 
 import java.awt.*;

@@ -5,7 +5,7 @@ import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.entity.message.MessageAuthor;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.moss.discord.Chester;
-import org.moss.discord.ChesterPlugin;
+import org.moss.chesterapi.ChesterPlugin;
 
 import java.awt.*;
 import java.net.URL;
@@ -19,7 +19,7 @@ public class MockingSpongebob extends Chester implements ChesterPlugin {
         getCommandHandler().registerCommand(this);
     }
 
-    @Command(aliases = {"!msb", ".msb"}, usage = "!msb text", description = "Mocking spongebob")
+    @Command(aliases = {"!msb"}, usage = "!msb text", description = "Mocking spongebob")
     public void onBob(TextChannel channel, String[] args, MessageAuthor author) {
         if (!author.canKickUsersFromServer()) {
             return;

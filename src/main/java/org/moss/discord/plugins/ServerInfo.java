@@ -5,7 +5,7 @@ import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.server.Server;
 import org.moss.discord.Chester;
-import org.moss.discord.ChesterPlugin;
+import org.moss.chesterapi.ChesterPlugin;
 
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -39,6 +39,7 @@ public class ServerInfo extends Chester implements ChesterPlugin {
 
         embed.addInlineField("Owner", server.getOwner().getMentionTag());
         embed.addInlineField("Verification", server.getVerificationLevel().name());
+        embed.addInlineField("Boosts", String.format("x%d Lvl. %d", server.getBoostCount(), server.getBoostLevel().getId()));
 
         embed.setFooter("ServerID: " + server.getIdAsString(), server.getIcon().get());
 

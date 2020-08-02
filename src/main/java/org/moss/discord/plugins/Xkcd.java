@@ -11,7 +11,7 @@ import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.user.User;
 import org.moss.discord.Chester;
-import org.moss.discord.ChesterPlugin;
+import org.moss.chesterapi.ChesterPlugin;
 
 import java.awt.*;
 import java.util.Objects;
@@ -27,7 +27,7 @@ public class Xkcd extends Chester implements ChesterPlugin {
         getCommandHandler().registerCommand(this);
     }
 
-    @Command(aliases = {"!xkcd", "!.xkcd"}, usage = "!xkcd <Query>", description = "Search xkcd")
+    @Command(aliases = {"!xkcd"}, usage = "!xkcd <Query>", description = "Search xkcd")
     public void onCommand(DiscordApi api, User user, TextChannel channel, String[] args) {
         if (args.length >= 1) {
             String id = search(String.join(" ", args));

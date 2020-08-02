@@ -8,7 +8,7 @@ import org.javacord.api.entity.message.MessageAuthor;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.user.User;
 import org.moss.discord.Chester;
-import org.moss.discord.ChesterPlugin;
+import org.moss.chesterapi.ChesterPlugin;
 
 import java.awt.*;
 import java.io.IOException;
@@ -28,10 +28,7 @@ public class Drama extends Chester implements ChesterPlugin {
     }
 
     @Command(aliases = {"!drama"}, usage = "!drama", description = "Creates a spigot drama")
-    public void onCommand(TextChannel channel, User user, MessageAuthor author) {
-        if (!author.canKickUsersFromServer()) {
-            return;
-        }
+    public void onCommand(TextChannel channel, User user) {
         try {
             String body = client.newCall(new Request.Builder().url(url).build()).execute().body().string();
             Matcher matcher = Pattern.compile(regex).matcher(body);

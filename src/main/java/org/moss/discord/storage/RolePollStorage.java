@@ -1,5 +1,6 @@
 package org.moss.discord.storage;
 
+@Deprecated
 public class RolePollStorage extends KeyValStorage {
 
     public RolePollStorage() {

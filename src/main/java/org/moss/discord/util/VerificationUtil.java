@@ -10,6 +10,9 @@ import okhttp3.Request;
 import org.javacord.api.entity.user.User;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Objects;
 
 public class VerificationUtil {
@@ -19,10 +22,14 @@ public class VerificationUtil {
     private static final String USER_ENDPOINT = "https://api.spigotmc.org/simple/0.1/index.php?action=getAuthor&id=";
 
     public boolean verify(User user, int spigotID) {
-        String userDiscord = getUserDiscord(spigotID);
-        if (userDiscord != null && user.getDiscriminatedName().equalsIgnoreCase(userDiscord)) {
-            setSpigotID(user.getIdAsString(), spigotID);
-            return true;
+        List<String> userDiscord = getUserDiscord(spigotID);
+        if (userDiscord.size() >= 1) {
+            for (String ident : userDiscord) {
+                if (user.getDiscriminatedName().equalsIgnoreCase(ident)) {
+                    setSpigotID(user.getIdAsString(), spigotID);
+                    return true;
+                }
+            }
         }
         return false;
     }
@@ -72,15 +79,18 @@ public class VerificationUtil {
         }
     }
 
-    private String getUserDiscord(int spigotID) {
+    private List<String> getUserDiscord(int spigotID) {
+        List<String> idents = new ArrayList<>();
         try {
             JsonNode jsonNode = makeRequest(USER_ENDPOINT+spigotID);
-            //System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(jsonNode));
-            if (jsonNode.get("identities").hasNonNull("discord")) {
-                return jsonNode.get("identities").get("discord").asText();
+            System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(jsonNode));
+            for (Iterator<String> it = jsonNode.get("identities").fieldNames(); it.hasNext(); ) {
+                String key = it.next();
+                idents.add(jsonNode.get("identities").get(key).asText());
             }
+            return idents;
         } catch (Exception ignored) {}
-        return null;
+        return idents;
     }
 
     private JsonNode makeRequest(String url) {

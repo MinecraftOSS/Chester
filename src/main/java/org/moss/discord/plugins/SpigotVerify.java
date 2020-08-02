@@ -9,7 +9,7 @@ import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
 import org.moss.discord.Chester;
-import org.moss.discord.ChesterPlugin;
+import org.moss.chesterapi.ChesterPlugin;
 import org.moss.discord.Constants;
 import org.moss.discord.util.VerificationUtil;
 
@@ -27,7 +27,10 @@ public class SpigotVerify extends Chester implements ChesterPlugin {
 
     @Command(aliases = {"!spigot"}, usage = "!spigot <Spigot ID>", description = "Spigot linking")
     public void onCommand(User user, Server server, TextChannel channel, String[] args) {
-        if (args.length == 1 && StringUtils.isNumeric(args[0])) {
+        if (args.length == 1) {
+            if (!StringUtils.isNumeric(args[0])) {
+                channel.sendMessage(user.getMentionTag(), new EmbedBuilder().setColor(Color.RED).setDescription("Please make sure to use your numeric ID").setImage("https://i.imgur.com/smkf1Td.png"));
+            }
             if (verificationUtil.isVerified(user.getIdAsString())) {
                 channel.sendMessage(user.getNicknameMentionTag(), new EmbedBuilder().setTitle("Your account is already linked!").setColor(Color.RED));
                 return;
@@ -47,9 +50,8 @@ public class SpigotVerify extends Chester implements ChesterPlugin {
 
     }
 
-    @Command(aliases = {"!fspigot"}, usage = "!fspigot <user> <Spigot ID>", description = "Spigot linking")
-    public void onForceLink(User user, Server server, TextChannel channel, String[] args, Message message, MessageAuthor messageAuthor) {
-        if (!messageAuthor.isServerAdmin()) return;
+    @Command(aliases = {"!fspigot"}, usage = "!fspigot <user> <Spigot ID>", description = "Spigot linking", requiredPermissions = "chester.admin")
+    public void onForceLink(User user, Server server, TextChannel channel, String[] args, Message message) {
         if (args.length >= 2 && message.getMentionedUsers().size() >= 1 && StringUtils.isNumeric(args[1])) {
             User target = message.getMentionedUsers().get(0);
             if (verificationUtil.verify(target, Integer.valueOf(args[1]), true)) {

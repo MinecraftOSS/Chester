@@ -1,5 +1,6 @@
 package org.moss.discord.storage;
 
+@Deprecated
 public class StarboardStorage extends KeyValStorage {
 
     public StarboardStorage() {

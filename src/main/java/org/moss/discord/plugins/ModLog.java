@@ -22,7 +22,7 @@ import org.javacord.api.listener.server.member.ServerMemberLeaveListener;
 import org.javacord.api.listener.user.UserChangeNameListener;
 import org.javacord.api.listener.user.UserChangeNicknameListener;
 import org.moss.discord.Chester;
-import org.moss.discord.ChesterPlugin;
+import org.moss.chesterapi.ChesterPlugin;
 import org.moss.discord.Constants;
 
 import java.awt.*;

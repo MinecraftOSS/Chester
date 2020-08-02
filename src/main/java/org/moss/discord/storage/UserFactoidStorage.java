@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class FactoidStorage  {
+public class UserFactoidStorage  {
 
     private Map<Server, HashMap<String, Factoid>> tagMap = new HashMap<>();
 
@@ -21,7 +21,7 @@ public class FactoidStorage  {
     private HashMap<String, Factoid> getFactoidsFromDB(Server server) {
         HashMap<String, Factoid> tagMap = new HashMap<>();
         try {
-            List<DbRow> results = DB.getResults("select name, content, owner, modified from factoids where server_id in (select server_id from servers where server_snow = ?)", server.getIdAsString());
+            List<DbRow> results = DB.getResults("select name, content, owner, modified from user_factoids where server_id in (select server_id from servers where server_snow = ?)", server.getIdAsString());
             results.forEach(dbRow -> {
                 Factoid toid = new Factoid()
                         .setName(dbRow.getString("name"))
@@ -39,7 +39,7 @@ public class FactoidStorage  {
     public void setFactoid(Server server, Factoid factoid) {
         try {
             getFactoidsFromServer(server).put(factoid.getName(), factoid);
-            DB.executeInsert("insert or replace into factoids (name, content, owner, modified, server_id) values(?, ?, ?, ?,(select server_id from servers where server_snow = ?))", factoid.getName(), factoid.getContent(), factoid.getOwner(), factoid.getModified(), server.getIdAsString());
+            DB.executeInsert("insert or replace into user_factoids (name, content, owner, modified, server_id) values(?, ?, ?, ?,(select server_id from servers where server_snow = ?))", factoid.getName(), factoid.getContent(), factoid.getOwner(), factoid.getModified(), server.getIdAsString());
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -53,7 +53,7 @@ public class FactoidStorage  {
         try {
             if (getFactoid(server, tag) != null) {
                 getFactoidsFromServer(server).remove(tag);
-                DB.executeUpdate("delete from factoids where name = ? and server_id = (select server_id from servers where server_snow = ?)", tag, server.getIdAsString());
+                DB.executeUpdate("delete from user_factoids where name = ? and server_id = (select server_id from servers where server_snow = ?)", tag, server.getIdAsString());
                 return true;
             }
         } catch (SQLException e) {

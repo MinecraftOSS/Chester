@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
 
+@Deprecated
 public class KeyValStorage {
 
     private Yaml yaml = new Yaml();

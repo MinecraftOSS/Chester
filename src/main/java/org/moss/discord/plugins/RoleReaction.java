@@ -1,7 +1,6 @@
 package org.moss.discord.plugins;
 
 import de.btobastian.sdcf4j.Command;
-import de.btobastian.sdcf4j.CommandExecutor;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.entity.message.Message;
@@ -13,8 +12,8 @@ import org.javacord.api.event.message.reaction.ReactionAddEvent;
 import org.javacord.api.event.message.reaction.ReactionRemoveEvent;
 import org.javacord.api.listener.message.reaction.ReactionAddListener;
 import org.javacord.api.listener.message.reaction.ReactionRemoveListener;
+import org.moss.chesterapi.ChesterPlugin;
 import org.moss.discord.Chester;
-import org.moss.discord.ChesterPlugin;
 import org.moss.discord.Constants;
 import org.moss.discord.storage.RolePollStorage;
 
