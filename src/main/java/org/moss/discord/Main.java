@@ -20,6 +20,7 @@ import org.moss.discord.commands.UserTagCommand;
 import org.moss.discord.commands.VerifyCommand;
 import org.moss.discord.commands.WolframAlphaCommand;
 import org.moss.discord.commands.XkcdCommand;
+import org.moss.discord.listeners.AntiHoistingListener;
 import org.moss.discord.listeners.StarboardListener;
 import org.moss.discord.commands.GithubCommand;
 import org.moss.discord.commands.MojangCommand;
@@ -96,6 +97,7 @@ public class Main {
         api.addListener(new AutoModListeners(api, commandHandler));
         api.addListener(new PrivateListener(api));
         api.addReactionAddListener(new StarboardListener(api));
+        api.addListener(new AntiHoistingListener(api));
 
     }
 
