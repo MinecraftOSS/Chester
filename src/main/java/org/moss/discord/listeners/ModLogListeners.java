@@ -80,7 +80,7 @@ public class ModLogListeners implements MessageEditListener, MessageDeleteListen
         embed.setFooter(ev.getMessage().get().getUserAuthor().get().getIdAsString());
         embed.setTimestamp(Instant.now());
 
-        modChannel.get().sendMessage(embed);
+        modChannel.ifPresent(ch -> ch.sendMessage(embed));
     }
 
     @Override
@@ -100,7 +100,7 @@ public class ModLogListeners implements MessageEditListener, MessageDeleteListen
         embed.setFooter(ev.getMessage().get().getUserAuthor().get().getIdAsString());
         embed.setTimestamp(Instant.now());
 
-        modChannel.get().sendMessage(embed);
+        modChannel.ifPresent(ch -> ch.sendMessage(embed));
     }
 
     @Override
@@ -137,7 +137,7 @@ public class ModLogListeners implements MessageEditListener, MessageDeleteListen
         embed.setFooter(ev.getUser().getIdAsString());
         embed.setTimestamp(Instant.now());
 
-        modChannel.get().sendMessage(embed);
+        modChannel.ifPresent(ch -> ch.sendMessage(embed));
     }
 
     @Override
@@ -153,7 +153,7 @@ public class ModLogListeners implements MessageEditListener, MessageDeleteListen
         embed.setFooter(ev.getUser().getIdAsString());
         embed.setTimestamp(Instant.now());
 
-        modChannel.get().sendMessage(embed);
+        modChannel.ifPresent(ch -> ch.sendMessage(embed));
     }
 
     @Override
@@ -193,7 +193,7 @@ public class ModLogListeners implements MessageEditListener, MessageDeleteListen
 
         embed.setFooter(ev.getUser().getIdAsString());
         embed.setTimestamp(Instant.now());
-        modChannel.get().sendMessage(embed);
+        modChannel.ifPresent(ch -> ch.sendMessage(embed));
     }
 
     @Override
@@ -210,7 +210,7 @@ public class ModLogListeners implements MessageEditListener, MessageDeleteListen
         embed.setFooter(ev.getUser().getIdAsString());
         embed.setTimestamp(Instant.now());
 
-        modChannel.get().sendMessage(embed);
+        modChannel.ifPresent(ch -> ch.sendMessage(embed));
     }
 
     @Override
@@ -221,14 +221,14 @@ public class ModLogListeners implements MessageEditListener, MessageDeleteListen
         embed.setColor(Color.YELLOW);
         embed.setThumbnail("https://i.imgur.com/bYGnGCp.png");
 
-        embed.addInlineField("Old", ev.getOldNickname().get());
-        embed.addInlineField("New", ev.getNewNickname().get());
+        embed.addInlineField("Old", ev.getOldNickname().orElse("<none>"));
+        embed.addInlineField("New", ev.getNewNickname().orElse("<none>"));
         embed.addField("ID", ev.getUser().getIdAsString());
 
         embed.setFooter(ev.getUser().getIdAsString());
         embed.setTimestamp(Instant.now());
 
-        modChannel.get().sendMessage(embed);
+        modChannel.ifPresent(ch -> ch.sendMessage(embed));
     }
 
     public String stripGrave(String string) {
