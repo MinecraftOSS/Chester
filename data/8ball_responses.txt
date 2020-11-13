@@ -1,3 +1,4 @@
+#00cd00|Absolutely
 #00cd00|As I see it, yes
 #00cd00|It is certain
 #00cd00|It is decidedly so
@@ -14,10 +15,12 @@
 #ffa500|Ask again later
 #ffa500|Better not tell you now
 #ffa500|Cannot predict now
+#ffa500|Go ask someone else
 #ffa500|Concentrate and ask again
 #ffa500|You know the answer better than I
 #ffa500|Maybe...
 #ffa500|There is as yet insufficient data for a meaningful answer
+#ff0000|Bad idea
 #ff0000|lol no
 #ff0000|You're kidding, right?
 #ff0000|Don't count on it
@@ -26,3 +29,4 @@
 #ff0000|My sources say no
 #ff0000|Outlook not so good
 #ff0000|Very doubtful
+#ff0000|Nice joke
