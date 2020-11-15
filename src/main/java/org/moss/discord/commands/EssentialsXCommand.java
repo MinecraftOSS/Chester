@@ -100,7 +100,7 @@ public class EssentialsXCommand implements CommandExecutor {
                 PagedEmbed pagedEmbed = new PagedEmbed(textChannel, embed, user);
                 pagedEmbed.setMaxFieldsPerPage(5);
                 for (JsonNode command : commands) {
-                    pagedEmbed.addField(command.get(1).asText(), String.format("```Usage: %s \n\nDescripton: %s \n\nAliases: %s```", command.get(4).asText(), command.get(3).asText(), command.get(2).asText()));
+                    pagedEmbed.addField(command.get(1).asText(), String.format("```Usage: %s \n\nDescripton: %s \n\nAliases: %s```", command.get(4).asText().replaceFirst("<command>", command.get(1).asText()), command.get(3).asText(), command.get(2).asText()));
                 }
                 pagedEmbed.build().join();
             } else {
